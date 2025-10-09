@@ -55,25 +55,50 @@ When a new GitHub issue is opened in any of the related repositories, the AI age
    * Implement the fix in the correct repository or repositories.
    * Ensure compatibility with related components.
 
+   * IMPORTANT: If multiple repositories are affected:
+
+     * Fix issues in each repository sequentially, one at a time.
+     * For each repository where you make changes:
+       a. Apply the fix
+       b. Run validation and tests for that specific repository
+       c. Create a PR for that repository
+       d. Move to the next affected repository
+
+     * Do not wait to fix all repositories before creating PRs - create a PR immediately after fixing and validating each repository.
+
 5. Run Validation and Verification
 
-   * Run relevant test suites or simulations to confirm that:
+   * For each repository where changes are made, run relevant test suites or simulations to confirm that:
 
-     * The issue is fully resolved.
+     * The issue is fully resolved in that repository.
      * All dependent repositories remain functional.
      * There are no new regressions introduced.
 
+   * After fixing all affected repositories, run final integration tests to ensure:
+
+     * All fixes work together properly across the entire ecosystem.
+     * No cross-repository conflicts or breaking changes exist.
+
 6. Finalize and Create a Pull Request
 
-   * Only after confirming stable functionality:
+   * For EACH repository where you made changes:
 
-     * Create a PR in the correct repository.
+     * Create a PR in the correct repository based on where the fix was applied:
+
+       * If the fix is in apim-apps → Create PR for ranuka-laksika/apim-apps
+       * If the fix is in carbon-apimgt → Create PR for ranuka-laksika/carbon-apimgt
+       * If the fix is in product-apim → Create PR for ranuka-laksika/product-apim
+       * If the fix is in api-developer-portal → Create PR for ranuka-laksika/api-developer-portal
+       * And so on for other repositories in the ecosystem
+
      * Include a concise PR description summarizing:
 
        * What issue was fixed
        * Why the change was necessary
        * How it affects or integrates with other repositories
        * Testing or verification steps completed
+
+     * IMPORTANT: Always create the PR for the repository where the actual code changes were made, targeting the appropriate ranuka-laksika/* fork
 
 ========================
 IMPORTANT CONSIDERATIONS
