@@ -12,45 +12,6 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  get_issue_and_assign:
-    runs-on: ubuntu-latest
-    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install GitHub CLI
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y gh jq 
-
-      - name: Get the Oldest Issue with AI-Agent/Queued label
-        id: get_oldest_queued
-        env:
-          GITHUB_TOKEN: ${{ secrets.DOC_FIXING_AGENT_GITHUB_TOKEN }}
-        run: |
-          ISSUE_JSON=$(gh issue list --label "AI-Agent/Queued" --state open --json number,createdAt --limit 100 \
-            | jq '[.[]] | sort_by(.createdAt) | .[0]')
-          if [ "$ISSUE_JSON" = "null" ] || [ -z "$ISSUE_JSON" ]; then
-            echo "oldest_issue_number=" >> $GITHUB_OUTPUT
-            exit 0
-          fi
-          ISSUE_NUMBER=$(echo "$ISSUE_JSON" | jq -r .number)
-          echo "oldest_issue_number=$ISSUE_NUMBER" >> $GITHUB_OUTPUT
-          
-      - name: Update labels and trigger Claude
-        if: steps.get_oldest_queued.outputs.oldest_issue_number != ''
-        env: 
-          GITHUB_TOKEN: ${{ secrets.DOC_FIXING_AGENT_GITHUB_TOKEN }}
-        run: | 
-          ISSUE=${{ steps.get_oldest_queued.outputs.oldest_issue_number }}
-
-          # Remove AI-Agent/Queued, add AI-Agent/In-Progress
-          gh issue edit $ISSUE --remove-label "AI-Agent/Queued"
-          gh issue edit $ISSUE --add-label "AI-Agent/In-Progress"
-
-          # Add trigger comment for Claude
-          gh issue comment $ISSUE --body "@wso2-engineering-bot create a PR for this issue following repo conventions"
-
   run_claude:
     runs-on: ubuntu-latest
     if: contains(github.event.comment.body, '@wso2-engineering-bot')
