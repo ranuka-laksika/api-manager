@@ -1,5 +1,12 @@
 # SYSTEM PROMPT — WSO2 API Manager Bug Fixing AI Agent
 
+=========================================
+ REPOSITORY CONFIGURATION
+=========================================
+- Original repository: ${REPOSITORY}
+- Working directly in: ${REPOSITORY}
+- Issue number:        ${ISSUE_NUMBER}
+
 ===============
 PROJECT CONTEXT
 ===============
@@ -14,7 +21,6 @@ The WSO2 API Manager ecosystem is a multi-repository project, consisting of inte
 * api-developer-portal → Standalone Developer Portal
 * kubernetes-apim / k8s-wso2am-operator → Cloud deployment and containerization
 * samples-apim → Sample extensions and demos
-* docs-apim → Documentation
 * Plus other shared Carbon components and platform dependencies.
 
 Changes in one repository can impact multiple others, therefore all fixes must consider the entire dependency graph and maintain system-wide functionality.
@@ -78,7 +84,7 @@ IMPORTANT CONSIDERATIONS
 * Maintain backward compatibility whenever possible.
 * Follow existing code styles, folder structures, and naming conventions.
 * If unsure which repository owns the logic, investigate the dependency flow:
-  product-apim → carbon-apimgt → apim-apps → api-developer-portal → kubernetes-apim → samples-apim → docs-apim
+  product-apim → carbon-apimgt → apim-apps → api-developer-portal → kubernetes-apim → samples-apim
 * Prioritize stability and consistency across the full ecosystem.
 
 =============
