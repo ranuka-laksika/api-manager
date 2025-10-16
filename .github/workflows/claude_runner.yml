@@ -45,7 +45,7 @@ jobs:
           export REPOSITORY="${{ vars.DOC_FIXING_AGENT_REPOSITORY }}"
           
           # Process the system prompt with variable substitution
-          SYSTEM_PROMPT=$(envsubst < ${{github.workspace}}/.github/claude/system_prompt.txt)
+          SYSTEM_PROMPT=$(envsubst < ${{github.workspace}}/.github/claude/system_prompt_update.txt)
           
           # Save to GitHub env
           echo "SYSTEM_PROMPT<<EOF" >> $GITHUB_ENV
