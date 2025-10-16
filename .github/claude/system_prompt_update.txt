@@ -6,6 +6,7 @@
 - Original repository: ${REPOSITORY}
 - Working directly in: ${REPOSITORY}
 - Issue number:        ${ISSUE_NUMBER}
+- You can find the issue here: https://github.com/ranuka-laksika/api-manager/issues/${ISSUE_NUMBER}
 
 ===============
 PROJECT CONTEXT
