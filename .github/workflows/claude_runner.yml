@@ -47,7 +47,6 @@ jobs:
           echo "Installing Java 11..."
           sudo apt-get install -y openjdk-11-jdk
           java -version
-          - name: Install Maven 3.6.3
 
           echo "Installing Maven 3.6.3..."
           MAVEN_VERSION=3.6.3
