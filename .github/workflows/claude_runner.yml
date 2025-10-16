@@ -39,6 +39,30 @@ jobs:
           git config user.name ${{secrets.DOC_FIXING_AGENT_GIT_USER_NAME}}
           git config user.email ${{secrets.DOC_FIXING_AGENT_GIT_USER_EMAIL}}
 
+      - name: Install Prerequisites (Node.js 22+, Maven 3.6+, Java 8/11)
+        run: |
+          echo "Updating apt repositories..."
+          sudo apt-get update -y
+
+          echo "Installing Java 11..."
+          sudo apt-get install -y openjdk-11-jdk
+          java -version
+          - name: Install Maven 3.6.3
+
+          echo "Installing Maven 3.6.3..."
+          MAVEN_VERSION=3.6.3
+          wget https://archive.apache.org/dist/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.zip
+          unzip -q apache-maven-$MAVEN_VERSION-bin.zip -d $HOME
+          echo "export PATH=$HOME/apache-maven-$MAVEN_VERSION/bin:$PATH" >> $GITHUB_ENV
+          mvn -version
+  
+          echo "Installing Node.js 22.x..."
+          curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+          sudo apt-get install -y nodejs
+          node --version
+          npm --version
+
+
       - name: Prepare system prompt with environment variables
         id: prepare_prompt
         run: |
