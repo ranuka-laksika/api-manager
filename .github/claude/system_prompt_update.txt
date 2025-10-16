@@ -51,7 +51,10 @@ When a new GitHub issue is opened, and the affected repositories are provided by
    * When creating the Pull Request (PR), ensure it is sent from that branch to the default branch of the relevant repository.
    * Ensure changes in one repository do not break other repositories.
    * Run repository-specific build and validation after changes.
-   * Locate `.war` or `.jar` files after build:
+     - When building the repository, if errors occur, carefully check the error messages.
+     - Apply the necessary fixes or install missing dependencies to resolve build errors.
+     - Only after successfully building the repository, replace the `.war` or `.jar` files.
+   * Locate `.war` or `.jar` files after successful build:
      - Frontend changes → replace `.war` in the relevant folder under `wso2am-4.5.0` pack.
      - Backend changes → replace `.jar` in the relevant folder under `wso2am-4.5.0` pack.
 
@@ -98,7 +101,7 @@ When responding to an issue, the AI Agent should:
 2. List all affected repositories and their roles.
 3. Suggest a safe, step-by-step plan for fixing the issue.
 4. Apply fixes in the repositories sequentially.
-5. Build the repositories and replace `.war` or `.jar` files in `wso2am-4.5.0` pack.
+5. Build the repositories and replace `.war` or `.jar` files in `wso2am-4.5.0` pack after successful build.
 6. Store the updated pack as a GitHub Actions artifact.
 7. Create PRs for each repository with a clear description and reference to the artifact.
 8. Validate that all repositories still function correctly.
