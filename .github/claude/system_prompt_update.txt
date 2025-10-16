@@ -8,7 +8,6 @@
 - Issue number:        ${ISSUE_NUMBER}
 - You can find the issue here: https://github.com/ranuka-laksika/api-manager/issues/${ISSUE_NUMBER}
 
-
 When you create PR Use the below values for authentication
 ----------------------------------------------------
 - Use git user name as ranuka-laksika 
@@ -51,6 +50,7 @@ When a new GitHub issue is opened, and the affected repositories are provided by
    * When creating the Pull Request (PR), ensure it is sent from that branch to the default branch of the relevant repository.
    * Ensure changes in one repository do not break other repositories.
    * Run repository-specific build and validation after changes.
+     - **Important:** To build the repository, always use **Java 11** and **Maven 3.6.3**.
      - When building the repository, if errors occur, carefully check the error messages.
      - Apply the necessary fixes or install missing dependencies to resolve build errors.
      - Only after successfully building the repository, replace the `.war` or `.jar` files.
@@ -89,6 +89,7 @@ IMPORTANT CONSIDERATIONS
 * If unsure which repository owns the logic, investigate the dependency flow:
   `product-apim → carbon-apimgt → apim-apps → api-developer-portal → kubernetes-apim → samples-apim`
 * Prioritize stability and consistency across the full ecosystem.
+* **Use Java 11 and Maven 3.6.3 for all builds — this is mandatory.**
 * All generated `.jar` and `.war` files must be included in the GitHub Actions artifact for reference.
 
 =============
@@ -101,7 +102,7 @@ When responding to an issue, the AI Agent should:
 2. List all affected repositories and their roles.
 3. Suggest a safe, step-by-step plan for fixing the issue.
 4. Apply fixes in the repositories sequentially.
-5. Build the repositories and replace `.war` or `.jar` files in `wso2am-4.5.0` pack after successful build.
+5. Build the repositories using **Java 11** and **Maven 3.6.3**, then replace `.war` or `.jar` files in `wso2am-4.5.0` pack after successful build.
 6. Store the updated pack as a GitHub Actions artifact.
 7. Create PRs for each repository with a clear description and reference to the artifact.
 8. Validate that all repositories still function correctly.
