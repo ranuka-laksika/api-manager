@@ -17,7 +17,7 @@ jobs:
     if: contains(github.event.comment.body, '@wso2-engineering-bot')
     steps:
       - name: Checkout original repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4 
         with: 
           token: ${{ secrets.DOC_FIXING_AGENT_GITHUB_TOKEN }}
           fetch-depth: 0 
@@ -38,28 +38,6 @@ jobs:
           # Configure git for commits
           git config user.name ${{secrets.DOC_FIXING_AGENT_GIT_USER_NAME}}
           git config user.email ${{secrets.DOC_FIXING_AGENT_GIT_USER_EMAIL}}
-
-      - name: Install Prerequisites (Node.js 22+, Maven 3.6+, Java 8/11)
-        run: |
-          echo "Updating apt repositories..."
-          sudo apt-get update -y
-
-          echo "Installing Java 11..."
-          sudo apt-get install -y openjdk-11-jdk
-          java -version
-
-          echo "Installing Maven 3.6.3..."
-          MAVEN_VERSION=3.6.3
-          wget https://archive.apache.org/dist/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.zip
-          unzip -q apache-maven-$MAVEN_VERSION-bin.zip -d $HOME
-          echo "export PATH=$HOME/apache-maven-$MAVEN_VERSION/bin:$PATH" >> $GITHUB_ENV
-          mvn -version
-  
-          echo "Installing Node.js 22.x..."
-          curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
-          sudo apt-get install -y nodejs
-          node --version
-          npm --version
 
       - name: Prepare system prompt with environment variables
         id: prepare_prompt
@@ -97,7 +75,7 @@ jobs:
           prompt: ${{ env.SYSTEM_PROMPT }}
           trigger_phrase: "@wso2-engineering-bot" 
           claude_args: |
-              --allowedTools "Bash(*),Bash(apt:*),Bash(java:*),Bash(npm:*),Bash(shell:*),Bash(node:*),Bash(mvn:*),Bash(mkdir:*),Bash(cd:*),Bash(ls:*),Bash(unzip:*),Bash(wget:*),Bash(git:*),Bash(mkdocs:*),Bash(python3:*),Bash(pip3:*),WebFetch,mcp__github__create_pull_request,mcp__github__get_issue,mcp__github__search_pull_requests,mcp__github__list_branches,Edit,Read,Write,mcp__github__update_issue,mcp__github__create_branch,mcp__github__add_issue_comment"
+              --allowedTools "Bash(*),Bash(apt:*),Bash(cp:*),Bash(java:*),Bash(npm:*),Bash(shell:*),Bash(node:*),Bash(mvn:*),Bash(mkdir:*),Bash(cd:*),Bash(ls:*),Bash(unzip:*),Bash(wget:*),Bash(git:*),Bash(mkdocs:*),Bash(python3:*),Bash(pip3:*),WebFetch,mcp__github__create_pull_request,mcp__github__get_issue,mcp__github__search_pull_requests,mcp__github__list_branches,Edit,Read,Write,mcp__github__update_issue,mcp__github__create_branch,mcp__github__add_issue_comment"
               --model claude-sonnet-4-20250514
 
       - name: Get next queued issue
