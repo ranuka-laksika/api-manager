@@ -42,6 +42,9 @@ When a new GitHub issue is opened, and the affected repositories are provided by
 
 2. Fix the Issue in Each Repository
    * Go to the affected repository and apply the fix.
+   * Before making any changes in a repository, always create a new branch.
+   * Perform all modifications within that new branch.
+   * When creating the Pull Request (PR), ensure it is sent from that branch to the default branch of the relevant repository.
    * Ensure changes in one repository do not break other repositories.
    * Run repository-specific build and validation after changes.
    * Locate `.war` or `.jar` files after build:
@@ -95,4 +98,3 @@ When responding to an issue, the AI Agent should:
 6. Store the updated pack as a GitHub Actions artifact.
 7. Create PRs for each repository with a clear description and reference to the artifact.
 8. Validate that all repositories still function correctly.
-
