@@ -13,10 +13,19 @@ AUTHENTICATION CREDENTIALS
 Use these credentials for git operations and PR creation:
 - Git username: ranuka-laksika
 - Git email: ranukalaksika@gmail.com
-- **GitHub Token**: Use the provided GitHub token for authentication when creating PRs
-  * The GitHub token will be provided to you for API authentication
+- **GitHub Token**: ${DOC_FIXING_AGENT_GITHUB_TOKEN}
+  * Use this token for authentication in git operations and PR creation
   * Use this token with GitHub CLI (gh) or GitHub API when creating pull requests
-  * This token is required for all GitHub operations (push, PR creation, etc.)
+
+**Git Configuration Setup (MANDATORY - DO THIS FIRST):**
+Before making any commits or pushes, you MUST configure git with the credentials:
+1. Set git user name: `git config user.name "ranuka-laksika"`
+2. Set git email: `git config user.email "ranukalaksika@gmail.com"`
+3. Set remote URL with authentication token:
+   - Format: `git remote set-url origin https://x-access-token:${DOC_FIXING_AGENT_GITHUB_TOKEN}@github.com/ranuka-laksika/{REPOSITORY_NAME}`
+   - Replace `{REPOSITORY_NAME}` with the actual repository name (e.g., apim-apps, carbon-apimgt, product-apim)
+   - Example for apim-apps: `git remote set-url origin https://x-access-token:${DOC_FIXING_AGENT_GITHUB_TOKEN}@github.com/ranuka-laksika/apim-apps`
+   - **Important**: The repository name changes based on which repository you're working on. Use the appropriate repository name.
 
 ===============
 PROJECT CONTEXT
@@ -44,14 +53,16 @@ When a new GitHub issue is opened, and the affected repositories are provided by
 
 1. Understand the Problem Context
     * Read the issue title, description, and labels.
-    * Identify the affected repositories provided by the user.
-    * If the user specifies what fix is needed in a repository, follow it.
-    * If the user does NOT specify, analyze the repository to determine the most accurate fix for the issue.
+    * **The user will provide you with the affected repository or repositories that need to be fixed.**
+    * Identify the repositories provided by the user.
+    * **Understanding the Fix:**
+        - **If the user specifies the exact fix**: Apply that exact fix in the repository.
+        - **If the user does NOT specify the exact fix**: Analyze the repository and determine the most accurate fix for the issue.
 
-    **Repository Workflow:**
-    * Always clone the affected repository from the WSO2 organization (upstream source).
-    * Example: If the affected repository is `apim-apps`, clone from `https://github.com/wso2/apim-apps.git`
-    * After cloning from WSO2, immediately create a new branch for your changes.
+    **Repository Workflow (CRITICAL - READ CAREFULLY):**
+    * **IMPORTANT**: Clone the affected repository from the **ranuka-laksika** organization (NOT wso2).
+    * Example: If the affected repository is `apim-apps`, clone from `https://github.com/ranuka-laksika/apim-apps.git`
+    * **After cloning, immediately create a new branch** for your changes before making any modifications.
     * Make all modifications in this new branch.
     * After modifications, build the repository using Java 11 and Maven 3.6.3 (use the provided paths).
     * **CRITICAL**: Wait for build to complete successfully (15-20 minutes timeout, increase if needed).
@@ -60,25 +71,33 @@ When a new GitHub issue is opened, and the affected repositories are provided by
     * Replace the corresponding `.war` or `.jar` files in the `wso2am-4.5.0` pack.
     * Zip the modified `wso2am-4.5.0` pack.
     * Upload the zipped pack as a GitHub Actions artifact.
-    * Push the modified branch to the corresponding fork repository in the ranuka-laksika organization.
-    * Create a Pull Request using the provided GitHub token for authentication.
-    * **PR Details**: The PR should be from the newly pushed branch to the default branch of the same fork repository.
-    * Example workflow for `apim-apps`:
-        1. Clone: `git clone https://github.com/wso2/apim-apps.git`
-        2. Create branch: `git checkout -b fix-issue-${ISSUE_NUMBER}`
-        3. Make modifications in the code
-        4. Build: Use Java 11 and Maven 3.6.3 to build the repository (timeout: 15-20 minutes, wait for "BUILD SUCCESS")
-        5. Replace: Extract `.war` files (only after BUILD SUCCESS) and replace in `wso2am-4.5.0` pack
-        6. Zip: Create zip file of the modified `wso2am-4.5.0` pack
-        7. Upload: Upload the zip as a GitHub Actions artifact
-        8. Add remote for fork: `git remote add fork https://github.com/ranuka-laksika/apim-apps.git`
-        9. Push to fork: `git push fork fix-issue-${ISSUE_NUMBER}`
-        10. Create PR: Use GitHub token to create PR in `ranuka-laksika/apim-apps` from branch `fix-issue-${ISSUE_NUMBER}` to the default branch (main/master) of the same fork repository
+    * **Commit and push the changes** to the newly created branch.
+    * **Create a Pull Request** using the provided GitHub token for authentication.
+    * **PR Details**: The PR should be from the newly created branch to the default branch (main/master) of the same repository.
+
+    * **Example workflow for `apim-apps`:**
+        1. Clone: `git clone https://github.com/ranuka-laksika/apim-apps.git`
+        2. Configure git credentials (MANDATORY):
+           - `git config user.name "ranuka-laksika"`
+           - `git config user.email "ranukalaksika@gmail.com"`
+           - `git remote set-url origin https://x-access-token:${DOC_FIXING_AGENT_GITHUB_TOKEN}@github.com/ranuka-laksika/apim-apps`
+        3. Create branch: `git checkout -b fix-issue-${ISSUE_NUMBER}`
+        4. Make modifications in the code (apply exact fix if provided by user, or determine the fix)
+        5. Build: Use Java 11 and Maven 3.6.3 to build the repository (timeout: 15-20 minutes, wait for "BUILD SUCCESS")
+        6. Replace: Extract `.war` files (only after BUILD SUCCESS) and replace in `wso2am-4.5.0` pack
+        7. Zip: Create zip file of the modified `wso2am-4.5.0` pack
+        8. Upload: Upload the zip as a GitHub Actions artifact
+        9. Commit: `git add .` and `git commit -m "Fix issue ${ISSUE_NUMBER}"`
+        10. Push: `git push origin fix-issue-${ISSUE_NUMBER}` (push to the newly created branch)
+        11. Create PR: Use GitHub token to create PR in `ranuka-laksika/apim-apps` from branch `fix-issue-${ISSUE_NUMBER}` to the default branch (main/master)
     * This same workflow applies to all affected repositories (carbon-apimgt, product-apim, etc.)
+    * **Remember**: Always clone from ranuka-laksika organization, NOT wso2.
 
 2. Fix the Issue in Each Repository
-    * Remember: You have already cloned from `wso2/*` organization and created a new branch.
+    * Remember: You have already cloned from `ranuka-laksika/*` organization and created a new branch.
     * Go to the affected repository and apply the fix.
+    * **If user specified exact fix**: Apply that exact fix.
+    * **If user did NOT specify exact fix**: Determine the most accurate fix for the issue.
     * Perform all modifications within the branch you created.
     * Ensure changes in one repository do not break other repositories.
     * After modifications, ALWAYS build the repository and replace artifacts before pushing.
@@ -142,13 +161,13 @@ When a new GitHub issue is opened, and the affected repositories are provided by
 4. Create Pull Requests
     * **Authentication**: Use the provided GitHub token for authentication when creating PRs.
     * For each repository where a change is applied:
-        - Create a PR in the relevant `ranuka-laksika/*` fork repository.
+        - Create a PR in the relevant `ranuka-laksika/*` repository.
         - **PR Source and Target**:
-          * Source: The newly pushed branch (e.g., `fix-issue-${ISSUE_NUMBER}`)
-          * Target: The default branch (main/master) of the SAME fork repository
-          * Example: In `ranuka-laksika/apim-apps`, create PR from `fix-issue-${ISSUE_NUMBER}` → `main` (within the same fork)
-        - Remember: You cloned from `wso2/*` (upstream), modified in a branch, built with Java 11 and Maven 3.6.3, replaced artifacts, and pushed to `ranuka-laksika/*` (fork).
-        - **Important**: The PR is within the fork repository itself (branch → default branch), NOT from fork to upstream.
+          * Source: The newly created and pushed branch (e.g., `fix-issue-${ISSUE_NUMBER}`)
+          * Target: The default branch (main/master) of the SAME repository
+          * Example: In `ranuka-laksika/apim-apps`, create PR from `fix-issue-${ISSUE_NUMBER}` → `main`
+        - Remember: You cloned from `ranuka-laksika/*`, created a new branch, modified the code, built with Java 11 and Maven 3.6.3, replaced artifacts, committed and pushed to the newly created branch.
+        - **Important**: The PR is from the newly created branch to the default branch of the same repository.
         - **PR Description must include (MANDATORY):**
             1. What issue was fixed (with issue number reference).
             2. Why the change was necessary.
@@ -213,9 +232,10 @@ IMPORTANT CONSIDERATIONS
 ========================
 
 * **Complete Workflow Reminder**: Always follow the complete workflow:
-  1. Clone from `wso2/*` (upstream) → 2. Create branch → 3. Modify code → 4. Build with Java 11 & Maven 3.6.3 →
-  5. Replace artifacts in `wso2am-4.5.0` → 6. Zip the pack → 7. Upload to GitHub Actions → 8. Push to `ranuka-laksika/*` (fork) →
-  9. Create PR using GitHub token (from branch → default branch within the same fork) with artifact reference
+  1. Clone from `ranuka-laksika/*` → 2. Configure git (username, email, remote URL with token) → 3. Create new branch →
+  4. Apply fix (exact fix if provided, or determine fix) → 5. Build with Java 11 & Maven 3.6.3 (wait for BUILD SUCCESS) →
+  6. Replace artifacts in `wso2am-4.5.0` → 7. Zip the pack → 8. Upload to GitHub Actions → 9. Commit and push to newly created branch →
+  10. Create PR using GitHub token (from newly created branch → default branch of same repository) with artifact reference
 
 * Always take a system-wide view before making changes.
 * Maintain backward compatibility wherever possible.
@@ -242,18 +262,29 @@ IMPORTANT CONSIDERATIONS
     * Clear download instructions from GitHub Actions
     * Explanation that users can download and use the complete modified pack
   - This is MANDATORY - users rely on this artifact to get the complete modified pack without building themselves.
-* **Repository Workflow:**
-  - Always clone from WSO2 organization (upstream source).
-  - Always push to ranuka-laksika organization (fork).
-  - Never push directly to WSO2 repositories.
+* **Repository Workflow (CRITICAL - READ CAREFULLY):**
+  - **IMPORTANT**: Always clone from ranuka-laksika organization (NOT wso2).
+  - Example: For `apim-apps`, clone from `https://github.com/ranuka-laksika/apim-apps.git`
+  - **IMMEDIATELY after cloning, configure git credentials**:
+    * `git config user.name "ranuka-laksika"`
+    * `git config user.email "ranukalaksika@gmail.com"`
+    * `git remote set-url origin https://x-access-token:${DOC_FIXING_AGENT_GITHUB_TOKEN}@github.com/ranuka-laksika/{REPOSITORY_NAME}`
+    * The {REPOSITORY_NAME} must match the actual repository you're working on
+  - Create a new branch immediately after git configuration.
+  - Make all changes in the new branch.
+  - Commit and push changes to the newly created branch.
+  - **User Input**:
+    * User will provide the affected repositories.
+    * User may provide the exact fix - if so, apply it exactly.
+    * If user does NOT provide exact fix, determine the most accurate fix.
 * **Authentication and PR Creation (CRITICAL):**
   - **GitHub Token**: Always use the provided GitHub token for authentication when creating PRs.
   - **Git Credentials**: Use username `ranuka-laksika` and email `ranukalaksika@gmail.com` for git operations.
-  - **PR Target**: Pull Requests must be created within the fork repository itself:
-    * From: The newly pushed feature branch (e.g., `fix-issue-${ISSUE_NUMBER}`)
-    * To: The default branch (main/master) of the SAME fork repository
-    * Example: `ranuka-laksika/apim-apps` → Create PR from `fix-issue-${ISSUE_NUMBER}` to `main` within `ranuka-laksika/apim-apps`
-  - **Important**: Do NOT create PRs from fork to upstream WSO2 repository. The PR stays within the fork.
+  - **PR Target**: Pull Requests are created within the same repository:
+    * From: The newly created and pushed branch (e.g., `fix-issue-${ISSUE_NUMBER}`)
+    * To: The default branch (main/master) of the SAME repository
+    * Example: In `ranuka-laksika/apim-apps`, create PR from `fix-issue-${ISSUE_NUMBER}` to `main`
+  - **Important**: Clone from ranuka-laksika, create branch, commit, push to branch, then create PR from branch to default branch.
 
 =============
 OUTPUT FORMAT
@@ -263,18 +294,30 @@ When responding to an issue, the AI Agent should follow this complete workflow:
 
 1. **Understand and Summarize**
    - Summarize the problem in plain language.
+   - **The user will provide the affected repositories** that need to be fixed.
    - List all affected repositories and their roles.
 
 2. **Plan the Fix**
    - Suggest a safe, step-by-step plan for fixing the issue.
-   - Identify which repositories need to be cloned from the WSO2 organization.
+   - **Check if user provided exact fix**:
+     * If yes: Plan to apply that exact fix
+     * If no: Plan to determine the most accurate fix for the issue
+   - Identify which repositories need to be cloned from the ranuka-laksika organization.
 
-3. **Clone and Branch**
-   - Clone affected repositories from `wso2/*` organization (upstream).
+3. **Clone and Configure Git (MANDATORY)**
+   - Clone affected repositories from `ranuka-laksika/*` organization.
+   - Example: `git clone https://github.com/ranuka-laksika/apim-apps.git`
+   - **IMMEDIATELY configure git credentials** (do this before any commits):
+     * `git config user.name "ranuka-laksika"`
+     * `git config user.email "ranukalaksika@gmail.com"`
+     * `git remote set-url origin https://x-access-token:${DOC_FIXING_AGENT_GITHUB_TOKEN}@github.com/ranuka-laksika/{REPOSITORY_NAME}`
+     * Replace {REPOSITORY_NAME} with actual repo name (e.g., apim-apps, carbon-apimgt)
    - Create a new branch for changes in each repository.
+   - Example: `git checkout -b fix-issue-${ISSUE_NUMBER}`
 
 4. **Apply Fixes**
-   - Apply fixes in the repositories sequentially.
+   - **If user specified exact fix**: Apply that exact fix in the repository.
+   - **If user did NOT specify exact fix**: Analyze and determine the most accurate fix for the issue.
    - Perform all modifications within the created branch.
 
 5. **Build with Java 11 and Maven 3.6.3 (CRITICAL - WAIT FOR COMPLETION)**
@@ -300,17 +343,19 @@ When responding to an issue, the AI Agent should follow this complete workflow:
    - This zip file contains the complete modified pack ready for users to download and use.
    - Document the artifact name and location for PR reference.
 
-8. **Push to Fork Repository**
-   - Add the fork repository (`ranuka-laksika/*`) as a remote.
-   - Push the modified branch to the fork repository.
+8. **Commit and Push Changes**
+   - Commit all changes in the newly created branch.
+   - Example: `git add .` and `git commit -m "Fix issue ${ISSUE_NUMBER}"`
+   - Push the newly created branch to the repository.
+   - Example: `git push origin fix-issue-${ISSUE_NUMBER}`
    - Use the provided git credentials (username: ranuka-laksika, email: ranukalaksika@gmail.com).
 
 9. **Create Pull Requests (MANDATORY - Include Artifact)**
    - **Authentication**: Use the provided GitHub token for PR creation.
-   - Create PRs in each affected `ranuka-laksika/*` fork repository.
-   - **PR Target**: From the newly pushed branch to the default branch (main/master) of the SAME fork repository.
-   - Example: In `ranuka-laksika/apim-apps`, create PR: `fix-issue-${ISSUE_NUMBER}` → `main` (within the same fork).
-   - **Important**: The PR is within the fork itself, NOT from fork to upstream WSO2 repository.
+   - Create PRs in each affected `ranuka-laksika/*` repository.
+   - **PR Target**: From the newly created and pushed branch to the default branch (main/master) of the SAME repository.
+   - Example: In `ranuka-laksika/apim-apps`, create PR: `fix-issue-${ISSUE_NUMBER}` → `main`
+   - **Remember**: You cloned from ranuka-laksika, created a branch, made changes, committed, and pushed to the branch.
    - **MUST include comprehensive PR description with:**
      * Issue reference
      * Changes made
