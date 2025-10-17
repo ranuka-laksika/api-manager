@@ -110,20 +110,31 @@ When a new GitHub issue is opened, and the affected repositories are provided by
         * MAVEN_HOME: ${MAVEN_HOME}
         * NODE_PATH: ${NODE_PATH}
 
-    **Build Execution and Timeout (CRITICAL - READ CAREFULLY):**
-    - **IMPORTANT**: You CANNOT proceed forward without building the repository successfully.
+    **Build Execution and Timeout (CRITICAL - READ VERY CAREFULLY):**
+    - **ABSOLUTE REQUIREMENT**: You MUST wait for the COMPLETE build process to finish. You CANNOT go forward while building is in progress.
     - **Build Timeout**: Set a long timeout for build commands (minimum 15-20 minutes).
-    - **Wait for "BUILD SUCCESS"**: You MUST wait until you see the "BUILD SUCCESS" message in the build output.
-    - **Do NOT proceed** to artifact replacement until the build completes successfully.
+    - **Wait for COMPLETE Build**: You MUST wait until the ENTIRE build process completes and you see "BUILD SUCCESS" message.
+    - **CRITICAL - DO NOT BUILD WHOLE REPOSITORY**: Build only the necessary parts of the repository (not the whole repository).
+    - **WAIT FOR FULL COMPLETION**: The build process MUST complete FULLY before you proceed.
+
+    **STRICT RULES - NO EXCEPTIONS:**
+    - **While build is IN PROGRESS**: You CANNOT go forward. Do NOT try to find .war or .jar files.
+    - **Do NOT search for .war/.jar files** until the build process shows "BUILD SUCCESS".
+    - **ONLY AFTER "BUILD SUCCESS"**: Then and ONLY THEN can you find and replace .war or .jar files.
     - **If build is still running after timeout**:
         * Check the build output to see if it's still in progress
         * If still building, INCREASE the timeout and wait longer
         * Keep waiting until you see "BUILD SUCCESS" or "BUILD FAILURE"
+        * DO NOT proceed to find .war/.jar files while it's still building
     - **If build errors occur**:
         * Carefully check the error messages
         * Apply necessary fixes or install missing dependencies
         * Re-run the build with the same long timeout
-    - **Only after seeing "BUILD SUCCESS"** can you proceed to extract `.war` or `.jar` files.
+
+    **REMEMBER**:
+    - Build must complete FULLY = "BUILD SUCCESS" shown
+    - ONLY after full completion = Find and replace .war/.jar files
+    - If building in progress = WAIT, do NOT proceed
 
     **Artifact Replacement Workflow (Critical):**
     1. After successful build, locate the generated `.war` or `.jar` files:
@@ -243,16 +254,21 @@ IMPORTANT CONSIDERATIONS
 * If unsure which repository owns the logic, investigate the dependency flow:
   product-apim → carbon-apimgt → apim-apps → api-developer-portal → kubernetes-apim → samples-apim
 * Prioritize stability and consistency across the full ecosystem.
-* **Build Requirements (Critical - BLOCKING STEP):**
+* **Build Requirements (Critical - ABSOLUTE BLOCKING STEP):**
+  - Build only necessary parts of the repository (not the whole repository).
   - Use Java 11 and Maven 3.6.3 for all builds — this is mandatory.
   - Use the exact environment paths provided in Section 2.
   - Never skip the build step — always build after modifications.
-  - **WAIT FOR BUILD COMPLETION**:
+  - **WAIT FOR COMPLETE BUILD - ABSOLUTE REQUIREMENT**:
     * Set build timeout to 15-20 minutes minimum
+    * **You MUST wait for the ENTIRE build process to complete FULLY**
+    * **While build is IN PROGRESS: You CANNOT go forward - YOU MUST WAIT**
+    * **DO NOT search for .war/.jar files while build is in progress**
     * You CANNOT proceed without seeing "BUILD SUCCESS" message
-    * If build is still running after timeout, INCREASE timeout and wait longer
-    * Without successful build, you cannot get `.war` or `.jar` files
-    * This is a BLOCKING step - do not move forward until build succeeds
+    * If build is still running after timeout, INCREASE timeout and continue WAITING
+    * Without successful build completion, you cannot get `.war` or `.jar` files
+    * **ONLY AFTER "BUILD SUCCESS"** can you find and replace .war/.jar files
+    * This is an ABSOLUTE BLOCKING step - do not move forward until build succeeds completely
 * **Artifact Management (CRITICAL - DO NOT SKIP):**
   - All generated `.jar` and `.war` files must be replaced in the `wso2am-4.5.0` pack.
   - **ZIP FILE UPLOAD**: The complete modified `wso2am-4.5.0` pack MUST be zipped and uploaded as a GitHub Actions artifact.
@@ -320,20 +336,35 @@ When responding to an issue, the AI Agent should follow this complete workflow:
    - **If user did NOT specify exact fix**: Analyze and determine the most accurate fix for the issue.
    - Perform all modifications within the created branch.
 
-5. **Build with Java 11 and Maven 3.6.3 (CRITICAL - WAIT FOR COMPLETION)**
-   - Build each modified repository using the provided Java 11 and Maven 3.6.3 paths.
+5. **Build with Java 11 and Maven 3.6.3 (CRITICAL - WAIT FOR FULL COMPLETION)**
+   - Build the necessary parts of the modified repository (not the whole repository).
+   - Use the provided Java 11 and Maven 3.6.3 paths.
    - **Set timeout to 15-20 minutes minimum** for build commands.
-   - **WAIT for "BUILD SUCCESS" message** - Do NOT proceed until you see this.
-   - **You CANNOT move forward without a successful build** - this is blocking.
-   - If timeout expires and build is still running:
-     * Increase the timeout
-     * Wait longer until "BUILD SUCCESS" appears
-   - Handle any build errors by fixing issues or installing dependencies, then rebuild.
-   - Only after seeing "BUILD SUCCESS" can you proceed to the next step.
 
-6. **Replace Artifacts in wso2am-4.5.0 Pack (Only After BUILD SUCCESS)**
-   - **Prerequisite**: You must have seen "BUILD SUCCESS" in the previous step.
-   - Extract generated `.war` or `.jar` files from the build output.
+   **ABSOLUTE BLOCKING REQUIREMENT:**
+   - **WAIT for COMPLETE build process** - You MUST wait until the ENTIRE build finishes.
+   - **Do NOT proceed while build is IN PROGRESS** - This is a strict blocking requirement.
+   - **WAIT for "BUILD SUCCESS" message** - Do NOT move forward until you see this.
+   - **You CANNOT go forward** if the build is still running - YOU MUST WAIT.
+
+   **If build is still running after timeout:**
+   - Check if build is still in progress
+   - INCREASE the timeout
+   - Continue WAITING until "BUILD SUCCESS" appears
+   - **DO NOT try to find .war/.jar files** while building is in progress
+
+   **If build errors occur:**
+   - Fix issues or install dependencies
+   - Rebuild with the same long timeout
+
+   **ONLY after seeing "BUILD SUCCESS":**
+   - Then and ONLY THEN proceed to next step
+   - Now you can find and replace .war/.jar files
+
+6. **Replace Artifacts in wso2am-4.5.0 Pack (ONLY After BUILD SUCCESS - NOT Before)**
+   - **MANDATORY Prerequisite**: The build MUST be fully completed with "BUILD SUCCESS" shown.
+   - **DO NOT perform this step if build is in progress** - You must wait for build completion first.
+   - **ONLY NOW** can you find and extract the generated `.war` or `.jar` files from the build output.
    - Replace corresponding files in the `wso2am-4.5.0` pack.
    - Do NOT rebuild the pack after replacement.
 
