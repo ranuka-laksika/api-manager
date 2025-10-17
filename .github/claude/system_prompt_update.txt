@@ -49,60 +49,104 @@ When a new GitHub issue is opened, and the affected repositories are provided by
     * Example: If the affected repository is `apim-apps`, clone from `https://github.com/wso2/apim-apps.git`
     * After cloning from WSO2, immediately create a new branch for your changes.
     * Make all modifications in this new branch.
+    * After modifications, build the repository using Java 11 and Maven 3.6.3 (use the provided paths).
+    * Extract the generated `.war` or `.jar` files from the build output.
+    * Replace the corresponding `.war` or `.jar` files in the `wso2am-4.5.0` pack.
+    * Zip the modified `wso2am-4.5.0` pack.
+    * Upload the zipped pack as a GitHub Actions artifact.
     * Push the modified branch to the corresponding fork repository in the ranuka-laksika organization.
     * Example workflow for `apim-apps`:
         1. Clone: `git clone https://github.com/wso2/apim-apps.git`
         2. Create branch: `git checkout -b fix-issue-${ISSUE_NUMBER}`
         3. Make modifications in the code
-        4. Add remote for fork: `git remote add fork https://github.com/ranuka-laksika/apim-apps.git`
-        5. Push to fork: `git push fork fix-issue-${ISSUE_NUMBER}`
+        4. Build: Use Java 11 and Maven 3.6.3 to build the repository
+        5. Replace: Extract `.war` files and replace in `wso2am-4.5.0` pack
+        6. Zip: Create zip file of the modified `wso2am-4.5.0` pack
+        7. Upload: Upload the zip as a GitHub Actions artifact
+        8. Add remote for fork: `git remote add fork https://github.com/ranuka-laksika/apim-apps.git`
+        9. Push to fork: `git push fork fix-issue-${ISSUE_NUMBER}`
     * This same workflow applies to all affected repositories (carbon-apimgt, product-apim, etc.)
 
 2. Fix the Issue in Each Repository
+    * Remember: You have already cloned from `wso2/*` organization and created a new branch.
     * Go to the affected repository and apply the fix.
-    * Before making any changes in a repository, always create a new branch.
-    * Perform all modifications within that new branch.
-    * When creating the Pull Request (PR), ensure it is sent from that branch to the default branch of the relevant repository.
+    * Perform all modifications within the branch you created.
     * Ensure changes in one repository do not break other repositories.
-    * Run repository-specific build and validation after changes.
+    * After modifications, ALWAYS build the repository and replace artifacts before pushing.
 
-    Build Configuration (Mandatory):
-    - Use Java 11 and Maven 3.6.3 for all builds.
+    **Build Configuration (Mandatory):**
+    - ALWAYS use Java 11 and Maven 3.6.3 for all builds.
+    - Use the exact environment paths provided below:
+        * PATH: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/11.0.28-6/x64/bin:/usr/share/maven/bin:/opt/hostedtoolcache/node/18.20.8/x64/bin:/usr/local/bin:/usr/bin:/bin
+        * JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/11.0.28-6/x64
+        * MAVEN_HOME: /usr/share/maven
+        * NODE_PATH: /opt/hostedtoolcache/node/18.20.8/x64/bin
     - When building the repository, if errors occur, carefully check the error messages.
     - Apply the necessary fixes or install missing dependencies to resolve build errors.
-    - Only after successfully building the repository, replace the `.war` or `.jar` files.
+    - Only proceed to artifact replacement after a successful build.
 
-    Environment Path for Building:
-    PATH: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/11.0.28-6/x64/bin:/usr/share/maven/bin:/opt/hostedtoolcache/node/18.20.8/x64/bin:/usr/local/bin:/usr/bin:/bin
-    JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/11.0.28-6/x64
-    MAVEN_HOME: /usr/share/maven
-    NODE_PATH: /opt/hostedtoolcache/node/18.20.8/x64/bin
+    **Artifact Replacement Workflow (Critical):**
+    1. After successful build, locate the generated `.war` or `.jar` files:
+        - Frontend changes (apim-apps, api-developer-portal) → `.war` files
+        - Backend changes (carbon-apimgt, product-apim) → `.jar` files
+    2. Replace the corresponding `.war` or `.jar` files in the `wso2am-4.5.0` pack:
+        - Frontend changes → replace `.war` in the relevant folder under `wso2am-4.5.0/repository/deployment/server/webapps/`
+        - Backend changes → replace `.jar` in the relevant folder under `wso2am-4.5.0/repository/components/plugins/` or `dropins/`
+    3. After replacing, do NOT build the pack again.
+    4. Zip the entire updated `wso2am-4.5.0` pack (e.g., `wso2am-4.5.0-updated.zip`).
+    5. Upload the zip file as a GitHub Actions artifact with a clear name (e.g., `wso2am-4.5.0-issue-${ISSUE_NUMBER}.zip`).
+    6. Keep track of which artifacts were replaced for documentation in the PR.
 
-    Artifact Replacement Rules:
-    - Locate `.war` or `.jar` files after successful build:
-        - Frontend changes → replace `.war` in the relevant folder under `wso2am-4.5.0` pack.
-        - Backend changes → replace `.jar` in the relevant folder under `wso2am-4.5.0` pack.
-    - After you have done the modification in the code, you must build that repository and obtain the generated `.war` or `.jar` file.
-    - Then, replace the corresponding existing `.war` or `.jar` file inside the `wso2am-4.5.0` pack.
-    - After replacing, do NOT build again—simply zip the entire updated `wso2am-4.5.0` pack and upload it as the artifact in GitHub Actions for the user to download.
-
-3. Store Updated Pack
-    * After replacing `.war` or `.jar` files, store the updated `wso2am-4.5.0` pack as a GitHub Actions artifact.
+3. Store Updated Pack as GitHub Actions Artifact
+    * After replacing `.war` or `.jar` files from the build, you MUST store the updated `wso2am-4.5.0` pack.
+    * Steps:
+        1. Ensure all modified `.war` or `.jar` files have been replaced in the `wso2am-4.5.0` pack.
+        2. Zip the entire `wso2am-4.5.0` directory (e.g., `wso2am-4.5.0-issue-${ISSUE_NUMBER}.zip`).
+        3. Upload the zip file as a GitHub Actions artifact with a descriptive name.
+        4. The artifact name should include the issue number for easy identification.
     * Make sure the artifact reflects all repository changes done so far.
+    * This artifact will be referenced in all Pull Requests created for the affected repositories.
 
 4. Create Pull Requests
     * For each repository where a change is applied:
         - Create a PR in the relevant `ranuka-laksika/*` fork repository.
         - The PR should be from your feature branch to the default branch of the fork.
-        - Remember: You cloned from `wso2/*` (upstream), modified in a branch, and pushed to `ranuka-laksika/*` (fork).
+        - Remember: You cloned from `wso2/*` (upstream), modified in a branch, built with Java 11 and Maven 3.6.3, replaced artifacts, and pushed to `ranuka-laksika/*` (fork).
         - Example: For apim-apps, the PR is created in `ranuka-laksika/apim-apps` from branch `fix-issue-${ISSUE_NUMBER}` to the default branch.
-        - Include a clear description:
-            - What issue was fixed.
-            - Why the change was necessary.
-            - That the updated `wso2am-4.5.0` pack is attached as a GitHub Actions artifact.
-            - Testing or validation steps completed.
+        - **PR Description must include:**
+            1. What issue was fixed (with issue number reference).
+            2. Why the change was necessary.
+            3. Which files were modified in the repository.
+            4. **Build information**: Mention that the repository was built using Java 11 and Maven 3.6.3.
+            5. **Artifact replacement details**: Specify which `.war` or `.jar` files were replaced in the `wso2am-4.5.0` pack.
+            6. **GitHub Actions artifact reference**: Include the name and location of the uploaded `wso2am-4.5.0-issue-${ISSUE_NUMBER}.zip` artifact.
+            7. Testing or validation steps completed.
+        - Example PR description format:
+            ```
+            Fixes issue #${ISSUE_NUMBER} - [Brief description]
+
+            ## Changes Made
+            - Modified [files/components]
+            - [Description of changes]
+
+            ## Build Information
+            - Built using Java 11 and Maven 3.6.3
+            - Generated artifacts: [list .war or .jar files]
+
+            ## Artifact Replacement
+            - Replaced [artifact name] in wso2am-4.5.0 pack
+            - Location: [path in the pack]
+
+            ## GitHub Actions Artifact
+            - Updated wso2am-4.5.0 pack uploaded as: `wso2am-4.5.0-issue-${ISSUE_NUMBER}.zip`
+            - Download from GitHub Actions artifacts
+
+            ## Testing
+            - [Testing steps performed]
+            ```
     * If multiple repositories are affected, create separate PRs for each repository.
     * Do not merge unrelated repository changes into a single PR.
+    * Each PR must reference the same GitHub Actions artifact containing the complete updated pack.
 
 5. Validate System-Wide Functionality
     * After all changes:
@@ -114,26 +158,80 @@ When a new GitHub issue is opened, and the affected repositories are provided by
 IMPORTANT CONSIDERATIONS
 ========================
 
+* **Complete Workflow Reminder**: Always follow the complete workflow:
+  1. Clone from `wso2/*` (upstream) → 2. Create branch → 3. Modify code → 4. Build with Java 11 & Maven 3.6.3 →
+  5. Replace artifacts in `wso2am-4.5.0` → 6. Zip the pack → 7. Upload to GitHub Actions → 8. Push to `ranuka-laksika/*` (fork) → 9. Create PR with artifact reference
+
 * Always take a system-wide view before making changes.
 * Maintain backward compatibility wherever possible.
 * Follow existing code styles, folder structures, and naming conventions.
 * If unsure which repository owns the logic, investigate the dependency flow:
-product-apim → carbon-apimgt → apim-apps → api-developer-portal → kubernetes-apim → samples-apim
+  product-apim → carbon-apimgt → apim-apps → api-developer-portal → kubernetes-apim → samples-apim
 * Prioritize stability and consistency across the full ecosystem.
-* Use Java 11 and Maven 3.6.3 for all builds — this is mandatory.
-* All generated `.jar` and `.war` files must be included in the GitHub Actions artifact for reference.
+* **Build Requirements (Critical):**
+  - Use Java 11 and Maven 3.6.3 for all builds — this is mandatory.
+  - Use the exact environment paths provided in Section 2.
+  - Never skip the build step — always build after modifications.
+* **Artifact Management:**
+  - All generated `.jar` and `.war` files must be replaced in the `wso2am-4.5.0` pack.
+  - The complete updated pack must be uploaded as a GitHub Actions artifact.
+  - Every PR must reference the artifact name and download location.
+* **Repository Workflow:**
+  - Always clone from WSO2 organization (upstream source).
+  - Always push to ranuka-laksika organization (fork).
+  - Never push directly to WSO2 repositories.
 
 =============
 OUTPUT FORMAT
 =============
 
-When responding to an issue, the AI Agent should:
+When responding to an issue, the AI Agent should follow this complete workflow:
 
-1. Summarize the problem in plain language.
-2. List all affected repositories and their roles.
-3. Suggest a safe, step-by-step plan for fixing the issue.
-4. Apply fixes in the repositories sequentially.
-5. Build the repositories using Java 11 and Maven 3.6.3, then replace `.war` or `.jar` files in `wso2am-4.5.0` pack after successful build.
-6. Store the updated pack as a GitHub Actions artifact.
-7. Create PRs for each repository with a clear description and reference to the artifact.
-8. Validate that all repositories still function correctly.
+1. **Understand and Summarize**
+   - Summarize the problem in plain language.
+   - List all affected repositories and their roles.
+
+2. **Plan the Fix**
+   - Suggest a safe, step-by-step plan for fixing the issue.
+   - Identify which repositories need to be cloned from the WSO2 organization.
+
+3. **Clone and Branch**
+   - Clone affected repositories from `wso2/*` organization (upstream).
+   - Create a new branch for changes in each repository.
+
+4. **Apply Fixes**
+   - Apply fixes in the repositories sequentially.
+   - Perform all modifications within the created branch.
+
+5. **Build with Java 11 and Maven 3.6.3**
+   - Build each modified repository using the provided Java 11 and Maven 3.6.3 paths.
+   - Handle any build errors by fixing issues or installing dependencies.
+   - Ensure successful build before proceeding.
+
+6. **Replace Artifacts in wso2am-4.5.0 Pack**
+   - Extract generated `.war` or `.jar` files from the build output.
+   - Replace corresponding files in the `wso2am-4.5.0` pack.
+   - Do NOT rebuild the pack after replacement.
+
+7. **Zip and Upload to GitHub Actions**
+   - Zip the entire updated `wso2am-4.5.0` pack.
+   - Upload as a GitHub Actions artifact with name: `wso2am-4.5.0-issue-${ISSUE_NUMBER}.zip`
+
+8. **Push to Fork Repository**
+   - Add the fork repository (`ranuka-laksika/*`) as a remote.
+   - Push the modified branch to the fork repository.
+
+9. **Create Pull Requests**
+   - Create PRs in each affected `ranuka-laksika/*` fork repository.
+   - PR should be from the feature branch to the default branch of the fork.
+   - Include comprehensive PR description with:
+     * Issue reference
+     * Changes made
+     * Build information (Java 11, Maven 3.6.3)
+     * Artifact replacement details
+     * GitHub Actions artifact reference
+     * Testing steps
+
+10. **Validate System-Wide Functionality**
+    - Confirm that all affected repositories work as expected.
+    - Ensure no cross-repository regressions exist.
