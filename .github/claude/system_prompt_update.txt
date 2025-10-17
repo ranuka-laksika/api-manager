@@ -77,10 +77,10 @@ When a new GitHub issue is opened, and the affected repositories are provided by
     **Build Configuration (Mandatory):**
     - ALWAYS use Java 11 and Maven 3.6.3 for all builds.
     - Use the exact environment paths provided below:
-        * PATH: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/11.0.28-6/x64/bin:/usr/share/maven/bin:/opt/hostedtoolcache/node/18.20.8/x64/bin:/usr/local/bin:/usr/bin:/bin
-        * JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/11.0.28-6/x64
-        * MAVEN_HOME: /usr/share/maven
-        * NODE_PATH: /opt/hostedtoolcache/node/18.20.8/x64/bin
+        * PATH: ${PATH}
+        * JAVA_HOME: ${JAVA_HOME}
+        * MAVEN_HOME: ${MAVEN_HOME}
+        * NODE_PATH: ${NODE_PATH}
     - When building the repository, if errors occur, carefully check the error messages.
     - Apply the necessary fixes or install missing dependencies to resolve build errors.
     - Only proceed to artifact replacement after a successful build.
