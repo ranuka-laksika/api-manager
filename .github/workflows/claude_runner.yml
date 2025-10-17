@@ -42,10 +42,10 @@ jobs:
           sudo apt-get install -y maven
           mvn --version
 
-      - name: Set up Node.js 18
+      - name: Set up Node.js (latest)
         uses: actions/setup-node@v4
         with:
-          node-version: '18.x'
+          node-version: 'lts/*'   # install latest LTS version    
 
       - name: Verify Node installation
         run: |
