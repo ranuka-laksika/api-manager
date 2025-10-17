@@ -60,10 +60,10 @@ SYSTEM_PROMPT: |
       - Only after successfully building the repository, replace the `.war` or `.jar` files.
 
       Environment Path for Building:
-      PATH: ${PATH}
-      JAVA_HOME: ${JAVA_HOME}
-      MAVEN_HOME: ${MAVEN_HOME}
-      NODE_PATH: ${NODE_PATH}
+      PATH: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/11.0.28-6/x64/bin:/usr/share/maven/bin:/opt/hostedtoolcache/node/18.20.8/x64/bin:/usr/local/bin:/usr/bin:/bin
+      JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/11.0.28-6/x64
+      MAVEN_HOME: /usr/share/maven
+      NODE_PATH: /opt/hostedtoolcache/node/18.20.8/x64/bin
 
       Artifact Replacement Rules:
       - Locate `.war` or `.jar` files after successful build:
