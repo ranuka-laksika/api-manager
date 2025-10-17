@@ -54,7 +54,9 @@ When a new GitHub issue is opened, and the affected repositories are provided by
     * After cloning from WSO2, immediately create a new branch for your changes.
     * Make all modifications in this new branch.
     * After modifications, build the repository using Java 11 and Maven 3.6.3 (use the provided paths).
-    * Extract the generated `.war` or `.jar` files from the build output.
+    * **CRITICAL**: Wait for build to complete successfully (15-20 minutes timeout, increase if needed).
+    * **MUST see "BUILD SUCCESS"** before proceeding - this is blocking.
+    * Extract the generated `.war` or `.jar` files from the build output (only after BUILD SUCCESS).
     * Replace the corresponding `.war` or `.jar` files in the `wso2am-4.5.0` pack.
     * Zip the modified `wso2am-4.5.0` pack.
     * Upload the zipped pack as a GitHub Actions artifact.
@@ -65,8 +67,8 @@ When a new GitHub issue is opened, and the affected repositories are provided by
         1. Clone: `git clone https://github.com/wso2/apim-apps.git`
         2. Create branch: `git checkout -b fix-issue-${ISSUE_NUMBER}`
         3. Make modifications in the code
-        4. Build: Use Java 11 and Maven 3.6.3 to build the repository
-        5. Replace: Extract `.war` files and replace in `wso2am-4.5.0` pack
+        4. Build: Use Java 11 and Maven 3.6.3 to build the repository (timeout: 15-20 minutes, wait for "BUILD SUCCESS")
+        5. Replace: Extract `.war` files (only after BUILD SUCCESS) and replace in `wso2am-4.5.0` pack
         6. Zip: Create zip file of the modified `wso2am-4.5.0` pack
         7. Upload: Upload the zip as a GitHub Actions artifact
         8. Add remote for fork: `git remote add fork https://github.com/ranuka-laksika/apim-apps.git`
@@ -88,9 +90,21 @@ When a new GitHub issue is opened, and the affected repositories are provided by
         * JAVA_HOME: ${JAVA_HOME}
         * MAVEN_HOME: ${MAVEN_HOME}
         * NODE_PATH: ${NODE_PATH}
-    - When building the repository, if errors occur, carefully check the error messages.
-    - Apply the necessary fixes or install missing dependencies to resolve build errors.
-    - Only proceed to artifact replacement after a successful build.
+
+    **Build Execution and Timeout (CRITICAL - READ CAREFULLY):**
+    - **IMPORTANT**: You CANNOT proceed forward without building the repository successfully.
+    - **Build Timeout**: Set a long timeout for build commands (minimum 15-20 minutes).
+    - **Wait for "BUILD SUCCESS"**: You MUST wait until you see the "BUILD SUCCESS" message in the build output.
+    - **Do NOT proceed** to artifact replacement until the build completes successfully.
+    - **If build is still running after timeout**:
+        * Check the build output to see if it's still in progress
+        * If still building, INCREASE the timeout and wait longer
+        * Keep waiting until you see "BUILD SUCCESS" or "BUILD FAILURE"
+    - **If build errors occur**:
+        * Carefully check the error messages
+        * Apply necessary fixes or install missing dependencies
+        * Re-run the build with the same long timeout
+    - **Only after seeing "BUILD SUCCESS"** can you proceed to extract `.war` or `.jar` files.
 
     **Artifact Replacement Workflow (Critical):**
     1. After successful build, locate the generated `.war` or `.jar` files:
@@ -209,10 +223,16 @@ IMPORTANT CONSIDERATIONS
 * If unsure which repository owns the logic, investigate the dependency flow:
   product-apim → carbon-apimgt → apim-apps → api-developer-portal → kubernetes-apim → samples-apim
 * Prioritize stability and consistency across the full ecosystem.
-* **Build Requirements (Critical):**
+* **Build Requirements (Critical - BLOCKING STEP):**
   - Use Java 11 and Maven 3.6.3 for all builds — this is mandatory.
   - Use the exact environment paths provided in Section 2.
   - Never skip the build step — always build after modifications.
+  - **WAIT FOR BUILD COMPLETION**:
+    * Set build timeout to 15-20 minutes minimum
+    * You CANNOT proceed without seeing "BUILD SUCCESS" message
+    * If build is still running after timeout, INCREASE timeout and wait longer
+    * Without successful build, you cannot get `.war` or `.jar` files
+    * This is a BLOCKING step - do not move forward until build succeeds
 * **Artifact Management (CRITICAL - DO NOT SKIP):**
   - All generated `.jar` and `.war` files must be replaced in the `wso2am-4.5.0` pack.
   - **ZIP FILE UPLOAD**: The complete modified `wso2am-4.5.0` pack MUST be zipped and uploaded as a GitHub Actions artifact.
@@ -257,12 +277,19 @@ When responding to an issue, the AI Agent should follow this complete workflow:
    - Apply fixes in the repositories sequentially.
    - Perform all modifications within the created branch.
 
-5. **Build with Java 11 and Maven 3.6.3**
+5. **Build with Java 11 and Maven 3.6.3 (CRITICAL - WAIT FOR COMPLETION)**
    - Build each modified repository using the provided Java 11 and Maven 3.6.3 paths.
-   - Handle any build errors by fixing issues or installing dependencies.
-   - Ensure successful build before proceeding.
+   - **Set timeout to 15-20 minutes minimum** for build commands.
+   - **WAIT for "BUILD SUCCESS" message** - Do NOT proceed until you see this.
+   - **You CANNOT move forward without a successful build** - this is blocking.
+   - If timeout expires and build is still running:
+     * Increase the timeout
+     * Wait longer until "BUILD SUCCESS" appears
+   - Handle any build errors by fixing issues or installing dependencies, then rebuild.
+   - Only after seeing "BUILD SUCCESS" can you proceed to the next step.
 
-6. **Replace Artifacts in wso2am-4.5.0 Pack**
+6. **Replace Artifacts in wso2am-4.5.0 Pack (Only After BUILD SUCCESS)**
+   - **Prerequisite**: You must have seen "BUILD SUCCESS" in the previous step.
    - Extract generated `.war` or `.jar` files from the build output.
    - Replace corresponding files in the `wso2am-4.5.0` pack.
    - Do NOT rebuild the pack after replacement.

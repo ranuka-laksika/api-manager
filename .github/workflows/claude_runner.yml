@@ -139,6 +139,7 @@ jobs:
           ls -l $GITHUB_WORKSPACE
           echo "Listing contents of wso2am-4.5.0 directory:"
           ls -l $GITHUB_WORKSPACE/wso2am-4.5.0
+
       - name: Upload artifact pack
         uses: actions/upload-artifact@v4
         with:
