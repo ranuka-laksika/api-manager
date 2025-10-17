@@ -23,12 +23,11 @@ jobs:
           token: ${{ secrets.DOC_FIXING_AGENT_GITHUB_TOKEN }}
           fetch-depth: 0
 
-      - name: Set up Java 11 (Eclipse Temurin)
+      - name: Set up Java 11
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
+          distribution: 'temurin'  
           java-version: '11'
-          cache: 'maven'
 
       - name: Verify Java installation
         run: |
@@ -104,11 +103,6 @@ jobs:
           claude_args: |
             --allowedTools "Bash(*),WebFetch,mcp__github__create_pull_request,mcp__github__get_issue,mcp__github__update_issue,mcp__github__list_branches,mcp__github__add_issue_comment,mcp__github__create_branch,Edit,Read,Write"
             --model claude-sonnet-4-20250514
-          claude_env: |
-            JAVA_HOME: /usr/lib/jvm/temurin-11-jdk
-            MAVEN_HOME: /usr/share/maven
-            NODE_PATH: /usr/local/lib/node_modules
-            NODE_VERSION: "18.x"
 
       - name: Get next queued issue
         id: get_next_queued
