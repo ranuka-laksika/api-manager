@@ -46,10 +46,30 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18.x'
-          cache: 'npm'
 
       - name: Verify Node installation
         run: |
+          node --version
+          npm --version
+          
+      - name: Check tool installation paths
+        run: |
+          echo "===== JAVA ====="
+          echo "JAVA_HOME: $JAVA_HOME"
+          which java
+          java -version
+
+          echo ""
+          echo "===== MAVEN ====="
+          echo "MAVEN_HOME: $MAVEN_HOME"
+          which mvn
+          mvn --version
+
+          echo ""
+          echo "===== NODE ====="
+          echo "NODE_PATH: $NODE_PATH"
+          which node
+          which npm
           node --version
           npm --version
 
