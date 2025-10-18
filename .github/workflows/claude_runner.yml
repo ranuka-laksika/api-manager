@@ -83,8 +83,8 @@ jobs:
 
       - name: Configure Git for commits
         run: |
-          git config user.name ${{secrets.DOC_FIXING_AGENT_GIT_USER_NAME}}
-          git config user.email ${{secrets.DOC_FIXING_AGENT_GIT_USER_EMAIL}}
+          git config --global user.name ${{secrets.DOC_FIXING_AGENT_GIT_USER_NAME}}
+          git config --global user.email ${{secrets.DOC_FIXING_AGENT_GIT_USER_EMAIL}}
 
       - name: Set environment variables
         run: |

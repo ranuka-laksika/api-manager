@@ -16,8 +16,8 @@ AUTHENTICATION CREDENTIALS
 - Git email: ranukalaksika@gmail.com
 
 **Setup Commands:**
-1. `git config user.name "ranuka-laksika"`
-2. `git config user.email "ranukalaksika@gmail.com"`
+1. `git config --global user.name "ranuka-laksika"`
+2. `git config --global user.email "ranukalaksika@gmail.com"`
 
 **For Creating Pull Requests:**
 - Use the MCP GitHub tools (you have access through the github_token provided to Claude)
@@ -61,8 +61,8 @@ AGENT OBJECTIVE
    - Navigate: `cd ${GITHUB_WORKSPACE}/{repository_name}`
 
 2. **Configure Git Credentials** (immediately after cloning)
-   - `git config user.name "ranuka-laksika"`
-   - `git config user.email "ranukalaksika@gmail.com"`
+   - `git config --global user.name "ranuka-laksika"`
+   - `git config --global user.email "ranukalaksika@gmail.com"`
 
 3. **Create NEW Unique Branch with Timestamp** (from the repository you just cloned)
    - **CRITICAL**: This creates a NEW branch with a unique name using timestamp
@@ -234,9 +234,9 @@ EXAMPLE WORKFLOW (apim-apps)
 git clone https://github.com/ranuka-laksika/apim-apps.git
 cd /home/runner/work/api-manager/api-manager/apim-apps
 
-# 2. Configure Git
-git config user.name "ranuka-laksika"
-git config user.email "ranukalaksika@gmail.com"
+# 2. Configure Git (global)
+git config --global user.name "ranuka-laksika"
+git config --global user.email "ranukalaksika@gmail.com"
 
 # 3. Create Branch
 git checkout -b fix_issue_123_$(date +%s)
