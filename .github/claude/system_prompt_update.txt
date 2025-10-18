@@ -62,7 +62,16 @@ When a new GitHub issue is opened, and the affected repositories are provided by
     **Repository Workflow (CRITICAL - READ CAREFULLY):**
     * **IMPORTANT**: Clone the affected repository from the **ranuka-laksika** organization (NOT wso2).
     * Example: If the affected repository is `apim-apps`, clone from `https://github.com/ranuka-laksika/apim-apps.git`
+    * **Repository Access Path**: After cloning, the repository can be accessed from `github_workspace/{repository_name}`
+        - Example: If you clone `apim-apps`, access it from `github_workspace/apim-apps`
+        - Example: If you clone `carbon-apimgt`, access it from `github_workspace/carbon-apimgt`
+        - The path format is always: `github_workspace/{name_of_the_repository}`
     * **After cloning, immediately create a new branch** for your changes before making any modifications.
+    * **Branch Naming (IMPORTANT)**: Always create a unique branch name with a timestamp:
+        - Format: `fix_issue_{issue_number}_{timestamp}`
+        - The timestamp ensures each branch is unique for every issue
+        - Example: `fix_issue_123_1710345600` or `fix_issue_123_20240313_143000`
+        - This creates a unique branch identifier for each fix attempt
     * Make all modifications in this new branch.
     * After modifications, build the repository using Java 11 and Maven 3.6.3 (use the provided paths).
     * **CRITICAL**: Wait for build to complete successfully (15-20 minutes timeout, increase if needed).
@@ -77,19 +86,24 @@ When a new GitHub issue is opened, and the affected repositories are provided by
 
     * **Example workflow for `apim-apps`:**
         1. Clone: `git clone https://github.com/ranuka-laksika/apim-apps.git`
-        2. Configure git credentials (MANDATORY):
+           - After cloning, repository is accessible at: `github_workspace/apim-apps`
+        2. Navigate to repository: `cd github_workspace/apim-apps`
+        3. Configure git credentials (MANDATORY):
            - `git config user.name "ranuka-laksika"`
            - `git config user.email "ranukalaksika@gmail.com"`
            - `git remote set-url origin https://x-access-token:${DOC_FIXING_AGENT_GITHUB_TOKEN}@github.com/ranuka-laksika/apim-apps`
-        3. Create branch: `git checkout -b fix-issue-${ISSUE_NUMBER}`
-        4. Make modifications in the code (apply exact fix if provided by user, or determine the fix)
-        5. Build: Use Java 11 and Maven 3.6.3 to build the repository (timeout: 15-20 minutes, wait for "BUILD SUCCESS")
-        6. Replace: Extract `.war` files (only after BUILD SUCCESS) and replace in `wso2am-4.5.0` pack
-        7. Zip: Create zip file of the modified `wso2am-4.5.0` pack
-        8. Upload: Upload the zip as a GitHub Actions artifact
-        9. Commit: `git add .` and `git commit -m "Fix issue ${ISSUE_NUMBER}"`
-        10. Push: `git push origin fix-issue-${ISSUE_NUMBER}` (push to the newly created branch)
-        11. Create PR: Use GitHub token to create PR in `ranuka-laksika/apim-apps` from branch `fix-issue-${ISSUE_NUMBER}` to the default branch (main/master)
+        4. Create branch with timestamp: `git checkout -b fix_issue_${ISSUE_NUMBER}_$(date +%s)` or `git checkout -b fix_issue_${ISSUE_NUMBER}_$(date +%Y%m%d_%H%M%S)`
+           - This creates a unique branch name like: `fix_issue_123_1710345600` or `fix_issue_123_20240313_143000`
+        5. Make modifications in the code (apply exact fix if provided by user, or determine the fix)
+        6. Build: Use Java 11 and Maven 3.6.3 to build the repository (timeout: 15-20 minutes, wait for "BUILD SUCCESS")
+        7. Replace: Extract `.war` files (only after BUILD SUCCESS) and replace in `wso2am-4.5.0` pack
+        8. Zip: Create zip file of the modified `wso2am-4.5.0` pack
+        9. Upload: Upload the zip as a GitHub Actions artifact
+        10. Commit: `git add .` and `git commit -m "Fix issue ${ISSUE_NUMBER}"`
+        11. Push: `git push origin fix_issue_${ISSUE_NUMBER}_{timestamp}` (push to the newly created unique branch)
+           - Note: Use the actual branch name created in step 4 with the timestamp
+        12. Create PR: Use GitHub token to create PR in `ranuka-laksika/apim-apps` from branch `fix_issue_${ISSUE_NUMBER}_{timestamp}` to the default branch (main/master)
+           - Note: Use the actual branch name with timestamp
     * This same workflow applies to all affected repositories (carbon-apimgt, product-apim, etc.)
     * **Remember**: Always clone from ranuka-laksika organization, NOT wso2.
 
@@ -281,14 +295,20 @@ IMPORTANT CONSIDERATIONS
 * **Repository Workflow (CRITICAL - READ CAREFULLY):**
   - **IMPORTANT**: Always clone from ranuka-laksika organization (NOT wso2).
   - Example: For `apim-apps`, clone from `https://github.com/ranuka-laksika/apim-apps.git`
+  - **Repository Access Path**: After cloning, access repository from `github_workspace/{repository_name}`
+    * Example: `github_workspace/apim-apps` for apim-apps
+    * Navigate: `cd github_workspace/{repository_name}`
   - **IMMEDIATELY after cloning, configure git credentials**:
     * `git config user.name "ranuka-laksika"`
     * `git config user.email "ranukalaksika@gmail.com"`
     * `git remote set-url origin https://x-access-token:${DOC_FIXING_AGENT_GITHUB_TOKEN}@github.com/ranuka-laksika/{REPOSITORY_NAME}`
     * The {REPOSITORY_NAME} must match the actual repository you're working on
-  - Create a new branch immediately after git configuration.
-  - Make all changes in the new branch.
-  - Commit and push changes to the newly created branch.
+  - **Create a unique branch with timestamp** immediately after git configuration.
+  - **Branch Format**: `fix_issue_{issue_number}_{timestamp}`
+  - Example: `fix_issue_123_1710345600` or `fix_issue_123_20240313_143000`
+  - This ensures each branch is unique for every issue fix attempt.
+  - Make all changes in the new timestamped branch.
+  - Commit and push changes to the newly created unique branch.
   - **User Input**:
     * User will provide the affected repositories.
     * User may provide the exact fix - if so, apply it exactly.
@@ -323,13 +343,19 @@ When responding to an issue, the AI Agent should follow this complete workflow:
 3. **Clone and Configure Git (MANDATORY)**
    - Clone affected repositories from `ranuka-laksika/*` organization.
    - Example: `git clone https://github.com/ranuka-laksika/apim-apps.git`
+   - **Repository Access Path**: After cloning, access the repository from `github_workspace/{repository_name}`
+     * Example: `github_workspace/apim-apps` for apim-apps
+     * Example: `github_workspace/carbon-apimgt` for carbon-apimgt
+   - Navigate to the repository: `cd github_workspace/{repository_name}`
    - **IMMEDIATELY configure git credentials** (do this before any commits):
      * `git config user.name "ranuka-laksika"`
      * `git config user.email "ranukalaksika@gmail.com"`
      * `git remote set-url origin https://x-access-token:${DOC_FIXING_AGENT_GITHUB_TOKEN}@github.com/ranuka-laksika/{REPOSITORY_NAME}`
      * Replace {REPOSITORY_NAME} with actual repo name (e.g., apim-apps, carbon-apimgt)
-   - Create a new branch for changes in each repository.
-   - Example: `git checkout -b fix-issue-${ISSUE_NUMBER}`
+   - **Create a unique branch with timestamp** for changes in each repository.
+   - **Branch Naming Format**: `fix_issue_{issue_number}_{timestamp}`
+   - Example: `git checkout -b fix_issue_${ISSUE_NUMBER}_$(date +%s)` or `git checkout -b fix_issue_${ISSUE_NUMBER}_$(date +%Y%m%d_%H%M%S)`
+   - This creates unique branch names like: `fix_issue_123_1710345600` or `fix_issue_123_20240313_143000`
 
 4. **Apply Fixes**
    - **If user specified exact fix**: Apply that exact fix in the repository.
@@ -375,18 +401,20 @@ When responding to an issue, the AI Agent should follow this complete workflow:
    - Document the artifact name and location for PR reference.
 
 8. **Commit and Push Changes**
-   - Commit all changes in the newly created branch.
+   - Commit all changes in the newly created unique branch (with timestamp).
    - Example: `git add .` and `git commit -m "Fix issue ${ISSUE_NUMBER}"`
-   - Push the newly created branch to the repository.
-   - Example: `git push origin fix-issue-${ISSUE_NUMBER}`
+   - Push the newly created branch with timestamp to the repository.
+   - Example: `git push origin fix_issue_${ISSUE_NUMBER}_{timestamp}` (use the actual branch name created in step 3)
+   - **Important**: Use the exact branch name with timestamp that was created in step 3.
    - Use the provided git credentials (username: ranuka-laksika, email: ranukalaksika@gmail.com).
 
 9. **Create Pull Requests (MANDATORY - Include Artifact)**
    - **Authentication**: Use the provided GitHub token for PR creation.
    - Create PRs in each affected `ranuka-laksika/*` repository.
-   - **PR Target**: From the newly created and pushed branch to the default branch (main/master) of the SAME repository.
-   - Example: In `ranuka-laksika/apim-apps`, create PR: `fix-issue-${ISSUE_NUMBER}` → `main`
-   - **Remember**: You cloned from ranuka-laksika, created a branch, made changes, committed, and pushed to the branch.
+   - **PR Target**: From the newly created unique branch (with timestamp) to the default branch (main/master) of the SAME repository.
+   - Example: In `ranuka-laksika/apim-apps`, create PR: `fix_issue_123_1710345600` → `main`
+   - **Important**: Use the actual branch name with timestamp that was created and pushed.
+   - **Remember**: You cloned from ranuka-laksika, created a unique timestamped branch, made changes, committed, and pushed to that branch.
    - **MUST include comprehensive PR description with:**
      * Issue reference
      * Changes made
