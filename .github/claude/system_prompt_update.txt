@@ -14,13 +14,15 @@ AUTHENTICATION CREDENTIALS
 **Git Configuration (MANDATORY - DO THIS FIRST):**
 - Git username: ranuka-laksika
 - Git email: ranukalaksika@gmail.com
-- **GitHub Token**: ${DOC_FIXING_AGENT_GITHUB_TOKEN}
 
 **Setup Commands:**
 1. `git config user.name "ranuka-laksika"`
 2. `git config user.email "ranukalaksika@gmail.com"`
-3. `git remote set-url origin https://x-access-token:${DOC_FIXING_AGENT_GITHUB_TOKEN}@github.com/ranuka-laksika/{REPOSITORY_NAME}`
-   - Replace `{REPOSITORY_NAME}` with actual repo name (e.g., apim-apps, carbon-apimgt, product-apim)
+
+**For Creating Pull Requests:**
+- Use the MCP GitHub tools (you have access through the github_token provided to Claude)
+- Available tools: `mcp__github__create_pull_request`, `mcp__github__create_branch`, etc.
+- Do NOT use bash commands for PR creation - use the MCP tools instead
 
 ===============
 PROJECT CONTEXT
@@ -61,7 +63,6 @@ AGENT OBJECTIVE
 2. **Configure Git Credentials** (immediately after cloning)
    - `git config user.name "ranuka-laksika"`
    - `git config user.email "ranukalaksika@gmail.com"`
-   - `git remote set-url origin https://x-access-token:${DOC_FIXING_AGENT_GITHUB_TOKEN}@github.com/ranuka-laksika/{REPOSITORY_NAME}`
 
 3. **Create NEW Unique Branch with Timestamp** (from the repository you just cloned)
    - **CRITICAL**: This creates a NEW branch with a unique name using timestamp
@@ -126,7 +127,8 @@ AGENT OBJECTIVE
      * Example: `git push origin fix_issue_123_1710345600`
    - **IMPORTANT**: Push to the branch with timestamp, NOT to main/master
 
-9. **Create Pull Request from NEW Branch to Default Branch** (use GitHub token)
+9. **Create Pull Request from NEW Branch to Default Branch** (use MCP GitHub tools)
+   - **Use MCP tool**: `mcp__github__create_pull_request`
    - **CRITICAL**: Create PR in the SAME repository (ranuka-laksika/{repository})
    - **From**: The NEW branch with timestamp (e.g., `fix_issue_123_1710345600`)
    - **To**: Default branch (main/master) of the SAME repository
@@ -235,7 +237,6 @@ cd /home/runner/work/api-manager/api-manager/apim-apps
 # 2. Configure Git
 git config user.name "ranuka-laksika"
 git config user.email "ranukalaksika@gmail.com"
-git remote set-url origin https://x-access-token:${DOC_FIXING_AGENT_GITHUB_TOKEN}@github.com/ranuka-laksika/apim-apps
 
 # 3. Create Branch
 git checkout -b fix_issue_123_$(date +%s)
@@ -265,9 +266,9 @@ git add .
 git commit -m "Fix issue 123"
 git push origin fix_issue_123_{timestamp}
 
-# 9. Create PR (use GitHub token)
+# 9. Create PR (use MCP GitHub tools)
+# Use mcp__github__create_pull_request tool
 # Include artifact download link in PR description
-gh pr create --title "Fix issue 123" --body "[PR description with artifact download link]"
 ```
 
 This same workflow applies to all repositories (carbon-apimgt, product-apim, etc.)
