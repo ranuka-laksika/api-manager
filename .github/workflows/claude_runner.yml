@@ -144,7 +144,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: my-artifact
-          path: ${{ github.workspace }}/wso2am-4.5.0.zip
+          path: ${{ github.workspace }}/wso2am-4.5.0-issue-${{github.event.issue.number}}.zip
 
       - name: Get next queued issue
         id: get_next_queued
