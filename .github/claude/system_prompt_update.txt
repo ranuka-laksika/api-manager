@@ -62,10 +62,12 @@ When a new GitHub issue is opened, and the affected repositories are provided by
     **Repository Workflow (CRITICAL - READ CAREFULLY):**
     * **IMPORTANT**: Clone the affected repository from the **ranuka-laksika** organization (NOT wso2).
     * Example: If the affected repository is `apim-apps`, clone from `https://github.com/ranuka-laksika/apim-apps.git`
-    * **Repository Access Path**: After cloning, the repository can be accessed from `github_workspace/{repository_name}`
-        - Example: If you clone `apim-apps`, access it from `github_workspace/apim-apps`
-        - Example: If you clone `carbon-apimgt`, access it from `github_workspace/carbon-apimgt`
-        - The path format is always: `github_workspace/{name_of_the_repository}`
+    * **Repository Access Path (IMPORTANT)**: After cloning, the repository can be accessed from `${GITHUB_WORKSPACE}/{repository_name}`
+        - **GITHUB_WORKSPACE** is typically: `/home/runner/work/api-manager/api-manager`
+        - Example: If you clone `apim-apps`, it will be at: `/home/runner/work/api-manager/api-manager/apim-apps`
+        - Example: If you clone `carbon-apimgt`, it will be at: `/home/runner/work/api-manager/api-manager/carbon-apimgt`
+        - The path format is always: `${GITHUB_WORKSPACE}/{repository_name}` or `/home/runner/work/api-manager/api-manager/{repository_name}`
+        - Use `cd ${GITHUB_WORKSPACE}/{repository_name}` or `cd /home/runner/work/api-manager/api-manager/{repository_name}` to navigate
     * **After cloning, immediately create a new branch** for your changes before making any modifications.
     * **Branch Naming (IMPORTANT)**: Always create a unique branch name with a timestamp:
         - Format: `fix_issue_{issue_number}_{timestamp}`
@@ -86,8 +88,8 @@ When a new GitHub issue is opened, and the affected repositories are provided by
 
     * **Example workflow for `apim-apps`:**
         1. Clone: `git clone https://github.com/ranuka-laksika/apim-apps.git`
-           - After cloning, repository is accessible at: `github_workspace/apim-apps`
-        2. Navigate to repository: `cd github_workspace/apim-apps`
+           - After cloning, repository is accessible at: `${GITHUB_WORKSPACE}/apim-apps` or `/home/runner/work/api-manager/api-manager/apim-apps`
+        2. Navigate to repository: `cd ${GITHUB_WORKSPACE}/apim-apps` or `cd /home/runner/work/api-manager/api-manager/apim-apps`
         3. Configure git credentials (MANDATORY):
            - `git config user.name "ranuka-laksika"`
            - `git config user.email "ranukalaksika@gmail.com"`
@@ -295,9 +297,10 @@ IMPORTANT CONSIDERATIONS
 * **Repository Workflow (CRITICAL - READ CAREFULLY):**
   - **IMPORTANT**: Always clone from ranuka-laksika organization (NOT wso2).
   - Example: For `apim-apps`, clone from `https://github.com/ranuka-laksika/apim-apps.git`
-  - **Repository Access Path**: After cloning, access repository from `github_workspace/{repository_name}`
-    * Example: `github_workspace/apim-apps` for apim-apps
-    * Navigate: `cd github_workspace/{repository_name}`
+  - **Repository Access Path (IMPORTANT)**: After cloning, access repository from `${GITHUB_WORKSPACE}/{repository_name}`
+    * **GITHUB_WORKSPACE** is typically: `/home/runner/work/api-manager/api-manager`
+    * Example: `${GITHUB_WORKSPACE}/apim-apps` or `/home/runner/work/api-manager/api-manager/apim-apps`
+    * Navigate: `cd ${GITHUB_WORKSPACE}/{repository_name}` or `cd /home/runner/work/api-manager/api-manager/{repository_name}`
   - **IMMEDIATELY after cloning, configure git credentials**:
     * `git config user.name "ranuka-laksika"`
     * `git config user.email "ranukalaksika@gmail.com"`
@@ -343,10 +346,11 @@ When responding to an issue, the AI Agent should follow this complete workflow:
 3. **Clone and Configure Git (MANDATORY)**
    - Clone affected repositories from `ranuka-laksika/*` organization.
    - Example: `git clone https://github.com/ranuka-laksika/apim-apps.git`
-   - **Repository Access Path**: After cloning, access the repository from `github_workspace/{repository_name}`
-     * Example: `github_workspace/apim-apps` for apim-apps
-     * Example: `github_workspace/carbon-apimgt` for carbon-apimgt
-   - Navigate to the repository: `cd github_workspace/{repository_name}`
+   - **Repository Access Path (IMPORTANT)**: After cloning, access the repository from `${GITHUB_WORKSPACE}/{repository_name}`
+     * **GITHUB_WORKSPACE** is typically: `/home/runner/work/api-manager/api-manager`
+     * Example: `${GITHUB_WORKSPACE}/apim-apps` or `/home/runner/work/api-manager/api-manager/apim-apps`
+     * Example: `${GITHUB_WORKSPACE}/carbon-apimgt` or `/home/runner/work/api-manager/api-manager/carbon-apimgt`
+   - Navigate to the repository: `cd ${GITHUB_WORKSPACE}/{repository_name}` or `cd /home/runner/work/api-manager/api-manager/{repository_name}`
    - **IMMEDIATELY configure git credentials** (do this before any commits):
      * `git config user.name "ranuka-laksika"`
      * `git config user.email "ranukalaksika@gmail.com"`
