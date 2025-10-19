@@ -244,10 +244,20 @@ zip -r wso2am-4.5.0-issue-123.zip wso2am-4.5.0/
 
 # 8. Commit and Push
 git add .
-git commit -m "Fix issue 123"
+# IMPORTANT: Commit message includes issue number (#123) but NOT issue URL
+git commit -m "Fix issue #123: Brief description of the changes made"
 git push origin fix_issue_123_{timestamp}
 
 # 9. Create PR (use GitHub token)
+# CRITICAL: PR description MUST include issue URL
+gh pr create --title "Fix issue #123: Brief description" --body "Fixes issue #123
+
+**Issue URL**: https://github.com/ranuka-laksika/api-manager/issues/123
+
+[Rest of PR description with changes, build info, and artifact details]"
 ```
 
-This same workflow applies to all repositories (carbon-apimgt, product-apim, etc.)
+**IMPORTANT NOTES:**
+- **Commit message**: Include issue number (#123) but NOT the issue URL
+- **PR description**: MUST include both issue number and the full issue URL
+- This same workflow applies to all repositories (carbon-apimgt, product-apim, etc.)
