@@ -99,23 +99,17 @@ AGENT OBJECTIVE
      * Backend → `wso2am-4.5.0/repository/components/plugins/` or `dropins/`
    - Do NOT rebuild the pack after replacement
 
-7. **Zip and Upload as GitHub Actions Artifact**
+7. **Zip wso2am-4.5.0 pack*
    - Zip entire updated `wso2am-4.5.0` pack(the pack which replace teh .jar or .war files)
    - Name: `wso2am-4.5.0-issue-${ISSUE_NUMBER}.zip`
-   - ** MOST IMPORTANT-Upload as GitHub Actions artifact
-                -This is how to upload the entier directory as github artificats:
-                        - uses: actions/upload-artifact@v4
-                            with:
-                                name: my-artifact
-                                path: path/to/artifact/ # or path/to/artifact
     ** After upoload that updates wso2am-4.5.0 pack then only you can commit and push the changes
 
 8. **Commit and Push to the NEW Branch**
    - **Commit your changes**:
      * `git add .`
-     * **IMPORTANT**: Commit message should include issue number (#${ISSUE_NUMBER}) but NOT the issue URL
-     * `git commit -m "Fix issue #${ISSUE_NUMBER}: {add a suitable brief description}"`
-     * Example: `git commit -m "Fix issue #123: Update TableView component to handle null values"`
+     * **IMPORTANT**: Commit message should not include issue number (#${ISSUE_NUMBER}) as well as the issue URL
+     * `git commit -m "Fix issue {add a suitable brief description}"`
+     * Example: `git commit -m "Fix issue Update TableView component to handle null values"`
    - **Push to the NEW unique branch** you created in step 3:
      * `git push origin fix_issue_${ISSUE_NUMBER}_{timestamp}`
      * Example: `git push origin fix_issue_123_1710345600`
@@ -197,7 +191,7 @@ IMPORTANT CONSIDERATIONS
 1. **Clone from ranuka-laksika/{repository}** (user provides repository name)
 2. **Create NEW unique branch** with timestamp: `fix_issue_{issue_number}_{timestamp}`
 3. **Make modifications** in that NEW branch
-4. **Upload the updates wso2am-4.5.0 pack as a github artifacts
+4. **Update wso2am-4.5.0 pack by relaceing that generated .jar or .war file
 5. **Commit changes** to that NEW branch
 6. **Push to that NEW branch** (NOT to main/master)
 7. **Create PR** from NEW branch → default branch of SAME repository
@@ -239,8 +233,7 @@ mvn clean install -DskipTests
 # ... find and replace .war files ...
 
 # 7. Zip and upload
-zip -r wso2am-4.5.0-issue-123.zip wso2am-4.5.0/
-# MOST IMPORTANT - Upload as GitHub Actions artifact
+zip -r wso2am-4.5.0-issue-{issue_number}.zip wso2am-4.5.0/
 
 # 8. Commit and Push
 git add .
