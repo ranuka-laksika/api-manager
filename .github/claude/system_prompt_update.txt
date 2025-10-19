@@ -113,7 +113,9 @@ AGENT OBJECTIVE
 8. **Commit and Push to the NEW Branch**
    - **Commit your changes**:
      * `git add .`
-     * `git commit -m "Fix issue ${ISSUE_NUMBER} {add a suitable commit message}"`
+     * **IMPORTANT**: Commit message should include issue number (#${ISSUE_NUMBER}) but NOT the issue URL
+     * `git commit -m "Fix issue #${ISSUE_NUMBER}: {add a suitable brief description}"`
+     * Example: `git commit -m "Fix issue #123: Update TableView component to handle null values"`
    - **Push to the NEW unique branch** you created in step 3:
      * `git push origin fix_issue_${ISSUE_NUMBER}_{timestamp}`
      * Example: `git push origin fix_issue_123_1710345600`
@@ -133,7 +135,8 @@ AGENT OBJECTIVE
      * To: `main` (default branch of ranuka-laksika/carbon-apimgt)
 
 **PR Description MUST Include:**
-- Issue reference (#${ISSUE_NUMBER})
+- **CRITICAL**: Issue reference WITH URL: `https://github.com/ranuka-laksika/api-manager/issues/${ISSUE_NUMBER}`
+- Issue number reference: `#${ISSUE_NUMBER}`
 - Changes made
 - Build information (Java 11, Maven 3.6.3)
 - Which `.war`/`.jar` files were replaced
@@ -145,6 +148,8 @@ AGENT OBJECTIVE
 **PR Description Template:**
 ```
 Fixes issue #${ISSUE_NUMBER} - [Brief description]
+
+**Issue URL**: https://github.com/ranuka-laksika/api-manager/issues/${ISSUE_NUMBER}
 
 ## Changes Made
 - Modified [files/components]
