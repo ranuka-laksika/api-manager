@@ -14,16 +14,11 @@ AUTHENTICATION CREDENTIALS
 **Git Configuration (MANDATORY - DO THIS FIRST):**
 - Git username: ranuka-laksika
 - Git email: ranukalaksika@gmail.com
+- **GitHub Token**: This is attach when we call to the claude.
 
 **Setup Commands:**
-1. `git config --global user.name "ranuka-laksika"`
-2. `git config --global user.email "ranukalaksika@gmail.com"`
-
-**For Creating Pull Requests:**
-- **CRITICAL**: Use `gh` CLI via Bash tool for ALL git operations and PR creation
-- **DO NOT use MCP GitHub tools** (mcp__github__create_pull_request, mcp__github__create_or_update_file, etc.)
-- MCP tools cause permission issues when working with local repositories
-- Use: `gh pr create` command via Bash tool instead
+1. `git --global config user.name "ranuka-laksika"`
+2. `git --global config user.email "ranukalaksika@gmail.com"`
 
 ===============
 PROJECT CONTEXT
@@ -51,40 +46,28 @@ AGENT OBJECTIVE
 
 **CRITICAL WORKFLOW - FOLLOW THIS EXACTLY:**
 
-1. **Locate Repository Locally** (Already Cloned)
-   - **IMPORTANT**: Repositories are ALREADY cloned locally in the fork directory
-   - **DO NOT clone again** - navigate to existing local repository
-   - **Local Base Path**: `/Users/ranukaranasinghe/Desktop/AI-Agent:Bug-Fixing/api-manager-fork/api-manager/`
-   - **Available Repositories**:
-     * apim-apps → `/Users/ranukaranasinghe/Desktop/AI-Agent:Bug-Fixing/api-manager-fork/api-manager/apim-apps`
-     * carbon-apimgt → `/Users/ranukaranasinghe/Desktop/AI-Agent:Bug-Fixing/api-manager-fork/api-manager/carbon-apimgt`
-     * product-apim → `/Users/ranukaranasinghe/Desktop/AI-Agent:Bug-Fixing/api-manager-fork/api-manager/product-apim`
-   - **Navigate to the relevant repository**: `cd /Users/ranukaranasinghe/Desktop/AI-Agent:Bug-Fixing/api-manager-fork/api-manager/{repository_name}`
-   - **Verify you're in correct location**: Use `pwd` and `ls` to confirm
+1. **Clone Repository from ranuka-laksika Organization** (NOT wso2)
+   - **IMPORTANT**: User will provide the repository name (e.g., apim-apps, carbon-apimgt, product-apim)
+   - **Clone from ranuka-laksika organization ONLY**
+   - Example: If user says "apim-apps", clone from: `git clone https://github.com/ranuka-laksika/apim-apps.git`
+   - Example: If user says "carbon-apimgt", clone from: `git clone https://github.com/ranuka-laksika/carbon-apimgt.git`
+   - **Repository Path**: After cloning, access at `${GITHUB_WORKSPACE}/{repository_name}`
+     * GITHUB_WORKSPACE is typically: `/home/runner/work/api-manager/api-manager`
+     * Example for apim-apps: `/home/runner/work/api-manager/api-manager/apim-apps`
+   - Navigate: `cd ${GITHUB_WORKSPACE}/{repository_name}`
 
-2. **Configure Git Credentials** (immediately after navigating to repository)
-   - **IMPORTANT**: Configure locally (NOT globally) to avoid conflicts
-   - `git config user.name "ranuka-laksika"`
-   - `git config user.email "ranukalaksika@gmail.com"`
-   - **Verify configuration**: `git config --get user.name && git config --get user.email`
+2. **Configure Git Credentials** (immediately after cloning)
+   - `git config --global user.name "ranuka-laksika"`
+   - `git config --global user.email "ranukalaksika@gmail.com"`
 
-3. **Create NEW Unique Branch with Timestamp** (from the default branch of the repository)
-   - **CRITICAL**: Must create branch from the default branch (usually `main`) of the repository
-   - **Steps**:
-     1. **Verify default branch**: `git remote show origin | grep "HEAD branch"`
-     2. **Fetch latest changes**: `git fetch origin`
-     3. **Create branch from origin/main** (assuming `main` is default branch):
-        - **Format**: `fix_issue_{issue_number}_{timestamp}`
-        - **Command**: `git checkout -b fix_issue_${ISSUE_NUMBER}_$(date +%s) origin/main`
-        - **Example result**: `fix_issue_123_1760882336`
-        - **This creates a NEW branch starting from origin/main**
-     4. **Verify branch created**: `git branch --show-current`
-   - **This ensures the branch is unique and starts from the latest default branch**
+3. **Create NEW Unique Branch with Timestamp** (from the repository you just cloned)
+   - **CRITICAL**: This creates a NEW branch with a unique name using timestamp
+   - **Format**: `fix_issue_{issue_number}_{timestamp}`
+   - **Command**: `git checkout -b fix_issue_${ISSUE_NUMBER}_$(date +%s)`
+   - **Example result**: `fix_issue_123_1710345600` or `fix_issue_123_20240313_143000`
+   - **This ensures the branch is unique for every fix attempt**
 
-4. **Apply Fix Using LOCAL Files**
-   - **CRITICAL**: Use the Edit tool to modify files in the LOCAL repository
-   - **DO NOT use MCP GitHub tools** (mcp__github__create_or_update_file) for code changes
-   - **Example**: Edit `/Users/ranukaranasinghe/Desktop/AI-Agent:Bug-Fixing/api-manager-fork/api-manager/apim-apps/portals/publisher/.../TableView.jsx`
+4. **Apply Fix**
    - If user specified exact fix: Apply it exactly
    - If not: Analyze and determine the most accurate fix
 
@@ -116,97 +99,48 @@ AGENT OBJECTIVE
      * Backend → `wso2am-4.5.0/repository/components/plugins/` or `dropins/`
    - Do NOT rebuild the pack after replacement
 
-7. **Zip and Upload as GitHub Actions Artifact (MANDATORY)**
-   - After replacing the .jar or .war files, zip the entire `wso2am-4.5.0` pack
-   - Zip file name: `wso2am-4.5.0-issue-${ISSUE_NUMBER}.zip`
-   - **Upload using GitHub Actions artifact upload:**
+7. **Zip and Upload as GitHub Actions Artifact**
+   - Zip entire updated `wso2am-4.5.0` pack(the pack which replace teh .jar or .war files)
+   - Name: `wso2am-4.5.0-issue-${ISSUE_NUMBER}.zip`
+   - ** MOST IMPORTANT-Upload as GitHub Actions artifact
+                -This is how to upload the entier directory as github artificats:
+                        - uses: actions/upload-artifact@v4
+                            with:
+                                name: my-artifact
+                                path: path/to/artifact/ # or path/to/artifact
+    ** After upoload that updates wso2am-4.5.0 pack then only you can commit and push the changes
 
-   ```yaml
-   - name: Upload artifact pack
-     uses: actions/upload-artifact@v4
-     with:
-       name: wso2am-4.5.0-issue-${ISSUE_NUMBER}
-       path: ${{ github.workspace }}/wso2am-4.5.0-issue-${ISSUE_NUMBER}.zip
-   ```
+8. **Commit and Push to the NEW Branch**
+   - **Commit your changes**:
+     * `git add .`
+     * `git commit -m "Fix issue ${ISSUE_NUMBER} {add a suitable commit message}"`
+   - **Push to the NEW unique branch** you created in step 3:
+     * `git push origin fix_issue_${ISSUE_NUMBER}_{timestamp}`
+     * Example: `git push origin fix_issue_123_1710345600`
+   - **IMPORTANT**: Push to the branch with timestamp, NOT to main/master
 
-   - **CRITICAL**: You MUST mention this artifact in the PR description with a download link for the user
-
-8. **Commit and Push to the NEW Branch** (CRITICAL - MUST COMPLETE SUCCESSFULLY)
-   - **CRITICAL**: After making all changes in your new branch, push to origin
-   - **Steps**:
-     1. **Stage all changes**: `git add .`
-     2. **Verify what's staged**: `git status`
-     3. **Commit with descriptive message**:
-        ```bash
-        git commit -m "Fix issue #${ISSUE_NUMBER}: <brief description>
-
-        <Detailed explanation of changes>
-        - Changed X to Y in <file>
-        - Modified Z component"
-        ```
-     4. **Push to the new branch on origin**:
-        - **Command**: `git push origin fix_issue_${ISSUE_NUMBER}_{timestamp}`
-        - **Example**: `git push origin fix_issue_123_1760882336`
-        - **IMPORTANT**: Push to the NEW branch with timestamp, NOT to main/master
-   - **Verify push succeeded**:
-     * Check output shows: `To https://github.com/ranuka-laksika/{repository}.git`
-     * Run: `git log origin/fix_issue_${ISSUE_NUMBER}_{timestamp} --oneline -5` to verify commits are on remote
-   - **IF PUSH FAILS**: Check for permission errors, verify remote is set correctly with `git remote -v`
-
-9. **Create Pull Request Using gh CLI** (use Bash tool, NOT MCP GitHub tools)
-   - **CRITICAL**: Create PR from the NEW branch to the DEFAULT branch of that repository
-   - **DO NOT use mcp__github__create_pull_request** - it causes permission issues
-   - **PR Direction**:
-     * **From**: `fix_issue_{issue_number}_{timestamp}` (the NEW branch you created and pushed)
-     * **To**: Default branch of the repository (usually `main`)
-   - **Command format**:
-     ```bash
-     gh pr create \
-       --repo ranuka-laksika/{repository} \
-       --base main \
-       --head fix_issue_${ISSUE_NUMBER}_{timestamp} \
-       --title "Fix issue #${ISSUE_NUMBER}: <short description>" \
-       --body "$(cat <<'EOF'
-     ## Summary
-     Fixes issue #${ISSUE_NUMBER}
-
-     ## Changes Made
-     - Modified [files/components]
-     - [Description of changes]
-
-     ## Files Changed
-     - [file path:line numbers]
-
-     ## Testing
-     - [Testing steps performed]
-
-     ## Build Information
-     - Built using Java 11 and Maven 3.6.3
-     - Generated artifacts: [list .war or .jar files]
-     EOF
-     )"
-     ```
+9. **Create Pull Request from NEW Branch to Default Branch** (use GitHub token)
+   - **CRITICAL**: Create PR in the SAME repository (ranuka-laksika/{repository})
+   - **From**: The NEW branch with timestamp (e.g., `fix_issue_123_1710345600`)
+   - **To**: Default branch (main/master) of the SAME repository
    - **Example for apim-apps**:
      * Repository: `ranuka-laksika/apim-apps`
-     * From: `fix_issue_123_1760882336` (the NEW branch you created)
+     * From: `fix_issue_123_1710345600` (the NEW branch you created)
      * To: `main` (default branch of ranuka-laksika/apim-apps)
    - **Example for carbon-apimgt**:
      * Repository: `ranuka-laksika/carbon-apimgt`
-     * From: `fix_issue_123_1760882336` (the NEW branch you created)
+     * From: `fix_issue_123_1710345600` (the NEW branch you created)
      * To: `main` (default branch of ranuka-laksika/carbon-apimgt)
-   - **Verify PR created**: Command will output the PR URL
 
 **PR Description MUST Include:**
 - Issue reference (#${ISSUE_NUMBER})
 - Changes made
 - Build information (Java 11, Maven 3.6.3)
 - Which `.war`/`.jar` files were replaced
-- **GitHub Actions Artifact Link (MANDATORY - CRITICAL):**
+- **GitHub Actions Artifact (MANDATORY):**
   * Artifact name: `wso2am-4.5.0-issue-${ISSUE_NUMBER}.zip`
-  * **MUST include direct download link** to the GitHub Actions artifact
-  * **Link format**: Provide the actual clickable link to the artifact
-  * How to download from GitHub Actions (provide clear steps)
-  * What's included in the artifact
+  * How to download from GitHub Actions
+  * What's included
 
 **PR Description Template:**
 ```
@@ -229,16 +163,12 @@ The complete modified `wso2am-4.5.0` pack with all updated artifacts has been up
 
 **Artifact Details:**
 - **Artifact Name**: `wso2am-4.5.0-issue-${ISSUE_NUMBER}.zip`
-- **Download Link**: [Click here to download wso2am-4.5.0-issue-${ISSUE_NUMBER}.zip](ACTUAL_LINK_TO_ARTIFACT)
-  * **CRITICAL**: Replace `ACTUAL_LINK_TO_ARTIFACT` with the real GitHub Actions artifact URL
-  * **Example**: `https://github.com/ranuka-laksika/{repository}/actions/runs/{run_id}/artifacts/{artifact_id}`
-  * **This link MUST be clickable and functional** so users can download directly
-- **Alternative Download Method**:
-  1. Go to the Actions tab of this repository: `https://github.com/ranuka-laksika/{repository}/actions`
+- **Location**: Available in GitHub Actions artifacts for this workflow run
+- **How to Download**:
+  1. Go to the Actions tab of this repository
   2. Find the workflow run for this PR
-  3. Scroll to the "Artifacts" section at the bottom
-  4. Download the artifact: `wso2am-4.5.0-issue-${ISSUE_NUMBER}.zip`
-  5. Extract and use the modified pack directly
+  3. Download the artifact: `wso2am-4.5.0-issue-${ISSUE_NUMBER}.zip`
+  4. Extract and use the modified pack directly
 
 **What's included:**
 - All replaced `.war`/`.jar` files from the build
@@ -259,31 +189,19 @@ IMPORTANT CONSIDERATIONS
 ========================
 
 **CRITICAL WORKFLOW SUMMARY:**
-1. **Navigate to local repository** (already cloned in fork directory)
-2. **Verify you're in the correct repository** using `pwd` and `ls`
-3. **Fetch latest changes** from origin: `git fetch origin`
-4. **Create NEW unique branch from default branch**:
-   - Format: `fix_issue_{issue_number}_{timestamp}`
-   - Command: `git checkout -b fix_issue_${ISSUE_NUMBER}_$(date +%s) origin/main`
-   - This ensures the branch starts from the latest default branch
-5. **Make modifications** in that NEW branch using Edit tool
-6. **Commit changes**: `git add .` then `git commit -m "..."`
-7. **Push to origin**: `git push origin fix_issue_{issue_number}_{timestamp}`
-   - Push to the NEW branch (NOT to main/master)
-8. **Create PR** from NEW branch → default branch of SAME repository using `gh pr create`
+1. **Clone from ranuka-laksika/{repository}** (user provides repository name)
+2. **Create NEW unique branch** with timestamp: `fix_issue_{issue_number}_{timestamp}`
+3. **Make modifications** in that NEW branch
+4. **Upload the updates wso2am-4.5.0 pack as a github artifacts
+5. **Commit changes** to that NEW branch
+6. **Push to that NEW branch** (NOT to main/master)
+7. **Create PR** from NEW branch → default branch of SAME repository
 
 **OTHER IMPORTANT POINTS:**
 * **Build is BLOCKING**: You CANNOT proceed without "BUILD SUCCESS"
 * **Wait for COMPLETE build** - do NOT search for .war/.jar files during build
-* **Zip and upload** modified pack as GitHub Actions artifact using:
-  ```yaml
-  - name: Upload artifact pack
-    uses: actions/upload-artifact@v4
-    with:
-      name: wso2am-4.5.0-issue-${ISSUE_NUMBER}
-      path: ${{ github.workspace }}/wso2am-4.5.0-issue-${ISSUE_NUMBER}.zip
-  ```
-* **Mention artifact in PR** with download link for the user (MANDATORY)
+* **Zip and upload** modified pack as GitHub Actions artifact
+* **Mention artifact** in EVERY PR with download link for the github artifcat
 * Always take a system-wide view before making changes
 * Maintain backward compatibility
 * Follow existing code styles
@@ -294,57 +212,37 @@ EXAMPLE WORKFLOW (apim-apps)
 =============
 
 ```bash
-# 1. Navigate to local repository (already cloned)
-cd /Users/ranukaranasinghe/Desktop/AI-Agent:Bug-Fixing/api-manager-fork/api-manager/apim-apps
+# 1. Clone
+git clone https://github.com/ranuka-laksika/apim-apps.git
+cd /home/runner/work/api-manager/api-manager/apim-apps
 
-# 2. Verify location
-pwd
-ls
-
-# 3. Configure Git (locally)
+# 2. Configure Git
 git config user.name "ranuka-laksika"
 git config user.email "ranukalaksika@gmail.com"
 
-# 4. Fetch latest changes and create branch from default branch (main)
-git fetch origin
-# Verify default branch
-git remote show origin | grep "HEAD branch"
-# Create branch from origin/main
-git checkout -b fix_issue_123_$(date +%s) origin/main
+# 3. Create Branch
+git checkout -b fix_issue_123_$(date +%s) origin/{default_branch of the repository}
 
-# 5. Make changes using Edit tool
+# 4. Make changes
 # ... apply fix ...
 
-# 6. Build (WAIT FOR "BUILD SUCCESS")
+# 5. Build (WAIT FOR "BUILD SUCCESS")
 mvn clean install -DskipTests
 # WAIT until you see "BUILD SUCCESS"
 
-# 7. Replace artifacts in wso2am-4.5.0 pack
+# 6. Replace artifacts in wso2am-4.5.0 pack
 # ... find and replace .war files ...
 
-# 8. Zip and upload as GitHub Actions artifact
+# 7. Zip and upload
 zip -r wso2am-4.5.0-issue-123.zip wso2am-4.5.0/
+# MOST IMPORTANT - Upload as GitHub Actions artifact
 
-# Upload using GitHub Actions (YAML):
-# - name: Upload artifact pack
-#   uses: actions/upload-artifact@v4
-#   with:
-#     name: wso2am-4.5.0-issue-123
-#     path: ${{ github.workspace }}/wso2am-4.5.0-issue-123.zip
-
-# 9. Commit and Push to NEW branch
+# 8. Commit and Push
 git add .
-git commit -m "Fix issue #123: Brief description of changes"
+git commit -m "Fix issue 123"
 git push origin fix_issue_123_{timestamp}
 
-# 10. Create PR using gh CLI (NOT MCP tools)
-gh pr create \
-  --repo ranuka-laksika/apim-apps \
-  --base main \
-  --head fix_issue_123_{timestamp} \
-  --title "Fix issue #123: Short description" \
-  --body "..."
-# Include artifact download link in PR description
+# 9. Create PR (use GitHub token)
 ```
 
 This same workflow applies to all repositories (carbon-apimgt, product-apim, etc.)
