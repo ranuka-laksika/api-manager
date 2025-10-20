@@ -51,16 +51,21 @@ AGENT OBJECTIVE
    - **Clone from ranuka-laksika organization ONLY**
    - Example: If user says "apim-apps", clone from: `git clone https://github.com/ranuka-laksika/apim-apps.git`
    - Example: If user says "carbon-apimgt", clone from: `git clone https://github.com/ranuka-laksika/carbon-apimgt.git`
-   - **Repository Path**: After cloning, access at `${GITHUB_WORKSPACE}/{repository_name}`
+   - **Repository Path**: After cloning, the repository will be at `${GITHUB_WORKSPACE}/{repository_name}`
      * GITHUB_WORKSPACE is typically: `/home/runner/work/api-manager/api-manager`
      * Example for apim-apps: `/home/runner/work/api-manager/api-manager/apim-apps`
-   - Navigate: `cd ${GITHUB_WORKSPACE}/{repository_name}`
+   - **CRITICAL - Navigate into the repository**: `cd ${GITHUB_WORKSPACE}/{repository_name}`
+   - **VERIFY YOU ARE IN THE CORRECT DIRECTORY**: Run `pwd` to confirm you are inside the cloned repository
+     * Expected output: `/home/runner/work/api-manager/api-manager/{repository_name}`
+   - **ALL SUBSEQUENT OPERATIONS MUST BE PERFORMED FROM WITHIN THIS DIRECTORY**
 
 2. **Configure Git Credentials** (immediately after cloning)
+   - **VERIFY**: Confirm you are inside the cloned repository with `pwd`
    - `git config --global user.name "ranuka-laksika"`
    - `git config --global user.email "ranukalaksika@gmail.com"`
 
 3. **Create NEW Unique Branch with Timestamp** (from the repository you just cloned)
+   - **VERIFY**: Confirm you are inside the cloned repository with `pwd` before creating branch
    - **CRITICAL**: This creates a NEW branch with a unique name using timestamp
    - **Format**: `fix_issue_{issue_number}_{timestamp}`
    - **Command**: `git checkout -b fix_issue_${ISSUE_NUMBER}_$(date +%s)`
@@ -68,10 +73,12 @@ AGENT OBJECTIVE
    - **This ensures the branch is unique for every fix attempt**
 
 4. **Apply Fix**
+   - **VERIFY**: Confirm you are inside the cloned repository with `pwd` before making changes
    - If user specified exact fix: Apply it exactly
    - If not: Analyze and determine the most accurate fix
 
 5. **Build (CRITICAL - WAIT FOR COMPLETE BUILD)**
+   - **VERIFY**: Confirm you are inside the cloned repository with `pwd` before building
    - Use Java 11 and Maven 3.6.3
    - Environment paths:
      * PATH: ${PATH}
@@ -105,15 +112,18 @@ AGENT OBJECTIVE
     ** After upoload that updates wso2am-4.5.0 pack then only you can commit and push the changes
 
 8. **Commit and Push to the NEW Branch**
+   - **VERIFY**: Confirm you are inside the cloned repository with `pwd` before committing
    - **Commit your changes**:
      * `git add .`
      * **IMPORTANT**: Commit message should not include issue number (#${ISSUE_NUMBER}) as well as the issue URL
      * `git commit -m "Fix issue {add a suitable brief description}"`
      * Example: `git commit -m "Fix issue Update TableView component to handle null values"`
+   - **VERIFY**: Confirm you are inside the cloned repository with `pwd` before pushing
    - **Push to the NEW unique branch** you created in step 3:
      * `git push origin fix_issue_${ISSUE_NUMBER}_{timestamp}`
      * Example: `git push origin fix_issue_123_1710345600`
    - **IMPORTANT**: Push to the branch with timestamp, NOT to main/master
+   - **ALL GIT OPERATIONS (add, commit, push) MUST BE DONE FROM WITHIN THE CLONED REPOSITORY DIRECTORY**
 
 9. **Create Pull Request from NEW Branch to Default Branch** (use GitHub token)
    - **CRITICAL**: Create PR in the SAME repository (ranuka-laksika/{repository})
@@ -187,14 +197,30 @@ The complete modified `wso2am-4.5.0` pack with all updated artifacts has been up
 IMPORTANT CONSIDERATIONS
 ========================
 
+**CRITICAL - WORKING DIRECTORY VERIFICATION:**
+- **BEFORE EVERY OPERATION**: You MUST verify you are inside the cloned repository directory
+- **Use `pwd` command**: Always check your current working directory before:
+  * Configuring git credentials
+  * Creating branches
+  * Making code changes
+  * Running builds
+  * Committing changes
+  * Pushing changes
+- **Expected directory**: `/home/runner/work/api-manager/api-manager/{repository_name}`
+- **If you are NOT in the correct directory**: Navigate to it using `cd ${GITHUB_WORKSPACE}/{repository_name}`
+- **ALL operations must be performed from within the cloned repository directory**
+- **Git operations will FAIL if you are in the wrong directory**
+
 **CRITICAL WORKFLOW SUMMARY:**
 1. **Clone from ranuka-laksika/{repository}** (user provides repository name)
-2. **Create NEW unique branch** with timestamp: `fix_issue_{issue_number}_{timestamp}`
-3. **Make modifications** in that NEW branch
-4. **Update wso2am-4.5.0 pack by relaceing that generated .jar or .war file
-5. **Commit changes** to that NEW branch
-6. **Push to that NEW branch** (NOT to main/master)
-7. **Create PR** from NEW branch → default branch of SAME repository
+2. **Navigate into the repository** and verify with `pwd`
+3. **Create NEW unique branch** with timestamp: `fix_issue_{issue_number}_{timestamp}`
+4. **Make modifications** in that NEW branch (verify directory first)
+5. **Build from within the repository** (verify directory first)
+6. **Update wso2am-4.5.0 pack** by replacing that generated .jar or .war file
+7. **Commit changes** to that NEW branch (verify directory first)
+8. **Push to that NEW branch** (NOT to main/master, verify directory first)
+9. **Create PR** from NEW branch → default branch of SAME repository
 
 **OTHER IMPORTANT POINTS:**
 * **Build is BLOCKING**: You CANNOT proceed without "BUILD SUCCESS"
@@ -213,35 +239,44 @@ EXAMPLE WORKFLOW (apim-apps)
 ```bash
 # 1. Clone
 git clone https://github.com/ranuka-laksika/apim-apps.git
-cd /home/runner/work/api-manager/api-manager/apim-apps
 
-# 2. Configure Git
+# 2. Navigate into the repository and VERIFY
+cd /home/runner/work/api-manager/api-manager/apim-apps
+pwd  # VERIFY: Should output /home/runner/work/api-manager/api-manager/apim-apps
+
+# 3. Configure Git (after verifying directory)
+pwd  # VERIFY you are in the repository
 git config user.name "ranuka-laksika"
 git config user.email "ranukalaksika@gmail.com"
 
-# 3. Create Branch
+# 4. Create Branch (after verifying directory)
+pwd  # VERIFY you are in the repository
 git checkout -b fix_issue_123_$(date +%s) origin/{default_branch of the repository}
 
-# 4. Make changes
+# 5. Make changes (after verifying directory)
+pwd  # VERIFY you are in the repository
 # ... apply fix ...
 
-# 5. Build (WAIT FOR "BUILD SUCCESS")
+# 6. Build (WAIT FOR "BUILD SUCCESS") (after verifying directory)
+pwd  # VERIFY you are in the repository
 mvn clean install -DskipTests
 # WAIT until you see "BUILD SUCCESS"
 
-# 6. Replace artifacts in wso2am-4.5.0 pack
+# 7. Replace artifacts in wso2am-4.5.0 pack
 # ... find and replace .war files ...
 
-# 7. Zip and upload
+# 8. Zip and upload
 zip -r wso2am-4.5.0-issue-{issue_number}.zip wso2am-4.5.0/
 
-# 8. Commit and Push
+# 9. Commit and Push (after verifying directory)
+pwd  # VERIFY you are in the repository before git operations
 git add .
 # IMPORTANT: Commit message includes issue number (#123) but NOT issue URL
 git commit -m "Fix issue #123: Brief description of the changes made"
+pwd  # VERIFY you are in the repository before pushing
 git push origin fix_issue_123_{timestamp}
 
-# 9. Create PR (use GitHub token)
+# 10. Create PR (use GitHub token)
 # CRITICAL: PR description MUST include issue URL
 gh pr create --title "Fix issue #123: Brief description" --body "Fixes issue #123
 
@@ -249,6 +284,12 @@ gh pr create --title "Fix issue #123: Brief description" --body "Fixes issue #12
 
 [Rest of PR description with changes, build info, and artifact details]"
 ```
+
+**KEY POINTS FROM THIS EXAMPLE:**
+- `pwd` is used BEFORE every major operation to verify the current directory
+- ALL operations happen from within `/home/runner/work/api-manager/api-manager/apim-apps`
+- If `pwd` shows you're in the wrong directory, navigate back with `cd /home/runner/work/api-manager/api-manager/apim-apps`
+- Git operations (config, checkout, add, commit, push) MUST be done from within the repository directory
 
 **IMPORTANT NOTES:**
 - **Commit message**: Include issue number (#123) but NOT the issue URL

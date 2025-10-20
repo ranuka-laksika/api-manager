@@ -112,6 +112,8 @@ jobs:
           echo "SYSTEM_PROMPT<<EOF" >> $GITHUB_ENV
           echo "$SYSTEM_PROMPT" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
+          cd ${{ github.workspace }}
+          ls -la
 
           echo "ISSUE_NUMBER=$ISSUE_NUMBER" >> $GITHUB_ENV
           echo "REPOSITORY=$REPOSITORY" >> $GITHUB_ENV
