@@ -141,6 +141,12 @@ AGENT OBJECTIVE
    - **CRITICAL**: Create PR in the SAME repository (ranuka-laksika/{repository})
    - **From**: The NEW branch with timestamp (e.g., `fix_issue_123_1710345600`)
    - **To**: Default branch (main/master) of the SAME repository
+
+   **Before Creating PR - Get GitHub Actions Run URL:**
+   - **CRITICAL**: You MUST include the GitHub Actions run URL in the PR description
+   - The run URL is: `https://github.com/ranuka-laksika/api-manager/actions/runs/${GITHUB_RUN_ID}`
+   - `GITHUB_RUN_ID` is available as an environment variable
+   - This URL is where users can download the `wso2am-4.5.0-issue-${ISSUE_NUMBER}.zip` artifact
    - **Example for apim-apps**:
      * Repository: `ranuka-laksika/apim-apps`
      * From: `fix_issue_123_1710345600` (the NEW branch you created)
@@ -157,9 +163,13 @@ AGENT OBJECTIVE
 - Build information (Java 11, Maven 3.6.3)
 - Which `.war`/`.jar` files were replaced
 - **GitHub Actions Artifact (MANDATORY):**
+  * **CRITICAL**: Include the GitHub Actions run link where the artifact can be downloaded
+  * Get the run link: Use `echo "https://github.com/ranuka-laksika/api-manager/actions/runs/${GITHUB_RUN_ID}"` to get the current workflow run URL
+  * Format: `https://github.com/ranuka-laksika/api-manager/actions/runs/{run_id}`
+  * Example: `https://github.com/ranuka-laksika/api-manager/actions/runs/18642196188`
   * Artifact name: `wso2am-4.5.0-issue-${ISSUE_NUMBER}.zip`
-  * How to download from GitHub Actions
-  * What's included
+  * Clear instructions on how to download from the Actions run page
+  * What's included in the artifact
 
 **PR Description Template:**
 ```
@@ -182,12 +192,15 @@ Fixes issue #${ISSUE_NUMBER} - [Brief description]
 ## Modified wso2am-4.5.0 Pack (GitHub Actions Artifact)
 The complete modified `wso2am-4.5.0` pack with all updated artifacts has been uploaded as a GitHub Actions artifact.
 
+**Download Link:**
+🔗 **[Download from GitHub Actions Run](https://github.com/ranuka-laksika/api-manager/actions/runs/${GITHUB_RUN_ID})**
+
 **Artifact Details:**
 - **Artifact Name**: `wso2am-4.5.0-issue-${ISSUE_NUMBER}.zip`
-- **Location**: Available in GitHub Actions artifacts for this workflow run
+- **Location**: Available in the GitHub Actions workflow run linked above
 - **How to Download**:
-  1. Go to the Actions tab of this repository
-  2. Find the workflow run for this PR
+  1. Click the GitHub Actions run link above
+  2. Scroll down to the "Artifacts" section at the bottom of the page
   3. Download the artifact: `wso2am-4.5.0-issue-${ISSUE_NUMBER}.zip`
   4. Extract and use the modified pack directly
 
@@ -293,12 +306,49 @@ pwd  # VERIFY you are in the repository before pushing
 git push origin fix_issue_123_{timestamp}
 
 # 10. Create PR (use GitHub token)
-# CRITICAL: PR description MUST include issue URL
+# CRITICAL: Get the GitHub Actions run URL first
+ACTIONS_RUN_URL="https://github.com/ranuka-laksika/api-manager/actions/runs/${GITHUB_RUN_ID}"
+echo "Actions Run URL: $ACTIONS_RUN_URL"
+
+# Create PR with the Actions run URL in the description
 gh pr create --title "Fix issue #123: Brief description" --body "Fixes issue #123
 
 **Issue URL**: https://github.com/ranuka-laksika/api-manager/issues/123
 
-[Rest of PR description with changes, build info, and artifact details]"
+## Changes Made
+- Modified [files/components]
+- [Description of changes]
+
+## Build Information
+- Built using Java 11 and Maven 3.6.3
+- Generated artifacts: [list .war or .jar files]
+
+## Artifact Replacement
+- Replaced [artifact name] in wso2am-4.5.0 pack
+- Location: [path in the pack]
+
+## Modified wso2am-4.5.0 Pack (GitHub Actions Artifact)
+The complete modified \`wso2am-4.5.0\` pack with all updated artifacts has been uploaded as a GitHub Actions artifact.
+
+**Download Link:**
+🔗 **[Download from GitHub Actions Run]($ACTIONS_RUN_URL)**
+
+**Artifact Details:**
+- **Artifact Name**: \`wso2am-4.5.0-issue-123.zip\`
+- **Location**: Available in the GitHub Actions workflow run linked above
+- **How to Download**:
+  1. Click the GitHub Actions run link above
+  2. Scroll down to the \"Artifacts\" section at the bottom of the page
+  3. Download the artifact: \`wso2am-4.5.0-issue-123.zip\`
+  4. Extract and use the modified pack directly
+
+**What's included:**
+- All replaced \`.war\`/\`.jar\` files from the build
+- Complete \`wso2am-4.5.0\` directory structure
+- Ready to use without any additional build steps
+
+## Testing
+- [Testing steps performed]"
 ```
 
 **KEY POINTS FROM THIS EXAMPLE:**
@@ -307,6 +357,7 @@ gh pr create --title "Fix issue #123: Brief description" --body "Fixes issue #12
 - If `pwd` shows you're in the wrong directory, navigate back with `cd /home/runner/work/api-manager/api-manager/apim-apps`
 - Git operations (config, checkout, add, commit, push) MUST be done from within the repository directory
 - GitHub token MUST be configured in the remote URL for push operations to work
+- **CRITICAL**: PR description MUST include the GitHub Actions run URL (`https://github.com/ranuka-laksika/api-manager/actions/runs/${GITHUB_RUN_ID}`) where users can download the artifact
 
 ========================
 TROUBLESHOOTING
@@ -335,5 +386,8 @@ TROUBLESHOOTING
 
 **IMPORTANT NOTES:**
 - **Commit message**: Include issue number (#123) but NOT the issue URL
-- **PR description**: MUST include both issue number and the full issue URL
+- **PR description**: MUST include:
+  * Issue number (#123) and the full issue URL
+  * **GitHub Actions run URL** where the artifact can be downloaded
+  * Use `${GITHUB_RUN_ID}` to construct the URL: `https://github.com/ranuka-laksika/api-manager/actions/runs/${GITHUB_RUN_ID}`
 - This same workflow applies to all repositories (carbon-apimgt, product-apim, etc.)
