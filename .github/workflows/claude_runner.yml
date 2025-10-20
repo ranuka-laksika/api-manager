@@ -106,6 +106,7 @@ jobs:
           export JAVA_HOME="${{ env.JAVA_HOME }}"
           export MAVEN_HOME="${{ env.MAVEN_HOME }}"
           export NODE_PATH="${{ env.NODE_PATH }}"
+          export GITHUB_TOKEN="${{ secrets.DOC_FIXING_AGENT_GITHUB_TOKEN }}"
 
           SYSTEM_PROMPT=$(envsubst < ${{github.workspace}}/.github/claude/system_prompt_update.txt)
 
@@ -128,6 +129,7 @@ jobs:
           NODE_PATH: ${{ env.NODE_PATH }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
           REPOSITORY: ${{ vars.DOC_FIXING_AGENT_REPOSITORY }}
+          GITHUB_TOKEN: ${{ secrets.DOC_FIXING_AGENT_GITHUB_TOKEN }}
         with:
           anthropic_api_key: ${{ secrets.DOC_FIXING_AGENT_ANTHROPIC_API_KEY }}
           github_token: ${{ secrets.DOC_FIXING_AGENT_GITHUB_TOKEN }}

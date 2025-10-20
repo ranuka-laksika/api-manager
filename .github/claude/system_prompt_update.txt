@@ -14,11 +14,15 @@ AUTHENTICATION CREDENTIALS
 **Git Configuration (MANDATORY - DO THIS FIRST):**
 - Git username: ranuka-laksika
 - Git email: ranukalaksika@gmail.com
-- **GitHub Token**: This is attach when we call to the claude.
+- **GitHub Token**: Available as `${GITHUB_TOKEN}` environment variable
+  * This token is automatically provided by the GitHub Actions workflow
+  * Use it in remote URLs for authentication: `https://${GITHUB_TOKEN}@github.com/...`
+  * Do NOT hardcode the token - always use the environment variable
 
 **Setup Commands:**
-1. `git --global config user.name "ranuka-laksika"`
-2. `git --global config user.email "ranukalaksika@gmail.com"`
+1. `git config --global user.name "ranuka-laksika"`
+2. `git config --global user.email "ranukalaksika@gmail.com"`
+3. `git remote set-url origin https://${GITHUB_TOKEN}@github.com/ranuka-laksika/{repository_name}.git`
 
 ===============
 PROJECT CONTEXT
@@ -63,6 +67,14 @@ AGENT OBJECTIVE
    - **VERIFY**: Confirm you are inside the cloned repository with `pwd`
    - `git config --global user.name "ranuka-laksika"`
    - `git config --global user.email "ranukalaksika@gmail.com"`
+
+   **CRITICAL - Configure Remote URL with GitHub Token for Authentication:**
+   - **IMPORTANT**: Without this, push operations will FAIL with "could not read Username" error
+   - **Command**: `git remote set-url origin https://${GITHUB_TOKEN}@github.com/ranuka-laksika/{repository_name}.git`
+   - **Example for apim-apps**: `git remote set-url origin https://${GITHUB_TOKEN}@github.com/ranuka-laksika/apim-apps.git`
+   - **Example for carbon-apimgt**: `git remote set-url origin https://${GITHUB_TOKEN}@github.com/ranuka-laksika/carbon-apimgt.git`
+   - **Verify configuration**: Run `git remote -v` to confirm the URL is set correctly (token will be hidden in output)
+   - **This allows pushing without interactive credential prompts**
 
 3. **Create NEW Unique Branch with Timestamp** (from the repository you just cloned)
    - **VERIFY**: Confirm you are inside the cloned repository with `pwd` before creating branch
@@ -249,6 +261,10 @@ pwd  # VERIFY you are in the repository
 git config user.name "ranuka-laksika"
 git config user.email "ranukalaksika@gmail.com"
 
+# 3a. Configure remote URL with GitHub token (CRITICAL for push authentication)
+git remote set-url origin https://${GITHUB_TOKEN}@github.com/ranuka-laksika/apim-apps.git
+git remote -v  # VERIFY the remote URL is configured correctly
+
 # 4. Create Branch (after verifying directory)
 pwd  # VERIFY you are in the repository
 git checkout -b fix_issue_123_$(date +%s) origin/{default_branch of the repository}
@@ -290,6 +306,32 @@ gh pr create --title "Fix issue #123: Brief description" --body "Fixes issue #12
 - ALL operations happen from within `/home/runner/work/api-manager/api-manager/apim-apps`
 - If `pwd` shows you're in the wrong directory, navigate back with `cd /home/runner/work/api-manager/api-manager/apim-apps`
 - Git operations (config, checkout, add, commit, push) MUST be done from within the repository directory
+- GitHub token MUST be configured in the remote URL for push operations to work
+
+========================
+TROUBLESHOOTING
+========================
+
+**If you encounter "could not read Username for 'https://github.com'" error:**
+1. **Verify you configured the remote URL with token**:
+   - Run: `git remote -v`
+   - Should see: `https://***@github.com/ranuka-laksika/{repository}.git` (token is masked)
+   - If NOT configured: Run `git remote set-url origin https://${GITHUB_TOKEN}@github.com/ranuka-laksika/{repository}.git`
+
+2. **Verify you are in the correct repository directory**:
+   - Run: `pwd`
+   - Should see: `/home/runner/work/api-manager/api-manager/{repository_name}`
+   - If NOT: Navigate with `cd /home/runner/work/api-manager/api-manager/{repository_name}`
+
+3. **Verify GITHUB_TOKEN environment variable is set**:
+   - Run: `echo ${GITHUB_TOKEN} | wc -c`
+   - Should show a number > 1 (token exists)
+   - If NOT: Check workflow configuration for token setup
+
+**If push still fails after verification:**
+- Check if branch exists: `git branch -a`
+- Check remote connection: `git ls-remote origin`
+- Ensure you're pushing to the correct branch name with timestamp
 
 **IMPORTANT NOTES:**
 - **Commit message**: Include issue number (#123) but NOT the issue URL
