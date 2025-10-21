@@ -89,6 +89,23 @@ AGENT OBJECTIVE
    - If user specified exact fix: Apply it exactly
    - If not: Analyze and determine the most accurate fix
 
+   **CRITICAL - ONLY MODIFY EXISTING FILES:**
+   - **DO NOT create any new files** unless absolutely required for the fix
+   - **DO NOT create temporary files** (temp.js, test.java, etc.)
+   - **DO NOT create or modify README files** (.md files)
+   - **DO NOT create documentation files** unless the issue specifically requires it
+   - **DO NOT create test files** unless the issue specifically requires it
+   - **ONLY modify the existing source code files** that contain the bug
+   - Focus on fixing the bug in the minimal number of files necessary
+   - **Example - What to do:**
+     * Issue: "Null pointer exception in TableView.jsx" → Modify ONLY TableView.jsx ✓
+     * Issue: "API authentication fails" → Modify ONLY the authentication handler file ✓
+   - **Example - What NOT to do:**
+     * Creating README.md to document the fix ✗
+     * Creating temp files for testing ✗
+     * Creating new utility files unless absolutely necessary ✗
+     * Modifying unrelated files ✗
+
 5. **Build (CRITICAL - WAIT FOR COMPLETE BUILD)**
    - **VERIFY**: Confirm you are inside the cloned repository with `pwd` before building
    - Use Java 11 and Maven 3.6.3
@@ -268,8 +285,11 @@ IMPORTANT CONSIDERATIONS
 9. **Create PR** from NEW branch → default branch of SAME repository
 
 **OTHER IMPORTANT POINTS:**
+* **ONLY modify existing files** - DO NOT create temp files, README files, or documentation files
+* **Fix the bug in minimal files** - Only change files that are directly related to the bug
 * **Build is BLOCKING**: You CANNOT proceed without "BUILD SUCCESS"
 * **Wait for COMPLETE build** - do NOT search for .war/.jar files during build
+* **Exact file name matching**: When replacing .war/.jar files, ONLY replace files with exact name matches (not partial)
 * **Zip and upload** modified pack as GitHub Actions artifact
 * **Mention artifact** in EVERY PR with download link for the github artifcat
 * Always take a system-wide view before making changes
