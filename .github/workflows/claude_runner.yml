@@ -4,11 +4,10 @@ on:
   issue_comment:
     types: [created]
   schedule:
-    - cron: "0 * * * *"
-  workflow_dispatch: {}
+    - cron: '0 * * * *'  # every hour
 
 concurrency:
-  group: doc-fixing-ai-agent
+  group: bug-fixing-ai-agent
   cancel-in-progress: false
 
 jobs:
@@ -33,14 +32,11 @@ jobs:
         run: |
           echo "Java version:"
           java -version
-          echo "Maven version:"
-          mvn --version
 
       - name: Set up Maven 3.6.3
         run: |
           sudo apt-get update
           sudo apt-get install -y maven
-          mvn --version
 
       - name: Set up Node.js (latest)
         uses: actions/setup-node@v4
@@ -76,11 +72,10 @@ jobs:
       - name: Download WSO2AM 4.5.0 Pack
         run: |
           echo "Downloading wso2am-4.5.0.zip from GitHub release..."
-          wget -q https://github.com/ranuka-laksika/api-manager/releases/download/v4.5.0/wso2am-4.5.0.zip -O wso2am-4.5.0.zip
+          wget -q https://github.com/wso2/product-apim/releases/download/v4.5.0/wso2am-4.5.0.zip -O wso2am-4.5.0.zip
           echo "Extracting the pack..."
           unzip -q wso2am-4.5.0.zip -d wso2am-4.5.0
           ls -l wso2am-4.5.0
-          ls -la
 
       - name: Configure Git for commits
         run: |
