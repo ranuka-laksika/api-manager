@@ -116,6 +116,26 @@ AGENT OBJECTIVE
    - Replace in `wso2am-${{WSO2AM_VERSION}}` pack:
      * Frontend → `wso2am-${{WSO2AM_VERSION}}/repository/deployment/server/webapps/`
      * Backend → `wso2am-${{WSO2AM_VERSION}}/repository/components/plugins/` or `dropins/`
+
+   **CRITICAL - EXACT FILE NAME MATCHING:**
+   - **ONLY replace files with EXACTLY matching names** - NOT partial matches
+   - Generated file name MUST match the target file name EXACTLY
+   - **Example - CORRECT:**
+     * Generated: `publisher.war` → Replace: `publisher.war` ✓
+     * Generated: `devportal.war` → Replace: `devportal.war` ✓
+     * Generated: `admin.war` → Replace: `admin.war` ✓
+   - **Example - INCORRECT (DO NOT DO THIS):**
+     * Generated: `publisher.war` → DO NOT replace: `api#am#publisher.war` ✗
+     * Generated: `publisher.war` → DO NOT replace: `api#am#publisher#v4.5.0.war` ✗
+     * Generated: `admin.war` → DO NOT replace: `api#am#admin.war` ✗
+   - **Verification Steps:**
+     1. Note the exact name of your generated artifact (e.g., `publisher.war`)
+     2. Navigate to the WSO2AM pack directory
+     3. List files: `ls -lh` to see all files
+     4. Find the file with the EXACT same name (not similar, EXACT)
+     5. Remove only that exact file: `rm publisher.war`
+     6. Copy your generated file: `cp /path/to/publisher.war .`
+   - **Important:** Files like `api#am#publisher.war` are different artifacts and should NOT be replaced when your generated file is `publisher.war`
    - Do NOT rebuild the pack after replacement
 
 7. **Zip wso2am-${{WSO2AM_VERSION}} pack*
