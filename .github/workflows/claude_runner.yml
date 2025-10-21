@@ -71,17 +71,28 @@ jobs:
 
       - name: Get Latest WSO2AM Release and Download Pack
         run: |
-          echo "Fetching latest release from wso2/product-apim..."
+          echo "Fetching latest release (including pre-releases) from wso2/product-apim..."
 
-          # Get the latest release tag from GitHub API
-          LATEST_RELEASE=$(curl -s https://api.github.com/repos/wso2/product-apim/releases/latest | grep '"tag_name":' | sed -E 's/.*"tag_name": "v?([^"]+)".*/\1/')
+          # Get the latest release tag from GitHub API (including pre-releases)
+          # Fetch all releases (stable + pre-releases), sort by created date, get the most recent
+          LATEST_RELEASE=$(curl -s "https://api.github.com/repos/wso2/product-apim/releases?per_page=10" | \
+            jq -r '.[0].tag_name' | sed -E 's/^v//')
 
-          if [ -z "$LATEST_RELEASE" ]; then
+          if [ -z "$LATEST_RELEASE" ] || [ "$LATEST_RELEASE" = "null" ]; then
             echo "Error: Could not fetch latest release"
             exit 1
           fi
 
+          # Check if it's a pre-release
+          IS_PRERELEASE=$(curl -s "https://api.github.com/repos/wso2/product-apim/releases?per_page=10" | \
+            jq -r '.[0].prerelease')
+
           echo "Latest release found: $LATEST_RELEASE"
+          if [ "$IS_PRERELEASE" = "true" ]; then
+            echo "Type: Pre-release"
+          else
+            echo "Type: Stable release"
+          fi
 
           # Construct download URL and file name
           DOWNLOAD_URL="https://github.com/wso2/product-apim/releases/download/v${LATEST_RELEASE}/wso2am-${LATEST_RELEASE}.zip"
