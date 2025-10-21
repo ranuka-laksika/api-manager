@@ -109,19 +109,19 @@ AGENT OBJECTIVE
    - If build errors: Fix issues, then rebuild with same timeout
    - **ONLY after "BUILD SUCCESS"** can you find and replace .war/.jar files
 
-6. **Replace Artifacts in wso2am-4.5.0 Pack** (ONLY after BUILD SUCCESS)
+6. **Replace Artifacts in wso2am-${{WSO2AM_VERSION}} Pack** (ONLY after BUILD SUCCESS)
    - Locate generated files:
      * Frontend changes (apim-apps, api-developer-portal) → `.war` files
      * Backend changes (carbon-apimgt, product-apim) → `.jar` files
-   - Replace in `wso2am-4.5.0` pack:
-     * Frontend → `wso2am-4.5.0/repository/deployment/server/webapps/`
-     * Backend → `wso2am-4.5.0/repository/components/plugins/` or `dropins/`
+   - Replace in `wso2am-${{WSO2AM_VERSION}}` pack:
+     * Frontend → `wso2am-${{WSO2AM_VERSION}}/repository/deployment/server/webapps/`
+     * Backend → `wso2am-${{WSO2AM_VERSION}}/repository/components/plugins/` or `dropins/`
    - Do NOT rebuild the pack after replacement
 
-7. **Zip wso2am-4.5.0 pack*
-   - Zip entire updated `wso2am-4.5.0` pack(the pack which replace teh .jar or .war files)
-   - Name: `wso2am-4.5.0-issue-${ISSUE_NUMBER}.zip`
-    ** After upoload that updates wso2am-4.5.0 pack then only you can commit and push the changes
+7. **Zip wso2am-${{WSO2AM_VERSION}} pack*
+   - Zip entire updated `wso2am-${{WSO2AM_VERSION}}` pack(the pack which replace teh .jar or .war files)
+   - Name: `wso2am-${{WSO2AM_VERSION}}-issue-${ISSUE_NUMBER}.zip`
+    ** After upoload that updates wso2am-${{WSO2AM_VERSION}} pack then only you can commit and push the changes
 
 8. **Commit and Push to the NEW Branch**
    - **VERIFY**: Confirm you are inside the cloned repository with `pwd` before committing
@@ -146,7 +146,7 @@ AGENT OBJECTIVE
    - **CRITICAL**: You MUST include the GitHub Actions run URL in the PR description
    - The run URL is: `https://github.com/ranuka-laksika/api-manager/actions/runs/${GITHUB_RUN_ID}`
    - `GITHUB_RUN_ID` is available as an environment variable
-   - This URL is where users can download the `wso2am-4.5.0-issue-${ISSUE_NUMBER}.zip` artifact
+   - This URL is where users can download the `wso2am-${{WSO2AM_VERSION}}-issue-${ISSUE_NUMBER}.zip` artifact
    - **Example for apim-apps**:
      * Repository: `ranuka-laksika/apim-apps`
      * From: `fix_issue_123_1710345600` (the NEW branch you created)
@@ -167,7 +167,7 @@ AGENT OBJECTIVE
   * Get the run link: Use `echo "https://github.com/ranuka-laksika/api-manager/actions/runs/${GITHUB_RUN_ID}"` to get the current workflow run URL
   * Format: `https://github.com/ranuka-laksika/api-manager/actions/runs/{run_id}`
   * Example: `https://github.com/ranuka-laksika/api-manager/actions/runs/18642196188`
-  * Artifact name: `wso2am-4.5.0-issue-${ISSUE_NUMBER}.zip`
+  * Artifact name: `wso2am-${{WSO2AM_VERSION}}-issue-${ISSUE_NUMBER}.zip`
   * Clear instructions on how to download from the Actions run page
   * What's included in the artifact
 
@@ -186,27 +186,27 @@ Fixes issue #${ISSUE_NUMBER} - [Brief description]
 - Generated artifacts: [list .war or .jar files]
 
 ## Artifact Replacement
-- Replaced [artifact name] in wso2am-4.5.0 pack
+- Replaced [artifact name] in wso2am-${{WSO2AM_VERSION}} pack
 - Location: [path in the pack]
 
-## Modified wso2am-4.5.0 Pack (GitHub Actions Artifact)
-The complete modified `wso2am-4.5.0` pack with all updated artifacts has been uploaded as a GitHub Actions artifact.
+## Modified wso2am-${{WSO2AM_VERSION}} Pack (GitHub Actions Artifact)
+The complete modified `wso2am-${{WSO2AM_VERSION}}` pack with all updated artifacts has been uploaded as a GitHub Actions artifact.
 
 **Download Link:**
 🔗 **[Download from GitHub Actions Run](https://github.com/ranuka-laksika/api-manager/actions/runs/${GITHUB_RUN_ID})**
 
 **Artifact Details:**
-- **Artifact Name**: `wso2am-4.5.0-issue-${ISSUE_NUMBER}.zip`
+- **Artifact Name**: `wso2am-${{WSO2AM_VERSION}}-issue-${ISSUE_NUMBER}.zip`
 - **Location**: Available in the GitHub Actions workflow run linked above
 - **How to Download**:
   1. Click the GitHub Actions run link above
   2. Scroll down to the "Artifacts" section at the bottom of the page
-  3. Download the artifact: `wso2am-4.5.0-issue-${ISSUE_NUMBER}.zip`
+  3. Download the artifact: `wso2am-${{WSO2AM_VERSION}}-issue-${ISSUE_NUMBER}.zip`
   4. Extract and use the modified pack directly
 
 **What's included:**
 - All replaced `.war`/`.jar` files from the build
-- Complete `wso2am-4.5.0` directory structure
+- Complete `wso2am-${{WSO2AM_VERSION}}` directory structure
 - Ready to use without any additional build steps
 
 ## Testing
@@ -242,7 +242,7 @@ IMPORTANT CONSIDERATIONS
 3. **Create NEW unique branch** with timestamp: `fix_issue_{issue_number}_{timestamp}`
 4. **Make modifications** in that NEW branch (verify directory first)
 5. **Build from within the repository** (verify directory first)
-6. **Update wso2am-4.5.0 pack** by replacing that generated .jar or .war file
+6. **Update wso2am-${{WSO2AM_VERSION}} pack** by replacing that generated .jar or .war file
 7. **Commit changes** to that NEW branch (verify directory first)
 8. **Push to that NEW branch** (NOT to main/master, verify directory first)
 9. **Create PR** from NEW branch → default branch of SAME repository
@@ -291,11 +291,11 @@ pwd  # VERIFY you are in the repository
 mvn clean install -DskipTests
 # WAIT until you see "BUILD SUCCESS"
 
-# 7. Replace artifacts in wso2am-4.5.0 pack
+# 7. Replace artifacts in wso2am-${{WSO2AM_VERSION}} pack
 # ... find and replace .war files ...
 
 # 8. Zip and upload
-zip -r wso2am-4.5.0-issue-{issue_number}.zip wso2am-4.5.0/
+zip -r wso2am-${{WSO2AM_VERSION}}-issue-{issue_number}.zip wso2am-${{WSO2AM_VERSION}}/
 
 # 9. Commit and Push (after verifying directory)
 pwd  # VERIFY you are in the repository before git operations
@@ -324,27 +324,27 @@ gh pr create --title "Fix issue #123: Brief description" --body "Fixes issue #12
 - Generated artifacts: [list .war or .jar files]
 
 ## Artifact Replacement
-- Replaced [artifact name] in wso2am-4.5.0 pack
+- Replaced [artifact name] in wso2am-${{WSO2AM_VERSION}} pack
 - Location: [path in the pack]
 
-## Modified wso2am-4.5.0 Pack (GitHub Actions Artifact)
-The complete modified \`wso2am-4.5.0\` pack with all updated artifacts has been uploaded as a GitHub Actions artifact.
+## Modified wso2am-${{WSO2AM_VERSION}} Pack (GitHub Actions Artifact)
+The complete modified \`wso2am-${{WSO2AM_VERSION}}\` pack with all updated artifacts has been uploaded as a GitHub Actions artifact.
 
 **Download Link:**
 🔗 **[Download from GitHub Actions Run]($ACTIONS_RUN_URL)**
 
 **Artifact Details:**
-- **Artifact Name**: \`wso2am-4.5.0-issue-123.zip\`
+- **Artifact Name**: \`wso2am-${{WSO2AM_VERSION}}-issue-123.zip\`
 - **Location**: Available in the GitHub Actions workflow run linked above
 - **How to Download**:
   1. Click the GitHub Actions run link above
   2. Scroll down to the \"Artifacts\" section at the bottom of the page
-  3. Download the artifact: \`wso2am-4.5.0-issue-123.zip\`
+  3. Download the artifact: \`wso2am-${{WSO2AM_VERSION}}-issue-123.zip\`
   4. Extract and use the modified pack directly
 
 **What's included:**
 - All replaced \`.war\`/\`.jar\` files from the build
-- Complete \`wso2am-4.5.0\` directory structure
+- Complete \`wso2am-${{WSO2AM_VERSION}}\` directory structure
 - Ready to use without any additional build steps
 
 ## Testing
