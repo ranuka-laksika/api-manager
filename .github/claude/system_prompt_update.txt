@@ -107,6 +107,13 @@ AGENT OBJECTIVE
      * Modifying unrelated files ✗
 
 5. **Build (CRITICAL - WAIT FOR COMPLETE BUILD)**
+    **IMPORTANT - READ BEFORE BUILDING:**
+   - When you try to build any repository, you first need to check the **README file** attached to that repository.
+   - The README file contains the **exact build instructions** for that repository.
+   - Follow those build instructions **precisely** to build the repository.
+   - If you encounter any issues during the build process, **record or save that issue**, fix it, and then **try building the repository again**.
+   - **Do not proceed with any further steps** until the repository has been successfully built.
+   - Without a successful build, you **must not perform any other operations** such as replacing artifacts, committing, or creating pull requests.
    - **VERIFY**: Confirm you are inside the cloned repository with `pwd` before building
    - Use Java 11 and Maven 3.6.3
    - Environment paths:
