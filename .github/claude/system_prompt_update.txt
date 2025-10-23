@@ -62,7 +62,7 @@ WORKFLOW FOR SINGLE REPOSITORY
 **If the issue affects ONLY ONE repository:**
 
 1. **Clone the repository** from ranuka-laksika organization
-2. **Apply the 100% accurate fix** in the correct location
+2. **Apply exactly the same fix if the user mention what is the fix should be or if that does't contain the eaxt fix then you need to find the 100% accurate fix** in the correct location
 3. **Build the repository** completely (wait for BUILD SUCCESS)
 4. **Replace artifacts** in the downloaded wso2am pack
 
@@ -71,16 +71,15 @@ WORKFLOW FOR SINGLE REPOSITORY
    **For FRONTEND issues (apim-apps, api-developer-portal):**
    - **NO TESTING REQUIRED**
    - Commit changes and create PR
-   - Zip the updated wso2am pack
-   - Upload as GitHub Actions artifact
+   - Zip the updated wso2am pack (This is the naming convention should used for the zip: `wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip`)
 
    **For BACKEND issues (carbon-apimgt, product-apim):**
    - **TESTING IS MANDATORY**
-   - Run the updated wso2am pack
+   - Run the updated wso2am pack which is wso2am pack replaced with the generaetd artificats after fixing the issue and built the affected repository repostiory.
    - Test by calling relevant APIs
    - **If issue is SOLVED:**
      * Commit changes and create PR
-     * Zip the updated wso2am pack
+     * Zip the updated wso2am pack (This is the naming convention should used for the zip: `wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip`)
      * Upload as GitHub Actions artifact
    - **If issue is NOT SOLVED:**
      * Go back to the repository
@@ -96,7 +95,7 @@ WORKFLOW FOR SINGLE REPOSITORY
 WORKFLOW FOR MULTIPLE REPOSITORIES
 ========================
 
-**If the issue affects MULTIPLE repositories:**
+**If the issue affects MULTIPLE repositories combine with frontend and backend repositories:**
 
 **CRITICAL - Repository Processing Order:**
 - **ALWAYS work on FRONTEND repositories FIRST**, then BACKEND repositories
@@ -109,7 +108,7 @@ WORKFLOW FOR MULTIPLE REPOSITORIES
    - Clone the repository
    - Apply the fix
    - Build the repository (wait for BUILD SUCCESS)
-   - Replace the generated artifacts (.war files) in the wso2am pack
+   - Replace the generated artifacts (.war files) to the wso2am pack
    - **Commit changes** to that repository
    - **Push** to the unique branch
    - **Create PR** for that repository
@@ -117,12 +116,12 @@ WORKFLOW FOR MULTIPLE REPOSITORIES
 3. The wso2am pack now contains all frontend artifacts
 
 **Phase 2 - Process BACKEND Repositories:**
-4. **After ALL frontend repositories are done**, work on BACKEND repositories (carbon-apimgt, product-apim)
-5. For EACH backend repository:
+1. **After ALL frontend repositories are done**, work on BACKEND repositories (carbon-apimgt, product-apim)
+2. For EACH backend repository:
    - Clone the repository
    - Apply the fix
    - Build the repository (wait for BUILD SUCCESS)
-   - Replace the generated artifacts (.jar files) in the **SAME wso2am pack** (which already has frontend artifacts)
+   - Replace the generated artifacts (.jar files) in the **SAME wso2am pack** (pack coming from the frontend side updated artifacts)
    - **TESTING IS MANDATORY** after replacing backend artifacts:
      * Run the updated wso2am pack (with all frontend + backend artifacts)
      * Test by calling relevant APIs
@@ -138,23 +137,23 @@ WORKFLOW FOR MULTIPLE REPOSITORIES
        - Replace artifacts in the wso2am pack again
        - Run the pack and test again
        - Repeat until the issue is completely solved
-       - Then commit, push, and create PR
+       - Then commit, push, and create PR.
 
 **Phase 3 - Zip the wso2am Pack:**
-6. **ONLY after ALL repositories (frontend + backend) are fixed and PRs are created:**
+1. **ONLY after ALL repositories (frontend + backend) are fixed and PRs are created:**
    - Zip the updated wso2am pack (with all artifacts from all repositories)
-   - Name: `wso2am-${{WSO2AM_VERSION}}-issue-${ISSUE_NUMBER}.zip`
-   - Upload as GitHub Actions artifact
-   - All PRs should reference this SAME artifact
+   - Name: `wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip`
+   - All PRs should reference that github action link.
 
 **Key Points for Multiple Repositories:**
 - **Process order**: FRONTEND repositories FIRST → BACKEND repositories SECOND
 - Frontend repos: Fix → Build → Replace artifacts → Commit → Push → Create PR (NO testing, NO zipping)
 - Backend repos: Fix → Build → Replace artifacts → TEST → Commit → Push → Create PR (NO zipping yet)
 - **ZIP ONLY ONCE** at the very end after ALL repositories are processed
-- ALL repositories share the SAME wso2am pack (accumulates all artifacts)
+- First repository will get the donwloaded wso2am pack and after that other repository will get the updates wso2am pack from the previous repository.
+- At last repostiory it should create the zip of that updates wso2am pack using this naming convention: wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip 
 - Each repository gets its own separate PR
-- All PRs reference the SAME final zipped artifact
+- All PRs reference the SAME github action running page link.
 
 **CRITICAL WORKFLOW - FOLLOW THIS EXACTLY:**
 
@@ -197,7 +196,7 @@ WORKFLOW FOR MULTIPLE REPOSITORIES
    - **IMPORTANT NEW STEP FOR BACKEND ISSUES:**
      - If the issue relates to backend repositories (e.g., `carbon-apimgt`, `product-apim`):
        1. Before applying any fix, you MUST first verify if the issue still exists.
-       2. To do this, run the current `wso2am-${{WSO2AM_VERSION}}` pack.
+       2. To do this, run the current `wso2am-${WSO2AM_VERSION}` pack.
        3. Start and run the pack, then test the relevant APIs to confirm the presence of the reported issue.
        4. If the issue is NOT reproducible (i.e., it no longer exists), DO NOT proceed with the fix.
        5. Only if the issue persists, continue to apply the fix.
@@ -251,13 +250,13 @@ WORKFLOW FOR MULTIPLE REPOSITORIES
    - If build errors: Fix issues, then rebuild with same timeout
    - **ONLY after "BUILD SUCCESS"** can you find and replace .war/.jar files
 
-6. **Replace Artifacts in wso2am-${{WSO2AM_VERSION}} Pack** (ONLY after BUILD SUCCESS)
+6. **Replace Artifacts in wso2am-${WSO2AM_VERSION} Pack** (ONLY after BUILD SUCCESS)
    - Locate generated files:
      * Frontend changes (apim-apps, api-developer-portal) → `.war` files
      * Backend changes (carbon-apimgt, product-apim) → `.jar` files
-   - Replace in `wso2am-${{WSO2AM_VERSION}}` pack:
-     * Frontend → `wso2am-${{WSO2AM_VERSION}}/repository/deployment/server/webapps/`
-     * Backend → `wso2am-${{WSO2AM_VERSION}}/repository/components/plugins/` or `dropins/`
+   - Replace in `wso2am-${WSO2AM_VERSION}` pack:
+     * Frontend → `wso2am-${WSO2AM_VERSION}/repository/deployment/server/webapps/`
+     * Backend → `wso2am-${WSO2AM_VERSION}/repository/components/plugins/` or `dropins/`
 
    **CRITICAL - EXACT FILE NAME MATCHING:**
    - **ONLY replace files with EXACTLY matching names** - NOT partial matches
@@ -288,7 +287,7 @@ WORKFLOW FOR MULTIPLE REPOSITORIES
 
    **For BACKEND repositories (carbon-apimgt, product-apim):**
    - **TESTING IS MANDATORY**
-   - Run the updated wso2am-${{WSO2AM_VERSION}} pack
+   - Run the updated wso2am-${WSO2AM_VERSION} pack
    - Test by calling relevant APIs to verify the issue is resolved
    - **If issue is SOLVED:**
      * Proceed to step 8 (Zip the pack)
@@ -302,9 +301,9 @@ WORKFLOW FOR MULTIPLE REPOSITORIES
      * Repeat this cycle until the issue is completely solved
      * Only then proceed to step 8
 
-8. **Zip wso2am-${{WSO2AM_VERSION}} pack**
-   - Zip entire updated `wso2am-${{WSO2AM_VERSION}}` pack (the pack which has the replaced .jar or .war files)
-   - Name: `wso2am-${{WSO2AM_VERSION}}-issue-${ISSUE_NUMBER}.zip`
+8. **Zip wso2am-${WSO2AM_VERSION} pack**
+   - Zip entire updated `wso2am-${WSO2AM_VERSION}` pack (the pack which has the replaced .jar or .war files)
+   - Name: `wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip`
    - **IMPORTANT**: After uploading this artifact, you can proceed to commit and push the changes
 
 9. **Commit and Push to the NEW Branch**
@@ -330,7 +329,7 @@ WORKFLOW FOR MULTIPLE REPOSITORIES
    - **CRITICAL**: You MUST include the GitHub Actions run URL in the PR description
    - The run URL is: `https://github.com/ranuka-laksika/api-manager/actions/runs/${GITHUB_RUN_ID}`
    - `GITHUB_RUN_ID` is available as an environment variable
-   - This URL is where users can download the `wso2am-${{WSO2AM_VERSION}}-issue-${ISSUE_NUMBER}.zip` artifact
+   - This URL is where users can download the `wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip` artifact
    - **Example for apim-apps**:
      * Repository: `ranuka-laksika/apim-apps`
      * From: `fix_issue_123_1710345600` (the NEW branch you created)
@@ -351,7 +350,7 @@ WORKFLOW FOR MULTIPLE REPOSITORIES
   * Get the run link: Use `echo "https://github.com/ranuka-laksika/api-manager/actions/runs/${GITHUB_RUN_ID}"` to get the current workflow run URL
   * Format: `https://github.com/ranuka-laksika/api-manager/actions/runs/{run_id}`
   * Example: `https://github.com/ranuka-laksika/api-manager/actions/runs/18642196188`
-  * Artifact name: `wso2am-${{WSO2AM_VERSION}}-issue-${ISSUE_NUMBER}.zip`
+  * Artifact name: `wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip`
   * Clear instructions on how to download from the Actions run page
   * What's included in the artifact
 
@@ -370,27 +369,27 @@ Fixes issue #${ISSUE_NUMBER} - [Brief description]
 - Generated artifacts: [list .war or .jar files]
 
 ## Artifact Replacement
-- Replaced [artifact name] in wso2am-${{WSO2AM_VERSION}} pack
+- Replaced [artifact name] in wso2am-${WSO2AM_VERSION} pack
 - Location: [path in the pack]
 
-## Modified wso2am-${{WSO2AM_VERSION}} Pack (GitHub Actions Artifact)
-The complete modified `wso2am-${{WSO2AM_VERSION}}` pack with all updated artifacts has been uploaded as a GitHub Actions artifact.
+## Modified wso2am-${WSO2AM_VERSION} Pack (GitHub Actions Artifact)
+The complete modified `wso2am-${WSO2AM_VERSION}` pack with all updated artifacts has been uploaded as a GitHub Actions artifact.
 
 **Download Link:**
 🔗 **[Download from GitHub Actions Run](https://github.com/ranuka-laksika/api-manager/actions/runs/${GITHUB_RUN_ID})**
 
 **Artifact Details:**
-- **Artifact Name**: `wso2am-${{WSO2AM_VERSION}}-issue-${ISSUE_NUMBER}.zip`
+- **Artifact Name**: `wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip`
 - **Location**: Available in the GitHub Actions workflow run linked above
 - **How to Download**:
   1. Click the GitHub Actions run link above
   2. Scroll down to the "Artifacts" section at the bottom of the page
-  3. Download the artifact: `wso2am-${{WSO2AM_VERSION}}-issue-${ISSUE_NUMBER}.zip`
+  3. Download the artifact: `wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip`
   4. Extract and use the modified pack directly
 
 **What's included:**
 - All replaced `.war`/`.jar` files from the build
-- Complete `wso2am-${{WSO2AM_VERSION}}` directory structure
+- Complete `wso2am-${WSO2AM_VERSION}` directory structure
 - Ready to use without any additional build steps
 
 ## Testing
@@ -423,7 +422,7 @@ IMPORTANT CONSIDERATIONS
 3. **Create NEW unique branch** with timestamp: `fix_issue_{issue_number}_{timestamp}`
 4. **Make modifications** in that NEW branch (verify directory first)
 5. **Build from within the repository** (verify directory first)
-6. **Update wso2am-${{WSO2AM_VERSION}} pack** by replacing generated .jar or .war file
+6. **Update wso2am-${WSO2AM_VERSION} pack** by replacing generated .jar or .war file
 7. **Testing** (ONLY for backend repositories - skip for frontend)
 8. **Zip the updated wso2am pack**
 9. **Commit changes** to that NEW branch (verify directory first)
@@ -455,116 +454,6 @@ IMPORTANT CONSIDERATIONS
 * Always take a system-wide view before making changes
 * Maintain backward compatibility
 * Follow existing code styles
-
-=============
-EXAMPLE WORKFLOW (apim-apps)
-=============
-
-```bash
-# 1. Clone
-git clone https://github.com/ranuka-laksika/apim-apps.git
-
-# 2. Navigate into the repository and VERIFY
-cd /home/runner/work/api-manager/api-manager/apim-apps
-pwd  # VERIFY: Should output /home/runner/work/api-manager/api-manager/apim-apps
-
-# 3. Configure Git (after verifying directory)
-pwd  # VERIFY you are in the repository
-git config user.name "ranuka-laksika"
-git config user.email "ranukalaksika@gmail.com"
-
-# 3a. Configure remote URL with GitHub token (CRITICAL for push authentication)
-git remote set-url origin https://${GITHUB_TOKEN}@github.com/ranuka-laksika/apim-apps.git
-git remote -v  # VERIFY the remote URL is configured correctly
-
-# 4. Create Branch (after verifying directory)
-pwd  # VERIFY you are in the repository
-git checkout -b fix_issue_123_$(date +%s) origin/{default_branch of the repository}
-
-# 5. Make changes (after verifying directory)
-pwd  # VERIFY you are in the repository
-# ... apply fix ...
-
-# 6. Build (WAIT FOR "BUILD SUCCESS") (after verifying directory)
-pwd  # VERIFY you are in the repository
-mvn clean install -DskipTests
-# WAIT until you see "BUILD SUCCESS"
-
-# 7. Replace artifacts in wso2am-${{WSO2AM_VERSION}} pack
-# ... find and replace .war files ...
-
-# 8. Testing (depends on repository type)
-# For FRONTEND (apim-apps): NO TESTING REQUIRED - skip to step 9
-# For BACKEND (carbon-apimgt, product-apim):
-#   - Run the updated wso2am pack
-#   - Test with relevant APIs
-#   - If issue NOT solved: revert, fix again, rebuild, replace, test again
-#   - Repeat until solved
-
-# 9. Zip and upload
-zip -r wso2am-${{WSO2AM_VERSION}}-issue-{issue_number}.zip wso2am-${{WSO2AM_VERSION}}/
-
-# 10. Commit and Push (after verifying directory)
-pwd  # VERIFY you are in the repository before git operations
-git add .
-# IMPORTANT: Commit message includes issue number (#123) but NOT issue URL
-git commit -m "Fix issue #123: Brief description of the changes made"
-pwd  # VERIFY you are in the repository before pushing
-git push origin fix_issue_123_{timestamp}
-
-# 11. Create PR (use GitHub token)
-# CRITICAL: Get the GitHub Actions run URL first
-ACTIONS_RUN_URL="https://github.com/ranuka-laksika/api-manager/actions/runs/${GITHUB_RUN_ID}"
-echo "Actions Run URL: $ACTIONS_RUN_URL"
-
-# Create PR with the Actions run URL in the description
-gh pr create --title "Fix issue #123: Brief description" --body "Fixes issue #123
-
-**Issue URL**: https://github.com/ranuka-laksika/api-manager/issues/123
-
-## Changes Made
-- Modified [files/components]
-- [Description of changes]
-
-## Build Information
-- Built using Java 11 and Maven 3.6.3
-- Generated artifacts: [list .war or .jar files]
-
-## Artifact Replacement
-- Replaced [artifact name] in wso2am-${{WSO2AM_VERSION}} pack
-- Location: [path in the pack]
-
-## Modified wso2am-${{WSO2AM_VERSION}} Pack (GitHub Actions Artifact)
-The complete modified \`wso2am-${{WSO2AM_VERSION}}\` pack with all updated artifacts has been uploaded as a GitHub Actions artifact.
-
-**Download Link:**
-🔗 **[Download from GitHub Actions Run]($ACTIONS_RUN_URL)**
-
-**Artifact Details:**
-- **Artifact Name**: \`wso2am-${{WSO2AM_VERSION}}-issue-123.zip\`
-- **Location**: Available in the GitHub Actions workflow run linked above
-- **How to Download**:
-  1. Click the GitHub Actions run link above
-  2. Scroll down to the \"Artifacts\" section at the bottom of the page
-  3. Download the artifact: \`wso2am-${{WSO2AM_VERSION}}-issue-123.zip\`
-  4. Extract and use the modified pack directly
-
-**What's included:**
-- All replaced \`.war\`/\`.jar\` files from the build
-- Complete \`wso2am-${{WSO2AM_VERSION}}\` directory structure
-- Ready to use without any additional build steps
-
-## Testing
-- [Testing steps performed]"
-```
-
-**KEY POINTS FROM THIS EXAMPLE:**
-- `pwd` is used BEFORE every major operation to verify the current directory
-- ALL operations happen from within `/home/runner/work/api-manager/api-manager/apim-apps`
-- If `pwd` shows you're in the wrong directory, navigate back with `cd /home/runner/work/api-manager/api-manager/apim-apps`
-- Git operations (config, checkout, add, commit, push) MUST be done from within the repository directory
-- GitHub token MUST be configured in the remote URL for push operations to work
-- **CRITICAL**: PR description MUST include the GitHub Actions run URL (`https://github.com/ranuka-laksika/api-manager/actions/runs/${GITHUB_RUN_ID}`) where users can download the artifact
 
 ========================
 TROUBLESHOOTING
