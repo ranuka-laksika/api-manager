@@ -45,17 +45,116 @@ Changes in one repository can impact others, so consider the entire dependency g
 AGENT OBJECTIVE
 ===============
 
-**User Input:**
-- User provides the affected repository/repositories that need to be fixed
-- User may provide exact fix (apply it exactly) OR you determine the most accurate fix
-- If the issue is related to **more than one repository**, you must apply and verify the fix in **all related repositories**, not just one.
-- **CRITICAL - SEQUENTIAL REPOSITORY PROCESSING:**
-  * When multiple repositories are mentioned, you MUST work on them **sequentially in the order provided by the user**
-  * Complete the ENTIRE workflow for the first repository (clone → fix → build → replace artifacts → commit → push → create PR) before starting work on the next repository
-  * DO NOT work on multiple repositories in parallel
-  * Example: If user mentions "carbon-apimgt and product-apim", work on carbon-apimgt first, complete all steps, then work on product-apim
-- For example, if an issue affects both `carbon-apimgt` and `product-apim`, you must fix, build, and validate the changes in **both repositories** before proceeding.
-- Ensure all related repositories are functioning correctly after applying the fixes.
+**Understanding the Issue:**
+- Issue will specify the affected repository/repositories that need to be fixed
+- Issue may provide the exact fix OR you must determine the 100% accurate solution
+- **CRITICAL**: If the issue provides the exact fix, apply it EXACTLY as specified
+- **CRITICAL**: If the issue does NOT provide the exact fix, you MUST find the 100% accurate solution
+
+**Repository Types:**
+- **Frontend repositories**: apim-apps, api-developer-portal (generates .war files)
+- **Backend repositories**: carbon-apimgt, product-apim (generates .jar files)
+
+========================
+WORKFLOW FOR SINGLE REPOSITORY
+========================
+
+**If the issue affects ONLY ONE repository:**
+
+1. **Clone the repository** from ranuka-laksika organization
+2. **Apply the 100% accurate fix** in the correct location
+3. **Build the repository** completely (wait for BUILD SUCCESS)
+4. **Replace artifacts** in the downloaded wso2am pack
+
+5. **Determine if testing is required:**
+
+   **For FRONTEND issues (apim-apps, api-developer-portal):**
+   - **NO TESTING REQUIRED**
+   - Commit changes and create PR
+   - Zip the updated wso2am pack
+   - Upload as GitHub Actions artifact
+
+   **For BACKEND issues (carbon-apimgt, product-apim):**
+   - **TESTING IS MANDATORY**
+   - Run the updated wso2am pack
+   - Test by calling relevant APIs
+   - **If issue is SOLVED:**
+     * Commit changes and create PR
+     * Zip the updated wso2am pack
+     * Upload as GitHub Actions artifact
+   - **If issue is NOT SOLVED:**
+     * Go back to the repository
+     * Revert the earlier changes
+     * Apply new changes based on testing observations
+     * Build the repository again
+     * Replace artifacts in the wso2am pack again
+     * Run the pack and test again
+     * Repeat until the issue is solved
+     * Only then commit, create PR, and zip the pack
+
+========================
+WORKFLOW FOR MULTIPLE REPOSITORIES
+========================
+
+**If the issue affects MULTIPLE repositories:**
+
+**CRITICAL - Repository Processing Order:**
+- **ALWAYS work on FRONTEND repositories FIRST**, then BACKEND repositories
+- Even if the user provides repositories in a different order, prioritize frontend repos first
+- Example: If user says "carbon-apimgt and apim-apps", work on apim-apps (frontend) FIRST, then carbon-apimgt (backend)
+
+**Phase 1 - Process FRONTEND Repositories First:**
+1. **Identify and work on ALL FRONTEND repositories first** (apim-apps, api-developer-portal)
+2. For EACH frontend repository:
+   - Clone the repository
+   - Apply the fix
+   - Build the repository (wait for BUILD SUCCESS)
+   - Replace the generated artifacts (.war files) in the wso2am pack
+   - **Commit changes** to that repository
+   - **Push** to the unique branch
+   - **Create PR** for that repository
+   - **DO NOT zip the wso2am pack yet**
+3. The wso2am pack now contains all frontend artifacts
+
+**Phase 2 - Process BACKEND Repositories:**
+4. **After ALL frontend repositories are done**, work on BACKEND repositories (carbon-apimgt, product-apim)
+5. For EACH backend repository:
+   - Clone the repository
+   - Apply the fix
+   - Build the repository (wait for BUILD SUCCESS)
+   - Replace the generated artifacts (.jar files) in the **SAME wso2am pack** (which already has frontend artifacts)
+   - **TESTING IS MANDATORY** after replacing backend artifacts:
+     * Run the updated wso2am pack (with all frontend + backend artifacts)
+     * Test by calling relevant APIs
+     * **If issue is SOLVED:**
+       - Commit changes to that repository
+       - Push to the unique branch
+       - Create PR for that repository
+       - **DO NOT zip yet if there are more backend repos**
+     * **If issue is NOT SOLVED:**
+       - Go back to that repository
+       - Revert earlier changes and apply new changes
+       - Build that repository again
+       - Replace artifacts in the wso2am pack again
+       - Run the pack and test again
+       - Repeat until the issue is completely solved
+       - Then commit, push, and create PR
+
+**Phase 3 - Zip the wso2am Pack:**
+6. **ONLY after ALL repositories (frontend + backend) are fixed and PRs are created:**
+   - Zip the updated wso2am pack (with all artifacts from all repositories)
+   - Name: `wso2am-${{WSO2AM_VERSION}}-issue-${ISSUE_NUMBER}.zip`
+   - Upload as GitHub Actions artifact
+   - All PRs should reference this SAME artifact
+
+**Key Points for Multiple Repositories:**
+- **Process order**: FRONTEND repositories FIRST → BACKEND repositories SECOND
+- Frontend repos: Fix → Build → Replace artifacts → Commit → Push → Create PR (NO testing, NO zipping)
+- Backend repos: Fix → Build → Replace artifacts → TEST → Commit → Push → Create PR (NO zipping yet)
+- **ZIP ONLY ONCE** at the very end after ALL repositories are processed
+- ALL repositories share the SAME wso2am pack (accumulates all artifacts)
+- Each repository gets its own separate PR
+- All PRs reference the SAME final zipped artifact
 
 **CRITICAL WORKFLOW - FOLLOW THIS EXACTLY:**
 
@@ -126,22 +225,14 @@ AGENT OBJECTIVE
      * Modifying unrelated files ✗
 
 5. **Build (CRITICAL - WAIT FOR COMPLETE BUILD)**
-**IMPORTANT - READ BEFORE BUILDING:**
-   - When you try to build any repository, you first need to check the **README file** attached to that repository.
-   - The README file contains the **exact build instructions** for that repository.
-   - Follow those build instructions **precisely** to build the repository.
-   - If you encounter any issues during the build process, **record or save that issue**, fix it, and then **try building the repository again**.
-   - **Do not proceed with any further steps** until the repository has been successfully built.
-   - Without a successful build, you **must not perform any other operations** such as replacing artifacts, committing, or creating pull requests.
 
-    **IMPORTANT - READ BEFORE BUILDING:**
-   - When you try to build any repository, you first need to check the **README file** attached to that repository.
-   - The README file contains the **exact build instructions** for that repository.
-   - Follow those build instructions **precisely** to build the repository.
-   - If you encounter any issues during the build process, **record or save that issue**, fix it, and then **try building the repository again**.
-   - **Do not proceed with any further steps** until the repository has been successfully built.
-   - Without a successful build, you **must not perform any other operations** such as replacing artifacts, committing, or creating pull requests.
-   
+   **IMPORTANT - READ BEFORE BUILDING:**
+   - Check the **README file** in the repository for exact build instructions
+   - Follow those build instructions **precisely**
+   - If you encounter build issues, fix them and try building again
+   - **Do not proceed** until the repository has been successfully built
+
+   **Build Configuration:**
    - **VERIFY**: Confirm you are inside the cloned repository with `pwd` before building
    - Use Java 11 and Maven 3.6.3
    - Environment paths:
@@ -149,8 +240,7 @@ AGENT OBJECTIVE
      * JAVA_HOME: ${JAVA_HOME}
      * MAVEN_HOME: ${MAVEN_HOME}
      * NODE_PATH: ${NODE_PATH}
-   - **Build only necessary parts** (not whole repository)
-   - **Set timeout: 15-20 minutes minimum**
+   - **Set build timeout: 15-20 minutes minimum**
 
    **ABSOLUTE BLOCKING REQUIREMENT:**
    - **WAIT for COMPLETE build** - You MUST wait until ENTIRE build finishes
@@ -190,12 +280,34 @@ AGENT OBJECTIVE
    - **Important:** Files like `api#am#publisher.war` are different artifacts and should NOT be replaced when your generated file is `publisher.war`
    - Do NOT rebuild the pack after replacement
 
-7. **Zip wso2am-${{WSO2AM_VERSION}} pack*
-   - Zip entire updated `wso2am-${{WSO2AM_VERSION}}` pack(the pack which replace teh .jar or .war files)
-   - Name: `wso2am-${{WSO2AM_VERSION}}-issue-${ISSUE_NUMBER}.zip`
-    ** After upoload that updates wso2am-${{WSO2AM_VERSION}} pack then only you can commit and push the changes
+7. **Testing and Validation** (depends on repository type)
 
-8. **Commit and Push to the NEW Branch**
+   **For FRONTEND repositories (apim-apps, api-developer-portal):**
+   - **NO TESTING REQUIRED**
+   - Skip directly to step 8 (Zip the pack)
+
+   **For BACKEND repositories (carbon-apimgt, product-apim):**
+   - **TESTING IS MANDATORY**
+   - Run the updated wso2am-${{WSO2AM_VERSION}} pack
+   - Test by calling relevant APIs to verify the issue is resolved
+   - **If issue is SOLVED:**
+     * Proceed to step 8 (Zip the pack)
+   - **If issue is NOT SOLVED:**
+     * Go back to the cloned repository
+     * Revert the earlier changes
+     * Apply new changes based on testing observations
+     * Build the repository again (wait for BUILD SUCCESS)
+     * Replace artifacts in the wso2am pack again
+     * Run the pack and test again
+     * Repeat this cycle until the issue is completely solved
+     * Only then proceed to step 8
+
+8. **Zip wso2am-${{WSO2AM_VERSION}} pack**
+   - Zip entire updated `wso2am-${{WSO2AM_VERSION}}` pack (the pack which has the replaced .jar or .war files)
+   - Name: `wso2am-${{WSO2AM_VERSION}}-issue-${ISSUE_NUMBER}.zip`
+   - **IMPORTANT**: After uploading this artifact, you can proceed to commit and push the changes
+
+9. **Commit and Push to the NEW Branch**
    - **VERIFY**: Confirm you are inside the cloned repository with `pwd` before committing
    - **Commit your changes**:
      * `git add .`
@@ -209,7 +321,7 @@ AGENT OBJECTIVE
    - **IMPORTANT**: Push to the branch with timestamp, NOT to main/master
    - **ALL GIT OPERATIONS (add, commit, push) MUST BE DONE FROM WITHIN THE CLONED REPOSITORY DIRECTORY**
 
-9. **Create Pull Request from NEW Branch to Default Branch** (use GitHub token)
+10. **Create Pull Request from NEW Branch to Default Branch** (use GitHub token)
    - **CRITICAL**: Create PR in the SAME repository (ranuka-laksika/{repository})
    - **From**: The NEW branch with timestamp (e.g., `fix_issue_123_1710345600`)
    - **To**: Default branch (main/master) of the SAME repository
@@ -285,11 +397,6 @@ The complete modified `wso2am-${{WSO2AM_VERSION}}` pack with all updated artifac
 - [Testing steps performed]
 ```
 
-10. **Validate System-Wide Functionality**
-    - Confirm all affected repositories work as expected
-    - Run integration tests if possible
-    - Ensure no cross-repository regressions
-
 ========================
 IMPORTANT CONSIDERATIONS
 ========================
@@ -309,15 +416,33 @@ IMPORTANT CONSIDERATIONS
 - **Git operations will FAIL if you are in the wrong directory**
 
 **CRITICAL WORKFLOW SUMMARY:**
+
+**For SINGLE Repository:**
 1. **Clone from ranuka-laksika/{repository}** (user provides repository name)
 2. **Navigate into the repository** and verify with `pwd`
 3. **Create NEW unique branch** with timestamp: `fix_issue_{issue_number}_{timestamp}`
 4. **Make modifications** in that NEW branch (verify directory first)
 5. **Build from within the repository** (verify directory first)
-6. **Update wso2am-${{WSO2AM_VERSION}} pack** by replacing that generated .jar or .war file
-7. **Commit changes** to that NEW branch (verify directory first)
-8. **Push to that NEW branch** (NOT to main/master, verify directory first)
-9. **Create PR** from NEW branch → default branch of SAME repository
+6. **Update wso2am-${{WSO2AM_VERSION}} pack** by replacing generated .jar or .war file
+7. **Testing** (ONLY for backend repositories - skip for frontend)
+8. **Zip the updated wso2am pack**
+9. **Commit changes** to that NEW branch (verify directory first)
+10. **Push to that NEW branch** (NOT to main/master, verify directory first)
+11. **Create PR** from NEW branch → default branch of SAME repository
+
+**For MULTIPLE Repositories:**
+1. **Prioritize repository order: FRONTEND first, then BACKEND**
+2. **For EACH FRONTEND repository:**
+   - Clone → Navigate → Create branch → Fix → Build → Replace artifacts in wso2am pack
+   - Commit → Push → Create PR (NO testing, NO zipping)
+3. **For EACH BACKEND repository:**
+   - Clone → Navigate → Create branch → Fix → Build → Replace artifacts in SAME wso2am pack
+   - **Test the pack** (mandatory) → If not solved: revert, fix, rebuild, test again
+   - Commit → Push → Create PR (NO zipping yet)
+4. **After ALL repositories are done:**
+   - **Zip the wso2am pack ONCE** (with all artifacts)
+   - Upload as GitHub Actions artifact
+   - All PRs reference this SAME artifact
 
 **OTHER IMPORTANT POINTS:**
 * **ONLY modify existing files** - DO NOT create temp files, README files, or documentation files
@@ -326,11 +451,10 @@ IMPORTANT CONSIDERATIONS
 * **Wait for COMPLETE build** - do NOT search for .war/.jar files during build
 * **Exact file name matching**: When replacing .war/.jar files, ONLY replace files with exact name matches (not partial)
 * **Zip and upload** modified pack as GitHub Actions artifact
-* **Mention artifact** in EVERY PR with download link for the github artifcat
+* **Mention artifact** in EVERY PR with download link for the github artifact
 * Always take a system-wide view before making changes
 * Maintain backward compatibility
 * Follow existing code styles
-* Dependency flow: product-apim → carbon-apimgt → apim-apps → api-developer-portal → kubernetes-apim → samples-apim
 
 =============
 EXAMPLE WORKFLOW (apim-apps)
@@ -369,10 +493,18 @@ mvn clean install -DskipTests
 # 7. Replace artifacts in wso2am-${{WSO2AM_VERSION}} pack
 # ... find and replace .war files ...
 
-# 8. Zip and upload
+# 8. Testing (depends on repository type)
+# For FRONTEND (apim-apps): NO TESTING REQUIRED - skip to step 9
+# For BACKEND (carbon-apimgt, product-apim):
+#   - Run the updated wso2am pack
+#   - Test with relevant APIs
+#   - If issue NOT solved: revert, fix again, rebuild, replace, test again
+#   - Repeat until solved
+
+# 9. Zip and upload
 zip -r wso2am-${{WSO2AM_VERSION}}-issue-{issue_number}.zip wso2am-${{WSO2AM_VERSION}}/
 
-# 9. Commit and Push (after verifying directory)
+# 10. Commit and Push (after verifying directory)
 pwd  # VERIFY you are in the repository before git operations
 git add .
 # IMPORTANT: Commit message includes issue number (#123) but NOT issue URL
@@ -380,7 +512,7 @@ git commit -m "Fix issue #123: Brief description of the changes made"
 pwd  # VERIFY you are in the repository before pushing
 git push origin fix_issue_123_{timestamp}
 
-# 10. Create PR (use GitHub token)
+# 11. Create PR (use GitHub token)
 # CRITICAL: Get the GitHub Actions run URL first
 ACTIONS_RUN_URL="https://github.com/ranuka-laksika/api-manager/actions/runs/${GITHUB_RUN_ID}"
 echo "Actions Run URL: $ACTIONS_RUN_URL"
