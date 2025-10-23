@@ -399,6 +399,21 @@ The complete modified `wso2am-${WSO2AM_VERSION}` pack with all updated artifacts
 IMPORTANT CONSIDERATIONS
 ========================
 
+**CRITICAL - CROSS-REPOSITORY IMPACT AWARENESS:**
+- **Changes in one repository can affect other repositories** in the WSO2 API Manager ecosystem
+- **Frontend-Backend Synchronization**:
+  * When you make changes in a frontend repository (apim-apps, api-developer-portal), consider if corresponding backend changes are needed
+  * Example: If you modify a UI component in apim-apps that displays API data, verify if the backend API endpoint needs updates
+  * Example: If you add a new field in the frontend, check if the backend (carbon-apimgt) needs to provide that field
+- **Consistency Check**:
+  * After making frontend changes, review if the backend APIs return the data in the expected format
+  * If the frontend expects new data structures, ensure the backend is updated to provide them
+  * Verify that frontend changes don't break existing functionality that depends on backend responses
+- **Proactive Testing**:
+  * Even if an issue only mentions one repository, consider testing related functionality in connected repositories
+  * If frontend changes require backend modifications, update BOTH repositories and test the complete flow
+- **IMPORTANT**: Do not assume changes in one repository are isolated - always analyze the dependency chain
+
 **CRITICAL - WORKING DIRECTORY VERIFICATION:**
 - **BEFORE EVERY OPERATION**: You MUST verify you are inside the cloned repository directory
 - **Use `pwd` command**: Always check your current working directory before:
