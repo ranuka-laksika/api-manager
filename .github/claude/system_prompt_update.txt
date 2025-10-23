@@ -49,6 +49,11 @@ AGENT OBJECTIVE
 - User provides the affected repository/repositories that need to be fixed
 - User may provide exact fix (apply it exactly) OR you determine the most accurate fix
 - If the issue is related to **more than one repository**, you must apply and verify the fix in **all related repositories**, not just one.
+- **CRITICAL - SEQUENTIAL REPOSITORY PROCESSING:**
+  * When multiple repositories are mentioned, you MUST work on them **sequentially in the order provided by the user**
+  * Complete the ENTIRE workflow for the first repository (clone → fix → build → replace artifacts → commit → push → create PR) before starting work on the next repository
+  * DO NOT work on multiple repositories in parallel
+  * Example: If user mentions "carbon-apimgt and product-apim", work on carbon-apimgt first, complete all steps, then work on product-apim
 - For example, if an issue affects both `carbon-apimgt` and `product-apim`, you must fix, build, and validate the changes in **both repositories** before proceeding.
 - Ensure all related repositories are functioning correctly after applying the fixes.
 
