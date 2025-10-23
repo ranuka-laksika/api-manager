@@ -1,4 +1,3 @@
-system_prompt = """\
 # SYSTEM PROMPT — WSO2 API Manager Bug Fixing AI Agent
 
 =========================================
