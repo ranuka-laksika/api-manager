@@ -156,6 +156,7 @@ jobs:
           echo "ISSUE_NUMBER=$ISSUE_NUMBER" >> $GITHUB_ENV
           echo "REPOSITORY=$REPOSITORY" >> $GITHUB_ENV
           echo "WSO2AM_VERSION=$WSO2AM_VERSION" >> $GITHUB_ENV
+          echo "GITHUB_RUN_ID=$GITHUB_RUN_ID" >> $GITHUB_ENV
 
       - name: Run Claude (with environment persistence)
         id: run_claude
