@@ -50,8 +50,10 @@ AGENT OBJECTIVE
 - **CRITICAL**: If the issue provides the exact fix, apply it EXACTLY as specified
 - **CRITICAL**: If the issue does NOT provide the exact fix, you MUST find the 100% accurate solution
                 Before finding the accurate answer:-
-                       * Need to find the most similar two issue for this relevant issue in the wso2/api-manager repository from closed issues.
-                       * If there is similar issues then look for the PRs that already merged for that similar issues and get some idea from that PRs and try to find the accurate answer for the current issue.
+                       * **CRITICAL**: Need to find the most similar two issues for this relevant issue in the wso2/api-manager repository from **CLOSED issues ONLY**
+                       * **Search ONLY in CLOSED issues**: Do NOT look at open issues; focus exclusively on issues that have been CLOSED
+                       * **How to search**: Use GitHub search with `is:issue is:closed` filters in the wso2/api-manager repository
+                       * If there are similar CLOSED issues, then look for the PRs that already merged for those similar CLOSED issues and get some idea from those PRs and try to find the accurate answer for the current issue.
 
 **Repository Types:**
 - **Frontend repositories**: apim-apps, api-developer-portal (generates .war files)
@@ -67,8 +69,10 @@ WORKFLOW FOR SINGLE REPOSITORY
 2. **Apply the fix**:
    - If the user/issue specifies the exact fix: Apply it EXACTLY as specified
    - If the issue does NOT provide the exact fix: Find the 100% accurate solution
-     * Research similar closed issues in wso2/api-manager repository
-     * Review merged PRs for those similar issues
+     * **Research similar CLOSED issues ONLY** in wso2/api-manager repository
+     * Use GitHub search with `is:issue is:closed` filters to find similar CLOSED issues
+     * Do NOT look at open issues; focus exclusively on CLOSED issues
+     * Review merged PRs for those similar CLOSED issues
      * Use insights from those PRs to determine the accurate fix
 3. **Build the repository** completely (wait for BUILD SUCCESS)
 4. **Replace artifacts** in the downloaded wso2am pack
@@ -114,7 +118,7 @@ WORKFLOW FOR MULTIPLE REPOSITORIES
    - Clone the repository
    - Apply the fix:
      * If exact fix provided: Apply it EXACTLY as specified
-     * If no exact fix: Research similar closed issues in wso2/api-manager, review merged PRs, and determine accurate solution
+     * If no exact fix: Research similar **CLOSED issues ONLY** in wso2/api-manager repository (use `is:issue is:closed` filters), review merged PRs for those CLOSED issues, and determine accurate solution
    - Build the repository (wait for BUILD SUCCESS)
    - Replace the generated artifacts (.war files) in the wso2am pack:
      * Remove existing folder → Copy .war file → Unzip to create new folder
@@ -131,7 +135,7 @@ WORKFLOW FOR MULTIPLE REPOSITORIES
    - Clone the repository
    - Apply the fix:
      * If exact fix provided: Apply it EXACTLY as specified
-     * If no exact fix: Research similar closed issues in wso2/api-manager, review merged PRs, and determine accurate solution
+     * If no exact fix: Research similar **CLOSED issues ONLY** in wso2/api-manager repository (use `is:issue is:closed` filters), review merged PRs for those CLOSED issues, and determine accurate solution
    - Build the repository (wait for BUILD SUCCESS)
    - Replace the generated artifacts (.jar files) in the **SAME wso2am pack** (pack coming from the frontend side updated artifacts):
      * Replace .jar file directly (no unzipping needed)
@@ -242,9 +246,11 @@ WORKFLOW FOR MULTIPLE REPOSITORIES
    - **CRITICAL - Finding the Accurate Solution:**
      - If the issue does NOT provide the exact fix, you MUST find the 100% accurate solution
      - Before determining the fix:
-       * Find the most similar two issues for this relevant issue in the wso2/api-manager repository from closed issues
-       * If there are similar issues, look for the PRs that were already merged for those similar issues
-       * Get insights from those PRs and use them to find the accurate answer for the current issue
+       * **Find the most similar two issues for this relevant issue in the wso2/api-manager repository from CLOSED issues ONLY**
+       * **CRITICAL**: Search ONLY in CLOSED issues (use `is:issue is:closed` filter on GitHub)
+       * **Do NOT look at open issues** - focus exclusively on issues that have been CLOSED and resolved
+       * If there are similar CLOSED issues, look for the PRs that were already merged for those similar CLOSED issues
+       * Get insights from those merged PRs and use them to find the accurate answer for the current issue
      - This research step is MANDATORY when the exact fix is not provided
 
    **CRITICAL - ONLY MODIFY EXISTING FILES:**
@@ -278,13 +284,23 @@ WORKFLOW FOR MULTIPLE REPOSITORIES
      * NODE_PATH: ${NODE_PATH}
    - **Set build timeout: 10-15 minutes minimum**
 
+   **Build Command:**
+   - **CRITICAL**: Always skip tests during the build to save time
+   - **Use this command**: `mvn clean install -DskipTests`
+   - **Why skip tests**: Tests are not required for generating artifacts; they only increase build time
+   - **If README specifies a different command**: Add `-DskipTests` flag to skip tests
+   - **Example commands**:
+     * Standard build: `mvn clean install -DskipTests`
+     * With profiles: `mvn clean install -DskipTests -P profile-name`
+     * Custom goals: `mvn clean package -DskipTests`
+
    **ABSOLUTE BLOCKING REQUIREMENT:**
    - **WAIT for COMPLETE build** - You MUST wait until ENTIRE build finishes
    - **Do NOT proceed while build is IN PROGRESS**
    - **WAIT for "BUILD SUCCESS" message** - Do NOT move forward until you see this
    - **DO NOT search for .war/.jar files** while building
    - If timeout expires and still building: INCREASE timeout and continue WAITING
-   - If build errors: Fix issues, then rebuild with same timeout
+   - If build errors: Fix issues, then rebuild with same timeout and `-DskipTests` flag
    - **ONLY after "BUILD SUCCESS"** can you find and replace .war/.jar files
 
 6. **Replace Artifacts in wso2am-${WSO2AM_VERSION} Pack** (ONLY after BUILD SUCCESS)
