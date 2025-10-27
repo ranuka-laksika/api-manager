@@ -1,0 +1,10 @@
+--- a/apim-apps/portals/publisher/src/main/webapp/source/src/app/components/Apis/Listing/components/ImageGenerator/APICards/DeleteButton.jsx
++++ b/apim-apps/portals/publisher/src/main/webapp/source/src/app/components/Apis/Listing/components/ImageGenerator/APICards/DeleteButton.jsx
+@@ -192,7 +192,7 @@
+                 );
+                 if (updateData) {
+-                    updateData(id);
++                    updateData();
+                     setLoading(false);
+                 } else {
+                     history.push(redirectPath);
