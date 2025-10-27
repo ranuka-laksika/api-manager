@@ -53,8 +53,6 @@ AGENT OBJECTIVE
                        * Need to find the most similar two issue for this relevant issue in the wso2/api-manager repository from closed issues.
                        * If there is similar issues then look for the PRs that already merged for that similar issues and get some idea from that PRs and try to find the accurate answer for the current issue.
 
-
-
 **Repository Types:**
 - **Frontend repositories**: apim-apps, api-developer-portal (generates .war files)
 - **Backend repositories**: carbon-apimgt, product-apim (generates .jar files)
@@ -84,12 +82,11 @@ WORKFLOW FOR SINGLE REPOSITORY
 
    **For BACKEND issues (carbon-apimgt, product-apim):**
    - **TESTING IS MANDATORY**
-   - Run the updated wso2am pack which is wso2am pack replaced with the generaetd artificats after fixing the issue and built the affected repository repostiory.
+   - Run the updated wso2am pack which is wso2am pack replaced with the generaetd artificats after fixing the issue and built the affected repository.
    - Test by calling relevant APIs
    - **If issue is SOLVED:**
      * Commit changes and create PR
      * Zip the updated wso2am pack (This is the naming convention should used for the zip: `wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip`)
-     * Upload as GitHub Actions artifact
    - **If issue is NOT SOLVED:**
      * Go back to the repository
      * Revert the earlier changes
@@ -119,7 +116,9 @@ WORKFLOW FOR MULTIPLE REPOSITORIES
      * If exact fix provided: Apply it EXACTLY as specified
      * If no exact fix: Research similar closed issues in wso2/api-manager, review merged PRs, and determine accurate solution
    - Build the repository (wait for BUILD SUCCESS)
-   - Replace the generated artifacts (.war files) to the wso2am pack
+   - Replace the generated artifacts (.war files) in the wso2am pack:
+     * Remove existing folder → Copy .war file → Unzip to create new folder
+       Example:- Remove publisher folder → Copy publisher.war file → Unzip publisher.war file to create new publisher folder
    - **Commit changes** to that repository
    - **Push** to the unique branch
    - **Create PR** for that repository
@@ -134,7 +133,8 @@ WORKFLOW FOR MULTIPLE REPOSITORIES
      * If exact fix provided: Apply it EXACTLY as specified
      * If no exact fix: Research similar closed issues in wso2/api-manager, review merged PRs, and determine accurate solution
    - Build the repository (wait for BUILD SUCCESS)
-   - Replace the generated artifacts (.jar files) in the **SAME wso2am pack** (pack coming from the frontend side updated artifacts)
+   - Replace the generated artifacts (.jar files) in the **SAME wso2am pack** (pack coming from the frontend side updated artifacts):
+     * Replace .jar file directly (no unzipping needed)
    - **TESTING IS MANDATORY** after replacing backend artifacts:
      * Run the updated wso2am pack (with all frontend + backend artifacts)
      * Test by calling relevant APIs
@@ -160,8 +160,8 @@ WORKFLOW FOR MULTIPLE REPOSITORIES
 
 **Key Points for Multiple Repositories:**
 - **Process order**: FRONTEND repositories FIRST → BACKEND repositories SECOND
-- Frontend repos: Fix → Build → Replace artifacts → Commit → Push → Create PR (NO testing, NO zipping)
-- Backend repos: Fix → Build → Replace artifacts → TEST → Commit → Push → Create PR (NO zipping yet)
+- Frontend repos: Fix → Build → Replace artifacts (remove folder, copy .war, unzip) → Commit → Push → Create PR (NO testing, NO zipping)
+- Backend repos: Fix → Build → Replace artifacts (replace .jar directly) → TEST → Commit → Push → Create PR (NO zipping yet)
 - **ZIP ONLY ONCE** at the very end after ALL repositories are processed
 - First repository will get the donwloaded wso2am pack and after that other repository will get the updates wso2am pack from the previous repository.
 - At last repostiory it should create the zip of that updates wso2am pack using this naming convention: wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip 
@@ -206,14 +206,34 @@ WORKFLOW FOR MULTIPLE REPOSITORIES
 
 4. **Apply Fix**
 
-   - **IMPORTANT NEW STEP FOR BACKEND ISSUES:**
-     - If the issue relates to backend repositories (e.g., `carbon-apimgt`, `product-apim`):
-       1. Before applying any fix, you MUST first verify if the issue still exists.
-       2. To do this, run the current `wso2am-${WSO2AM_VERSION}` pack.
-       3. Start and run the pack, then test the relevant APIs to confirm the presence of the reported issue.
-       4. If the issue is NOT reproducible (i.e., it no longer exists), DO NOT proceed with the fix.
-       5. Only if the issue persists, continue to apply the fix.
-     - This step prevents unnecessary fixes on resolved or non-existent issues.
+   **CRITICAL - BACKEND ISSUE VERIFICATION (MANDATORY FOR BACKEND REPOSITORIES):**
+   - **If the issue relates to backend repositories** (e.g., `carbon-apimgt`, `product-apim`):
+
+     **STEP 1 - Verify Issue Still Exists:**
+     1. **BEFORE applying any fix**, you MUST first verify if the issue still exists
+     2. Download and extract the `wso2am-${WSO2AM_VERSION}` pack if not already available
+     3. **Start and run the pack**:
+        - Navigate to `wso2am-${WSO2AM_VERSION}/bin`
+        - Start the server (e.g., `./wso2server.sh` on Linux/Mac or `wso2server.bat` on Windows)
+        - Wait for the server to start completely
+     4. **Test the issue** by calling the relevant functions/APIs mentioned in the issue:
+        - Use the exact steps described in the issue to reproduce the problem
+        - Test all relevant API endpoints or functions
+        - Document the observed behavior
+     5. **Decision Point**:
+        - **If the issue is NOT reproducible** (i.e., it no longer exists):
+          * DO NOT proceed with any fix
+          * Stop the server
+          * Report that the issue cannot be reproduced and provide details of your testing
+          * DO NOT create any commits or PRs
+        - **If the issue IS reproducible** (i.e., it still exists):
+          * Stop the server
+          * Document the exact behavior observed
+          * Proceed to STEP 2 to apply the fix
+     6. **This verification step prevents unnecessary fixes on already-resolved or non-existent issues**
+
+     **STEP 2 - Apply the Fix (ONLY if issue was confirmed in STEP 1):**
+     - Now proceed with applying the fix as described below
 
    - **VERIFY**: Confirm you are inside the cloned repository with `pwd` before making changes
    - If user specified exact fix: Apply it exactly
@@ -234,10 +254,6 @@ WORKFLOW FOR MULTIPLE REPOSITORIES
    - **DO NOT create documentation files** unless the issue specifically requires it
    - **DO NOT create test files** unless the issue specifically requires it
    - **ONLY modify the existing source code files** that contain the bug
-   - Focus on fixing the bug in the minimal number of files necessary
-   - **Example - What to do:**
-     * Issue: "Null pointer exception in TableView.jsx" → Modify ONLY TableView.jsx ✓
-     * Issue: "API authentication fails" → Modify ONLY the authentication handler file ✓
    - **Example - What NOT to do:**
      * Creating README.md to document the fix ✗
      * Creating temp files for testing ✗
@@ -260,7 +276,7 @@ WORKFLOW FOR MULTIPLE REPOSITORIES
      * JAVA_HOME: ${JAVA_HOME}
      * MAVEN_HOME: ${MAVEN_HOME}
      * NODE_PATH: ${NODE_PATH}
-   - **Set build timeout: 15-20 minutes minimum**
+   - **Set build timeout: 10-15 minutes minimum**
 
    **ABSOLUTE BLOCKING REQUIREMENT:**
    - **WAIT for COMPLETE build** - You MUST wait until ENTIRE build finishes
@@ -275,28 +291,46 @@ WORKFLOW FOR MULTIPLE REPOSITORIES
    - Locate generated files:
      * Frontend changes (apim-apps, api-developer-portal) → `.war` files
      * Backend changes (carbon-apimgt, product-apim) → `.jar` files
-   - Replace in `wso2am-${WSO2AM_VERSION}` pack:
+   - Target locations in `wso2am-${WSO2AM_VERSION}` pack:
      * Frontend → `wso2am-${WSO2AM_VERSION}/repository/deployment/server/webapps/`
      * Backend → `wso2am-${WSO2AM_VERSION}/repository/components/plugins/` or `dropins/`
 
-   **CRITICAL - EXACT FILE NAME MATCHING:**
-   - **ONLY replace files with EXACTLY matching names** - NOT partial matches
-   - Generated file name MUST match the target file name EXACTLY
-   - **Example - CORRECT:**
-     * Generated: `publisher.war` → Replace: `publisher.war` ✓
-     * Generated: `devportal.war` → Replace: `devportal.war` ✓
-     * Generated: `admin.war` → Replace: `admin.war` ✓
-   - **Example - INCORRECT (DO NOT DO THIS):**
-     * Generated: `publisher.war` → DO NOT replace: `api#am#publisher.war` ✗
-     * Generated: `publisher.war` → DO NOT replace: `api#am#publisher#v4.5.0.war` ✗
-     * Generated: `admin.war` → DO NOT replace: `api#am#admin.war` ✗
-   - **Verification Steps:**
+   **CRITICAL - FRONTEND .war FILE REPLACEMENT PROCESS:**
+   - **IMPORTANT**: For frontend `.war` files, you must replace the FOLDER, not the .war file
+   - **Process for Frontend Artifacts:**
      1. Note the exact name of your generated artifact (e.g., `publisher.war`)
-     2. Navigate to the WSO2AM pack directory
-     3. List files: `ls -lh` to see all files
-     4. Find the file with the EXACT same name (not similar, EXACT)
-     5. Remove only that exact file: `rm publisher.war`
-     6. Copy your generated file: `cp /path/to/publisher.war .`
+     2. Navigate to `wso2am-${WSO2AM_VERSION}/repository/deployment/server/webapps/`
+     3. **Remove the existing FOLDER** with the matching name (without .war extension):
+        * Example: If generated file is `publisher.war`, remove the `publisher` folder
+        * Command: `rm -rf publisher`
+     4. **Copy the new .war file** to the webapps directory:
+        * Command: `cp /path/to/publisher.war .`
+     5. **Unzip the .war file** to create the new folder:
+        * Command: `unzip publisher.war -d publisher`
+        * This extracts the contents into a new `publisher` folder
+     6. **(Optional) Remove the .war file after extraction** if desired:
+        * Command: `rm publisher.war`
+
+   - **Example - Complete Frontend Replacement Process:**
+     * Generated: `publisher.war`
+     * Remove folder: `rm -rf wso2am-${WSO2AM_VERSION}/repository/deployment/server/webapps/publisher`
+     * Copy war: `cp publisher.war wso2am-${WSO2AM_VERSION}/repository/deployment/server/webapps/`
+     * Unzip: `cd wso2am-${WSO2AM_VERSION}/repository/deployment/server/webapps/ && unzip publisher.war -d publisher`
+
+   - **Example - Complete Process for Multiple Frontend Files:**
+     * For `devportal.war`: Remove `devportal` folder → Copy `devportal.war` → Unzip to `devportal` folder
+     * For `admin.war`: Remove `admin` folder → Copy `admin.war` → Unzip to `admin` folder
+
+   **BACKEND .jar FILE REPLACEMENT PROCESS:**
+   - **For backend `.jar` files, replace the file directly** (no unzipping needed)
+   - **Process for Backend Artifacts:**
+     1. Note the exact name of your generated artifact (e.g., `org.wso2.carbon.apimgt.xxx.jar`)
+     2. Navigate to `wso2am-${WSO2AM_VERSION}/repository/components/plugins/` or `dropins/`
+     3. Find and remove the existing .jar file with EXACT matching name
+     4. Copy your generated .jar file to that location
+
+   **CRITICAL - EXACT NAME MATCHING:**
+   - Generated file name MUST match the target folder/file name EXACTLY
    - **Important:** Files like `api#am#publisher.war` are different artifacts and should NOT be replaced when your generated file is `publisher.war`
    - Do NOT rebuild the pack after replacement
 
@@ -325,7 +359,6 @@ WORKFLOW FOR MULTIPLE REPOSITORIES
 8. **Zip wso2am-${WSO2AM_VERSION} pack**
    - Zip entire updated `wso2am-${WSO2AM_VERSION}` pack (the pack which has the replaced .jar or .war files)
    - Name: `wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip`
-   - **IMPORTANT**: After uploading this artifact, you can proceed to commit and push the changes
 
 9. **Commit and Push to the NEW Branch**
    - **VERIFY**: Confirm you are inside the cloned repository with `pwd` before committing
@@ -443,7 +476,9 @@ IMPORTANT CONSIDERATIONS
 3. **Create NEW unique branch** with timestamp: `fix_issue_{issue_number}_{timestamp}`
 4. **Make modifications** in that NEW branch (verify directory first)
 5. **Build from within the repository** (verify directory first)
-6. **Update wso2am-${WSO2AM_VERSION} pack** by replacing generated .jar or .war file
+6. **Update wso2am-${WSO2AM_VERSION} pack**:
+   - Frontend (.war): Remove folder → Copy .war → Unzip to create new folder
+   - Backend (.jar): Replace .jar file directly
 7. **Testing** (ONLY for backend repositories - skip for frontend)
 8. **Zip the updated wso2am pack**
 9. **Commit changes** to that NEW branch (verify directory first)
@@ -453,10 +488,10 @@ IMPORTANT CONSIDERATIONS
 **For MULTIPLE Repositories:**
 1. **Prioritize repository order: FRONTEND first, then BACKEND**
 2. **For EACH FRONTEND repository:**
-   - Clone → Navigate → Create branch → Fix → Build → Replace artifacts in wso2am pack
+   - Clone → Navigate → Create branch → Fix → Build → Replace artifacts in wso2am pack (remove folder, copy .war, unzip)
    - Commit → Push → Create PR (NO testing, NO zipping)
 3. **For EACH BACKEND repository:**
-   - Clone → Navigate → Create branch → Fix → Build → Replace artifacts in SAME wso2am pack
+   - Clone → Navigate → Create branch → Fix → Build → Replace artifacts in SAME wso2am pack (replace .jar directly)
    - **Test the pack** (mandatory) → If not solved: revert, fix, rebuild, test again
    - Commit → Push → Create PR (NO zipping yet)
 4. **After ALL repositories are done:**
@@ -469,9 +504,11 @@ IMPORTANT CONSIDERATIONS
 * **Fix the bug in minimal files** - Only change files that are directly related to the bug
 * **Build is BLOCKING**: You CANNOT proceed without "BUILD SUCCESS"
 * **Wait for COMPLETE build** - do NOT search for .war/.jar files during build
-* **Exact file name matching**: When replacing .war/.jar files, ONLY replace files with exact name matches (not partial)
-* **Zip and upload** modified pack as GitHub Actions artifact
-* **Mention artifact** in EVERY PR with download link for the github artifact
+* **Artifact replacement**:
+  - Frontend (.war): Remove existing folder → Copy .war file → Unzip to create new folder (exact name matching)
+  - Backend (.jar): Replace .jar file directly (exact name matching)
+* **Zip** modified pack.
+* **Mention action run link** in EVERY PR with github action running link
 * Always take a system-wide view before making changes
 * Maintain backward compatibility
 * Follow existing code styles
