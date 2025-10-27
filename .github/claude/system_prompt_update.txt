@@ -297,29 +297,55 @@ WORKFLOW FOR MULTIPLE REPOSITORIES
 
    **CRITICAL - FRONTEND .war FILE REPLACEMENT PROCESS:**
    - **IMPORTANT**: For frontend `.war` files, you must replace the FOLDER, not the .war file
+   - **CRITICAL - EXACT NAME MATCHING REQUIREMENT:**
+     * You MUST verify the exact name of the generated .war file
+     * You MUST replace ONLY the folder that has the EXACT SAME NAME (without .war extension)
+     * **DO NOT replace with similarly named files**:
+       - If generated file is `publisher.war` → Replace ONLY the `publisher` folder
+       - If generated file is `admin.war` → Replace ONLY the `admin` folder
+       - If generated file is `devportal.war` → Replace ONLY the `devportal` folder
+     * **WRONG APPROACH - DO NOT DO THIS:**
+       - ✗ Generated: `publisher.war` → Replacing `api#am#publisher.war` (WRONG - different artifact)
+       - ✗ Generated: `admin.war` → Replacing `admin-portal.war` (WRONG - different artifact)
+       - ✗ Replacing any file that contains additional words or characters beyond the exact base name
+     * **CORRECT APPROACH:**
+       - ✓ Generated: `publisher.war` → Replace `publisher` folder ONLY
+       - ✓ Generated: `admin.war` → Replace `admin` folder ONLY
+       - ✓ Generated: `devportal.war` → Replace `devportal` folder ONLY
+
    - **Process for Frontend Artifacts:**
-     1. Note the exact name of your generated artifact (e.g., `publisher.war`)
-     2. Navigate to `wso2am-${WSO2AM_VERSION}/repository/deployment/server/webapps/`
-     3. **Remove the existing FOLDER** with the matching name (without .war extension):
+     1. **Identify the exact name** of your generated artifact (e.g., `publisher.war`)
+     2. **Verify the target** - The folder name in wso2am pack MUST match exactly (without .war extension)
+        * Example: For `publisher.war`, verify that `wso2am-${WSO2AM_VERSION}/repository/deployment/server/webapps/publisher` folder exists
+        * If the exact folder name does NOT exist, you have the WRONG artifact or are looking in the WRONG location
+     3. Navigate to `wso2am-${WSO2AM_VERSION}/repository/deployment/server/webapps/`
+     4. **Remove the existing FOLDER** with the EXACT matching name (without .war extension):
         * Example: If generated file is `publisher.war`, remove the `publisher` folder
         * Command: `rm -rf publisher`
-     4. **Copy the new .war file** to the webapps directory:
+     5. **Copy the new .war file** to the webapps directory:
         * Command: `cp /path/to/publisher.war .`
-     5. **Unzip the .war file** to create the new folder:
+     6. **Unzip the .war file** to create the new folder:
         * Command: `unzip publisher.war -d publisher`
-        * This extracts the contents into a new `publisher` folder
-     6. **(Optional) Remove the .war file after extraction** if desired:
+        * This extracts the contents into a new `publisher` folder with the EXACT same name
+     7. **(Optional) Remove the .war file after extraction** if desired:
         * Command: `rm publisher.war`
 
    - **Example - Complete Frontend Replacement Process:**
      * Generated: `publisher.war`
+     * Verify target exists: Check if `wso2am-${WSO2AM_VERSION}/repository/deployment/server/webapps/publisher` folder exists
      * Remove folder: `rm -rf wso2am-${WSO2AM_VERSION}/repository/deployment/server/webapps/publisher`
      * Copy war: `cp publisher.war wso2am-${WSO2AM_VERSION}/repository/deployment/server/webapps/`
      * Unzip: `cd wso2am-${WSO2AM_VERSION}/repository/deployment/server/webapps/ && unzip publisher.war -d publisher`
+     * Result: New `publisher` folder created with the exact same name
 
    - **Example - Complete Process for Multiple Frontend Files:**
-     * For `devportal.war`: Remove `devportal` folder → Copy `devportal.war` → Unzip to `devportal` folder
-     * For `admin.war`: Remove `admin` folder → Copy `admin.war` → Unzip to `admin` folder
+     * For `devportal.war`: Verify `devportal` folder exists → Remove `devportal` folder → Copy `devportal.war` → Unzip to `devportal` folder
+     * For `admin.war`: Verify `admin` folder exists → Remove `admin` folder → Copy `admin.war` → Unzip to `admin` folder
+
+   - **VERIFICATION STEP (MANDATORY):**
+     * After replacement, verify the folder name matches EXACTLY with the original folder name
+     * Check that the folder structure inside is correct
+     * DO NOT proceed if the names don't match exactly
 
    **BACKEND .jar FILE REPLACEMENT PROCESS:**
    - **For backend `.jar` files, replace the file directly** (no unzipping needed)
@@ -332,6 +358,16 @@ WORKFLOW FOR MULTIPLE REPOSITORIES
    **CRITICAL - EXACT NAME MATCHING:**
    - Generated file name MUST match the target folder/file name EXACTLY
    - **Important:** Files like `api#am#publisher.war` are different artifacts and should NOT be replaced when your generated file is `publisher.war`
+   - **VERIFICATION BEFORE REPLACEMENT:**
+     * For frontend (.war files): Check that a folder with the EXACT matching name (without .war) exists in `webapps/`
+     * For backend (.jar files): Check that a file with the EXACT matching name exists in `plugins/` or `dropins/`
+     * If EXACT match is NOT found, you have the WRONG artifact or are looking in the WRONG location
+     * DO NOT replace files with similar but not identical names
+   - **Examples of EXACT matching:**
+     * ✓ Generated: `publisher.war` → Replace: `publisher` folder (CORRECT)
+     * ✓ Generated: `org.wso2.carbon.apimgt.api.jar` → Replace: `org.wso2.carbon.apimgt.api.jar` file (CORRECT)
+     * ✗ Generated: `publisher.war` → Replace: `api#am#publisher.war` (WRONG - different artifact)
+     * ✗ Generated: `admin.war` → Replace: `admin-portal.war` (WRONG - different artifact)
    - Do NOT rebuild the pack after replacement
 
 7. **Testing and Validation** (depends on repository type)
