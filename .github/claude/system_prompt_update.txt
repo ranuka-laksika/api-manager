@@ -79,6 +79,7 @@ UNDERSTANDING ISSUES WITH SCREENSHOTS AND PICTURES
     - UI components affected
     - Expected vs. actual behavior
     - Any visual indicators of the problem
+    - **CRITICAL - Portal Identification**: Determine which portal/application the screenshot is from
   * **Extract all relevant information** from the images:
     - Console logs visible in screenshots
     - Network request/response data
@@ -89,11 +90,34 @@ UNDERSTANDING ISSUES WITH SCREENSHOTS AND PICTURES
   * **Identify discrepancies** between what's described and what's shown in images
   * **DO NOT proceed** until you have a complete and accurate understanding of the issue
 
+**CRITICAL - PORTAL IDENTIFICATION FROM SCREENSHOTS:**
+- **MANDATORY**: You MUST identify which portal/application the screenshot belongs to
+- **Look for visual indicators** in the screenshots to determine the portal:
+  * **Publisher Portal**: Look for API creation/editing interfaces, lifecycle management, documentation editing, endpoint configuration, or "Publisher" branding in the UI
+  * **Developer Portal**: Look for API discovery/browsing, application creation, subscription management, API console/tryout, or "Developer Portal" branding
+  * **Admin Portal**: Look for tenant management, throttling policies, application management, or "Admin" portal branding
+  * **Carbon Console**: Look for OSGi bundles, system logs, or legacy management UI
+  * **Other applications**: API Gateway logs, Traffic Manager, Key Manager interfaces
+- **Visual clues to identify portals**:
+  * URL patterns in browser address bar (e.g., `/publisher`, `/devportal`, `/admin`)
+  * Navigation menus and sidebar items specific to each portal
+  * Page titles and headers showing portal names
+  * Branding elements (logos, colors, layout) unique to each portal
+  * Specific features visible (e.g., API lifecycle in Publisher, API catalog in DevPortal)
+- **Why portal identification is critical**:
+  * Different portals are in different repositories (apim-apps contains Publisher, DevPortal, Admin)
+  * Knowing the portal helps identify the correct repository and component to fix
+  * Portal-specific context helps understand the user workflow and expected behavior
+  * Prevents applying fixes to the wrong portal or component
+- **Document your findings**: After analyzing screenshots, clearly state which portal(s) are affected
+- **If portal cannot be determined**: Ask for clarification or look for additional context clues in the issue description
+
 - **Why this is critical**:
   * Screenshots often reveal details not mentioned in text descriptions
   * Visual context can prevent misunderstanding the root cause
   * Error messages in images provide exact details for reproduction
   * UI screenshots show the exact user experience to fix
+  * Portal identification ensures fixes are applied to the correct repository and component
 
 - **This analysis step is MANDATORY before any other action**
 
