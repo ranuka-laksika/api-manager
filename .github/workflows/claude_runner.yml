@@ -136,8 +136,6 @@ jobs:
           echo "JAVA_HOME=/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/11.0.28-6/x64" >> $GITHUB_ENV
           echo "MAVEN_HOME=/usr/share/maven" >> $GITHUB_ENV
           echo "NODE_PATH=/opt/hostedtoolcache/node/18.20.8/x64/bin" >> $GITHUB_ENV
-      - name: Insert RAG architecture
-        run: |
           
       - name: Prepare system prompt with environment variables
         id: prepare_prompt
