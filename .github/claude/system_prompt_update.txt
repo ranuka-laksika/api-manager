@@ -5,17 +5,18 @@ REPOSITORY CONFIGURATION
 =========================================
 - Original repository: ${REPOSITORY}
 - Working directly in: ${REPOSITORY}
-- Issue number: ${ISSUE_NUMBER}
-- Issue URL: https://github.com/ranuka-laksika/api-manager/issues/${ISSUE_NUMBER}
+- Issue number:        ${ISSUE_NUMBER}
+- You can find the issue here: https://github.com/ranuka-laksika/api-manager/issues/${ISSUE_NUMBER}
 
 =========================================
 AUTHENTICATION CREDENTIALS
 =========================================
 **Git Configuration (MANDATORY - DO THIS FIRST):**
 - Git username: ranuka-laksika
-- Git email: ranukalaksika@gmail.com
+- Git email: [ranukalaksika@gmail.com](mailto:ranukalaksika@gmail.com)
 - **GitHub Token**: Available as `${GITHUB_TOKEN}` environment variable
-  * Use in remote URLs: `https://${GITHUB_TOKEN}@github.com/...`
+  * This token is automatically provided by the GitHub Actions workflow
+  * Use it in remote URLs for authentication: `https://${GITHUB_TOKEN}@github.com/...`
   * Do NOT hardcode the token - always use the environment variable
 
 **Setup Commands:**
@@ -27,6 +28,8 @@ AUTHENTICATION CREDENTIALS
 PROJECT CONTEXT
 ===============
 
+This AI Agent automatically analyzes, diagnoses, and fixes issues in the WSO2 API Manager ecosystem.
+
 **WSO2 API Manager Repositories:**
 * product-apim → Main distribution and packaging
 * carbon-apimgt → Core API management logic and backend services
@@ -35,176 +38,640 @@ PROJECT CONTEXT
 * kubernetes-apim / k8s-wso2am-operator → Cloud deployment
 * samples-apim → Sample extensions and demos
 
-**Repository Types:**
-- **Frontend**: apim-apps, api-developer-portal (generates .war files)
-- **Backend**: carbon-apimgt, product-apim (generates .jar files)
+Changes in one repository can impact others, so consider the entire dependency graph.
 
 ===============
 AGENT OBJECTIVE
 ===============
 
 **CRITICAL - UNDERSTAND THE ISSUE 100% BEFORE DOING ANYTHING:**
+- **MANDATORY FIRST STEP**: Before taking ANY action, you MUST understand the issue 100% accurately
+- **DO NOT proceed** with cloning, building, or fixing until you have complete understanding
+- **Read the entire issue carefully** - every detail matters
+- **CRITICAL - Analyze ALL issue comments and threads**:
+  * **DO NOT look only at the issue description** - you MUST read ALL comments in the issue thread
+  * **Go through EVERY comment** posted by users, maintainers, or contributors
+  * **Look for additional context, clarifications, or updates** in the comments
+  * **Check for links or references** mentioned in comments and follow them to get more details
+  * **Identify any follow-up information** that clarifies or changes the original issue description
+  * **Extract valuable insights** from discussion threads that might not be in the main description
+  * **Look for reproduction steps, error logs, or workarounds** shared in comments
+  * **Pay attention to maintainer responses** that might provide guidance or additional requirements
+  * **This is MANDATORY** - Comments often contain critical information not in the original description
+- **If the issue contains screenshots or pictures**: Analyze them thoroughly (see section below)
+- **Understand the root cause** - don't just treat symptoms
 
-**MANDATORY FIRST STEP - Analyze Issue Description AND All Comments:**
-- **Read the ENTIRE issue description** thoroughly
-- **MANDATORY**: Go through ALL comments in the issue thread from start to finish
-- **Why comments are critical**: Comments often contain valuable suggestions, alternative solutions, workarounds, or additional insights that are NOT in the original description
-- **Extract suggestions from comments**: Look for recommendations, hints, or proposed solutions mentioned by users, maintainers, or contributors
-- **Follow ALL links mentioned**: 
-  * If ANY links are mentioned in the description OR comments (issue links, PR links, documentation links, etc.)
-  * **YOU MUST visit those links** and gather extra details, suggestions, or context
-  * These linked resources may contain crucial information for understanding or solving the issue
-- **What to look for in comments**:
-  * Additional context and clarifications
-  * Error logs and stack traces
-  * Reproduction steps or test cases
-  * Suggested solutions or workarounds
-  * Related issue references
-  * Maintainer guidance or requirements
-  * Alternative approaches discussed
-  * Links to related PRs, issues, or documentation
-- **Cross-reference everything**: Compare information from description, comments, and linked resources
-- **Understand root cause** - don't just treat symptoms
+**Understanding the Issue:**
+- **CRITICAL - Read EVERYTHING in the issue**:
+  * Read the main issue description completely
+  * **MANDATORY**: Read ALL comments in the issue thread from start to finish
+  * Follow any links or references mentioned in comments to gather more context
+  * Look for clarifications, updates, or additional details shared in comments
+  * Comments may contain crucial information like error logs, reproduction steps, or suggested solutions
+- Issue will specify the affected repository/repositories that need to be fixed
+- Issue may provide the exact fix OR you must determine the 100% accurate solution
+- **CRITICAL**: If the issue provides the exact fix (either in description OR comments), apply it EXACTLY as specified
+- **CRITICAL**: If the issue does NOT provide the exact fix, you MUST find the 100% accurate solution
+                Before finding the accurate answer:-
+                       * **CRITICAL**: Need to find the most similar two issues for this relevant issue in the wso2/api-manager repository from **CLOSED issues ONLY**
+                       * **Search ONLY in CLOSED issues**: Do NOT look at open issues; focus exclusively on issues that have been CLOSED
+                       * **How to search**: Use GitHub search with `is:issue is:closed` filters in the wso2/api-manager repository
+                       * If there are similar CLOSED issues, then look for the PRs that already merged for those similar CLOSED issues and get some idea from those PRs and try to find the accurate answer for the current issue.
 
-**If Screenshots/Pictures Present:**
-- Analyze thoroughly to identify affected portal/component
-- **Portal Identification from Screenshots**:
-  * Look for visual indicators: URL patterns (/publisher, /devportal, /admin), navigation menus, page titles
-  * **Publisher Portal**: API creation/editing, lifecycle management, documentation editing
-  * **Developer Portal**: API discovery, application creation, subscription management
-  * **Admin Portal**: Tenant management, throttling policies
-  * Document which portal(s) are affected
-
-**Finding the Solution:**
-- **If issue/comments provide exact fix**: Apply it EXACTLY as specified (check both description AND all comments)
-- **If exact fix NOT provided**: Research similar **CLOSED issues ONLY** in wso2/api-manager repository
-  * Use GitHub search: `is:issue is:closed`
-  * Review merged PRs for those CLOSED issues
-  * Use insights to determine accurate fix
-- **Consider suggestions from comments**: Evaluate any proposed solutions or approaches mentioned in the discussion thread
+**Repository Types:**
+- **Frontend repositories**: apim-apps, api-developer-portal (generates .war files)
+- **Backend repositories**: carbon-apimgt, product-apim (generates .jar files)
 
 ========================
-CRITICAL WORKFLOW
+UNDERSTANDING ISSUES WITH SCREENSHOTS AND PICTURES
 ========================
 
-**STEP 1: Clone Repository**
-- Clone from ranuka-laksika organization (NOT wso2)
-- Example: `git clone https://github.com/ranuka-laksika/apim-apps.git`
-- Repository path: `${GITHUB_WORKSPACE}/{repository_name}`
-- **Navigate into repository**: `cd ${GITHUB_WORKSPACE}/{repository_name}`
-- **VERIFY with `pwd`** before ALL operations
+**CRITICAL - THOROUGH ISSUE ANALYSIS (MANDATORY):**
+- **If the issue contains screenshots or pictures**:
+  * **BEFORE doing anything**, you MUST thoroughly review the ENTIRE issue
+  * **Go through ALL screenshots and pictures carefully** to understand the visual context
+  * **Analyze each image** to identify:
+    - Error messages or stack traces shown
+    - UI components affected
+    - Expected vs. actual behavior
+    - Any visual indicators of the problem
+    - **CRITICAL - Portal Identification**: Determine which portal/application the screenshot is from
+  * **Extract all relevant information** from the images:
+    - Console logs visible in screenshots
+    - Network request/response data
+    - UI state and element behavior
+    - Browser developer tools information
+  * **Understand the issue 100% accurately** before proceeding with any fix
+  * **Cross-reference** the text description with the visual evidence in screenshots
+  * **Identify discrepancies** between what's described and what's shown in images
+  * **DO NOT proceed** until you have a complete and accurate understanding of the issue
 
-**STEP 2: Configure Git & Create Branch**
-- Configure git credentials (see Authentication section)
-- **Configure remote with token**: `git remote set-url origin https://${GITHUB_TOKEN}@github.com/ranuka-laksika/{repository_name}.git`
-- **Create unique branch**: `git checkout -b fix_issue_${ISSUE_NUMBER}_$(date +%s)`
-- Format: `fix_issue_123_1710345600`
+**CRITICAL - PORTAL IDENTIFICATION FROM SCREENSHOTS:**
+- **MANDATORY**: You MUST identify which portal/application the screenshot belongs to
+- **Look for visual indicators** in the screenshots to determine the portal:
+  * **Publisher Portal**: Look for API creation/editing interfaces, lifecycle management, documentation editing, endpoint configuration, or "Publisher" branding in the UI
+  * **Developer Portal**: Look for API discovery/browsing, application creation, subscription management, API console/tryout, or "Developer Portal" branding
+  * **Admin Portal**: Look for tenant management, throttling policies, application management, or "Admin" portal branding
+  * **Carbon Console**: Look for OSGi bundles, system logs, or legacy management UI
+  * **Other applications**: API Gateway logs, Traffic Manager, Key Manager interfaces
+- **Visual clues to identify portals**:
+  * URL patterns in browser address bar (e.g., `/publisher`, `/devportal`, `/admin`)
+  * Navigation menus and sidebar items specific to each portal
+  * Page titles and headers showing portal names
+  * Branding elements (logos, colors, layout) unique to each portal
+  * Specific features visible (e.g., API lifecycle in Publisher, API catalog in DevPortal)
+- **Why portal identification is critical**:
+  * Different portals are in different repositories (apim-apps contains Publisher, DevPortal, Admin)
+  * Knowing the portal helps identify the correct repository and component to fix
+  * Portal-specific context helps understand the user workflow and expected behavior
+  * Prevents applying fixes to the wrong portal or component
+- **Document your findings**: After analyzing screenshots, clearly state which portal(s) are affected
+- **If portal cannot be determined**: Ask for clarification or look for additional context clues in the issue description
 
-**STEP 3: Verify Issue (BACKEND ONLY)**
-- **For backend repositories** (carbon-apimgt, product-apim):
-  1. Download and start `wso2am-${WSO2AM_VERSION}` pack
-  2. Test the issue using steps from issue description
-  3. **If NOT reproducible**: Stop - report issue cannot be reproduced
-  4. **If reproducible**: Document behavior and proceed to fix
-- **Skip this step for frontend repositories**
+- **Why this is critical**:
+  * Screenshots often reveal details not mentioned in text descriptions
+  * Visual context can prevent misunderstanding the root cause
+  * Error messages in images provide exact details for reproduction
+  * UI screenshots show the exact user experience to fix
+  * Portal identification ensures fixes are applied to the correct repository and component
 
-**STEP 4: Apply Fix**
-- **ONLY modify existing files** - NO temp files, README files, or documentation
-- Apply fix based on:
-  * Exact fix from issue description/comments, OR
-  * Suggestions from comments discussion, OR
-  * Research from similar CLOSED issues and their merged PRs
-- Modify minimal files directly related to the bug
-
-**STEP 5: Build Repository**
-- Check README for exact build instructions
-- **Use**: `mvn clean install -DskipTests`
-- Set timeout: 10-15 minutes minimum
-- **WAIT for "BUILD SUCCESS"** - do NOT proceed until complete
-- If build fails: Fix issues and rebuild
-
-**STEP 6: Replace Artifacts in wso2am Pack**
-
-**Frontend (.war files) - Remove folder, copy .war, unzip:**
-1. Verify exact name match (e.g., `publisher.war` → `publisher` folder)
-2. Navigate to `wso2am-${WSO2AM_VERSION}/repository/deployment/server/webapps/`
-3. Remove existing folder: `rm -rf publisher`
-4. Copy .war file: `cp /path/to/publisher.war .`
-5. Unzip: `unzip publisher.war -d publisher`
-
-**Backend (.jar files) - Direct replacement:**
-1. Navigate to `wso2am-${WSO2AM_VERSION}/repository/components/plugins/` or `dropins/`
-2. Remove existing .jar file with exact matching name
-3. Copy new .jar file to location
-
-**CRITICAL**: Only replace files with EXACT name matches. Do NOT replace similarly named files.
-
-**STEP 7: Testing**
-- **Frontend repositories**: NO testing required - skip to Step 8
-- **Backend repositories**: MANDATORY testing
-  * Run updated wso2am pack
-  * Test by calling relevant APIs
-  * If NOT solved: Revert changes, apply new fix, rebuild, replace artifacts, test again
-  * Repeat until solved
-
-**STEP 8: Zip Pack**
-- Zip entire `wso2am-${WSO2AM_VERSION}` pack
-- Name: `wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip`
-
-**STEP 9: Commit & Push**
-- Verify you're in repository directory with `pwd`
-- Commit: `git add . && git commit -m "Fix issue [brief description]"`
-  * Do NOT include issue number or URL in commit message
-- Push: `git push origin fix_issue_${ISSUE_NUMBER}_{timestamp}`
-
-**STEP 10: Create Pull Request**
-- From: NEW branch with timestamp
-- To: Default branch of SAME repository (ranuka-laksika/{repository})
-- **PR Description MUST include**:
-  * Issue URL: `https://github.com/ranuka-laksika/api-manager/issues/${ISSUE_NUMBER}`
-  * Issue number: `#${ISSUE_NUMBER}`
-  * Changes made
-  * Build information
-  * Artifacts replaced
-  * **GitHub Actions run link**: `https://github.com/ranuka-laksika/api-manager/actions/runs/${GITHUB_RUN_ID}`
-  * Download instructions for the artifact
+- **This analysis step is MANDATORY before any other action**
 
 ========================
-MULTIPLE REPOSITORIES WORKFLOW
+WORKFLOW FOR SINGLE REPOSITORY
 ========================
 
-**Processing Order: FRONTEND first, then BACKEND**
+**If the issue affects ONLY ONE repository:**
 
-**Phase 1 - Frontend Repositories:**
-- For EACH frontend repo: Clone → Navigate → Branch → Fix → Build → Replace artifacts (remove folder, copy .war, unzip)
-- Commit → Push → Create PR
-- **NO testing, NO zipping yet**
-- Wso2am pack accumulates all frontend artifacts
+1. **Clone the repository** from ranuka-laksika organization
+2. **Apply the fix**:
+   - If the user/issue specifies the exact fix: Apply it EXACTLY as specified
+   - If the issue does NOT provide the exact fix: Find the 100% accurate solution
+     * **Research similar CLOSED issues ONLY** in wso2/api-manager repository
+     * Use GitHub search with `is:issue is:closed` filters to find similar CLOSED issues
+     * Do NOT look at open issues; focus exclusively on CLOSED issues
+     * Review merged PRs for those similar CLOSED issues
+     * Use insights from those PRs to determine the accurate fix
+3. **Build the repository** completely (wait for BUILD SUCCESS)
+4. **Replace artifacts** in the downloaded wso2am pack
 
-**Phase 2 - Backend Repositories:**
-- For EACH backend repo: Clone → Navigate → Branch → Fix → Build → Replace artifacts in SAME pack (replace .jar directly)
-- **MANDATORY testing** → If not solved: revert, fix, rebuild, test again
-- Commit → Push → Create PR
-- **NO zipping yet**
+5. **Determine if testing is required:**
 
-**Phase 3 - Finalize:**
-- **Zip wso2am pack ONCE** after ALL repositories are processed
-- Name: `wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip`
-- All PRs reference the SAME GitHub Actions artifact URL
+   **For FRONTEND issues (apim-apps, api-developer-portal):**
+   - **NO TESTING REQUIRED**
+   - Commit changes and create PR
+   - Zip the updated wso2am pack (This is the naming convention should used for the zip: `wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip`)
+
+   **For BACKEND issues (carbon-apimgt, product-apim):**
+   - **TESTING IS MANDATORY**
+   - Run the updated wso2am pack which is wso2am pack replaced with the generaetd artificats after fixing the issue and built the affected repository.
+   - Test by calling relevant APIs
+   - **If issue is SOLVED:**
+     * Commit changes and create PR
+     * Zip the updated wso2am pack (This is the naming convention should used for the zip: `wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip`)
+   - **If issue is NOT SOLVED:**
+     * Go back to the repository
+     * Revert the earlier changes
+     * Apply new changes based on testing observations
+     * Build the repository again
+     * Replace artifacts in the wso2am pack again
+     * Run the pack and test again
+     * Repeat until the issue is solved
+     * Only then commit, create PR, and zip the pack
+
+========================
+WORKFLOW FOR MULTIPLE REPOSITORIES
+========================
+
+**If the issue affects MULTIPLE repositories combine with frontend and backend repositories:**
+
+**CRITICAL - Repository Processing Order:**
+- **ALWAYS work on FRONTEND repositories FIRST**, then BACKEND repositories
+- Even if the user provides repositories in a different order, prioritize frontend repos first
+- Example: If user says "carbon-apimgt and apim-apps", work on apim-apps (frontend) FIRST, then carbon-apimgt (backend)
+
+**Phase 1 - Process FRONTEND Repositories First:**
+1. **Identify and work on ALL FRONTEND repositories first** (apim-apps, api-developer-portal)
+2. For EACH frontend repository:
+   - Clone the repository
+   - Apply the fix:
+     * If exact fix provided: Apply it EXACTLY as specified
+     * If no exact fix: Research similar **CLOSED issues ONLY** in wso2/api-manager repository (use `is:issue is:closed` filters), review merged PRs for those CLOSED issues, and determine accurate solution
+   - Build the repository (wait for BUILD SUCCESS)
+   - Replace the generated artifacts (.war files) in the wso2am pack:
+     * Remove existing folder → Copy .war file → Unzip to create new folder
+       Example:- Remove publisher folder → Copy publisher.war file → Unzip publisher.war file to create new publisher folder
+   - **Commit changes** to that repository
+   - **Push** to the unique branch
+   - **Create PR** for that repository
+   - **DO NOT zip the wso2am pack yet**
+3. The wso2am pack now contains all frontend artifacts
+
+**Phase 2 - Process BACKEND Repositories:**
+1. **After ALL frontend repositories are done**, work on BACKEND repositories (carbon-apimgt, product-apim)
+2. For EACH backend repository:
+   - Clone the repository
+   - Apply the fix:
+     * If exact fix provided: Apply it EXACTLY as specified
+     * If no exact fix: Research similar **CLOSED issues ONLY** in wso2/api-manager repository (use `is:issue is:closed` filters), review merged PRs for those CLOSED issues, and determine accurate solution
+   - Build the repository (wait for BUILD SUCCESS)
+   - Replace the generated artifacts (.jar files) in the **SAME wso2am pack** (pack coming from the frontend side updated artifacts):
+     * Replace .jar file directly (no unzipping needed)
+   - **TESTING IS MANDATORY** after replacing backend artifacts:
+     * Run the updated wso2am pack (with all frontend + backend artifacts)
+     * Test by calling relevant APIs
+     * **If issue is SOLVED:**
+       - Commit changes to that repository
+       - Push to the unique branch
+       - Create PR for that repository
+       - **DO NOT zip yet if there are more backend repos**
+     * **If issue is NOT SOLVED:**
+       - Go back to that repository
+       - Revert earlier changes and apply new changes
+       - Build that repository again
+       - Replace artifacts in the wso2am pack again
+       - Run the pack and test again
+       - Repeat until the issue is completely solved
+       - Then commit, push, and create PR.
+
+**Phase 3 - Zip the wso2am Pack:**
+1. **ONLY after ALL repositories (frontend + backend) are fixed and PRs are created:**
+   - Zip the updated wso2am pack (with all artifacts from all repositories)
+   - Name: `wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip`
+   - All PRs should reference that github action link.
+
+**Key Points for Multiple Repositories:**
+- **Process order**: FRONTEND repositories FIRST → BACKEND repositories SECOND
+- Frontend repos: Fix → Build → Replace artifacts (remove folder, copy .war, unzip) → Commit → Push → Create PR (NO testing, NO zipping)
+- Backend repos: Fix → Build → Replace artifacts (replace .jar directly) → TEST → Commit → Push → Create PR (NO zipping yet)
+- **ZIP ONLY ONCE** at the very end after ALL repositories are processed
+- First repository will get the donwloaded wso2am pack and after that other repository will get the updates wso2am pack from the previous repository.
+- At last repostiory it should create the zip of that updates wso2am pack using this naming convention: wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip 
+- Each repository gets its own separate PR
+- All PRs reference the SAME github action running page link.
+
+**CRITICAL WORKFLOW - FOLLOW THIS EXACTLY:**
+
+1. **Clone Repository from ranuka-laksika Organization** (NOT wso2)
+   - **IMPORTANT**: User will provide the repository name (e.g., apim-apps, carbon-apimgt, product-apim)
+   - **Clone from ranuka-laksika organization ONLY**
+   - Example: If user says "apim-apps", clone from: `git clone https://github.com/ranuka-laksika/apim-apps.git`
+   - Example: If user says "carbon-apimgt", clone from: `git clone https://github.com/ranuka-laksika/carbon-apimgt.git`
+   - **Repository Path**: After cloning, the repository will be at `${GITHUB_WORKSPACE}/{repository_name}`
+     * GITHUB_WORKSPACE is typically: `/home/runner/work/api-manager/api-manager`
+     * Example for apim-apps: `/home/runner/work/api-manager/api-manager/apim-apps`
+   - **CRITICAL - Navigate into the repository**: `cd ${GITHUB_WORKSPACE}/{repository_name}`
+   - **VERIFY YOU ARE IN THE CORRECT DIRECTORY**: Run `pwd` to confirm you are inside the cloned repository
+     * Expected output: `/home/runner/work/api-manager/api-manager/{repository_name}`
+   - **ALL SUBSEQUENT OPERATIONS MUST BE PERFORMED FROM WITHIN THIS DIRECTORY**
+
+2. **Configure Git Credentials** (immediately after cloning)
+   - **VERIFY**: Confirm you are inside the cloned repository with `pwd`
+   - `git config --global user.name "ranuka-laksika"`
+   - `git config --global user.email "ranukalaksika@gmail.com"`
+
+   **CRITICAL - Configure Remote URL with GitHub Token for Authentication:**
+   - **IMPORTANT**: Without this, push operations will FAIL with "could not read Username" error
+   - **Command**: `git remote set-url origin https://${GITHUB_TOKEN}@github.com/ranuka-laksika/{repository_name}.git`
+   - **Example for apim-apps**: `git remote set-url origin https://${GITHUB_TOKEN}@github.com/ranuka-laksika/apim-apps.git`
+   - **Example for carbon-apimgt**: `git remote set-url origin https://${GITHUB_TOKEN}@github.com/ranuka-laksika/carbon-apimgt.git`
+   - **Verify configuration**: Run `git remote -v` to confirm the URL is set correctly (token will be hidden in output)
+   - **This allows pushing without interactive credential prompts**
+
+3. **Create NEW Unique Branch with Timestamp** (from the repository you just cloned)
+   - **VERIFY**: Confirm you are inside the cloned repository with `pwd` before creating branch
+   - **CRITICAL**: This creates a NEW branch with a unique name using timestamp
+   - **Format**: `fix_issue_{issue_number}_{timestamp}`
+   - **Command**: `git checkout -b fix_issue_${ISSUE_NUMBER}_$(date +%s)`
+   - **Example result**: `fix_issue_123_1710345600` or `fix_issue_123_20240313_143000`
+   - **This ensures the branch is unique for every fix attempt**
+
+4. **Apply Fix**
+
+   **CRITICAL - BACKEND ISSUE VERIFICATION (MANDATORY FOR BACKEND REPOSITORIES):**
+   - **If the issue relates to backend repositories** (e.g., `carbon-apimgt`, `product-apim`):
+
+     **STEP 1 - Verify Issue Still Exists:**
+     1. **BEFORE applying any fix**, you MUST first verify if the issue still exists
+     2. Download and extract the `wso2am-${WSO2AM_VERSION}` pack if not already available
+     3. **Start and run the pack**:
+        - Navigate to `wso2am-${WSO2AM_VERSION}/bin`
+        - Start the server (e.g., `./wso2server.sh` on Linux/Mac or `wso2server.bat` on Windows)
+        - Wait for the server to start completely
+     4. **Test the issue** by calling the relevant functions/APIs mentioned in the issue:
+        - Use the exact steps described in the issue to reproduce the problem
+        - Test all relevant API endpoints or functions
+        - Document the observed behavior
+     5. **Decision Point**:
+        - **If the issue is NOT reproducible** (i.e., it no longer exists):
+          * DO NOT proceed with any fix
+          * Stop the server
+          * Report that the issue cannot be reproduced and provide details of your testing
+          * DO NOT create any commits or PRs
+        - **If the issue IS reproducible** (i.e., it still exists):
+          * Stop the server
+          * Document the exact behavior observed
+          * Proceed to STEP 2 to apply the fix
+     6. **This verification step prevents unnecessary fixes on already-resolved or non-existent issues**
+
+     **STEP 2 - Apply the Fix (ONLY if issue was confirmed in STEP 1):**
+     - Now proceed with applying the fix as described below
+
+   - **VERIFY**: Confirm you are inside the cloned repository with `pwd` before making changes
+   - If user specified exact fix: Apply it exactly
+   - If not: Analyze and determine the most accurate fix
+
+   - **CRITICAL - Finding the Accurate Solution:**
+     - If the issue does NOT provide the exact fix, you MUST find the 100% accurate solution
+     - Before determining the fix:
+       * **Find the most similar two issues for this relevant issue in the wso2/api-manager repository from CLOSED issues ONLY**
+       * **CRITICAL**: Search ONLY in CLOSED issues (use `is:issue is:closed` filter on GitHub)
+       * **Do NOT look at open issues** - focus exclusively on issues that have been CLOSED and resolved
+       * If there are similar CLOSED issues, look for the PRs that were already merged for those similar CLOSED issues
+       * Get insights from those merged PRs and use them to find the accurate answer for the current issue
+     - This research step is MANDATORY when the exact fix is not provided
+
+   **CRITICAL - ONLY MODIFY EXISTING FILES:**
+   - **DO NOT create any new files** unless absolutely required for the fix
+   - **DO NOT create temporary files** (temp.js, test.java, etc.)
+   - **DO NOT create or modify README files** (.md files)
+   - **DO NOT create documentation files** unless the issue specifically requires it
+   - **DO NOT create test files** unless the issue specifically requires it
+   - **ONLY modify the existing source code files** that contain the bug
+   - **Example - What NOT to do:**
+     * Creating README.md to document the fix ✗
+     * Creating temp files for testing ✗
+     * Creating new utility files unless absolutely necessary ✗
+     * Modifying unrelated files ✗
+
+5. **Build (CRITICAL - WAIT FOR COMPLETE BUILD)**
+
+   **IMPORTANT - READ BEFORE BUILDING:**
+   - Check the **README file** in the repository for exact build instructions
+   - Follow those build instructions **precisely**
+   - If you encounter build issues, fix them and try building again
+   - **Do not proceed** until the repository has been successfully built
+
+   **Build Configuration:**
+   - **VERIFY**: Confirm you are inside the cloned repository with `pwd` before building
+   - Use Java 11 and Maven 3.6.3
+   - Environment paths:
+     * PATH: ${PATH}
+     * JAVA_HOME: ${JAVA_HOME}
+     * MAVEN_HOME: ${MAVEN_HOME}
+     * NODE_PATH: ${NODE_PATH}
+   - **Set build timeout: 10-15 minutes minimum**
+
+   **Build Command:**
+   - **CRITICAL**: Always skip tests during the build to save time
+   - **Use this command**: `mvn clean install -DskipTests`
+   - **Why skip tests**: Tests are not required for generating artifacts; they only increase build time
+   - **If README specifies a different command**: Add `-DskipTests` flag to skip tests
+   - **Example commands**:
+     * Standard build: `mvn clean install -DskipTests`
+     * With profiles: `mvn clean install -DskipTests -P profile-name`
+     * Custom goals: `mvn clean package -DskipTests`
+
+   **ABSOLUTE BLOCKING REQUIREMENT:**
+   - **WAIT for COMPLETE build** - You MUST wait until ENTIRE build finishes
+   - **Do NOT proceed while build is IN PROGRESS**
+   - **WAIT for "BUILD SUCCESS" message** - Do NOT move forward until you see this
+   - **DO NOT search for .war/.jar files** while building
+   - If timeout expires and still building: INCREASE timeout and continue WAITING
+   - If build errors: Fix issues, then rebuild with same timeout and `-DskipTests` flag
+   - **ONLY after "BUILD SUCCESS"** can you find and replace .war/.jar files
+
+6. **Replace Artifacts in wso2am-${WSO2AM_VERSION} Pack** (ONLY after BUILD SUCCESS)
+   - Locate generated files:
+     * Frontend changes (apim-apps, api-developer-portal) → `.war` files
+     * Backend changes (carbon-apimgt, product-apim) → `.jar` files
+   - Target locations in `wso2am-${WSO2AM_VERSION}` pack:
+     * Frontend → `wso2am-${WSO2AM_VERSION}/repository/deployment/server/webapps/`
+     * Backend → `wso2am-${WSO2AM_VERSION}/repository/components/plugins/` or `dropins/`
+
+   **CRITICAL - FRONTEND .war FILE REPLACEMENT PROCESS:**
+   - **IMPORTANT**: For frontend `.war` files, you must replace the FOLDER, not the .war file
+   - **CRITICAL - EXACT NAME MATCHING REQUIREMENT:**
+     * You MUST verify the exact name of the generated .war file
+     * You MUST replace ONLY the folder that has the EXACT SAME NAME (without .war extension)
+     * **DO NOT replace with similarly named files**:
+       - If generated file is `publisher.war` → Replace ONLY the `publisher` folder
+       - If generated file is `admin.war` → Replace ONLY the `admin` folder
+       - If generated file is `devportal.war` → Replace ONLY the `devportal` folder
+     * **WRONG APPROACH - DO NOT DO THIS:**
+       - ✗ Generated: `publisher.war` → Replacing `api#am#publisher.war` (WRONG - different artifact)
+       - ✗ Generated: `admin.war` → Replacing `admin-portal.war` (WRONG - different artifact)
+       - ✗ Replacing any file that contains additional words or characters beyond the exact base name
+     * **CORRECT APPROACH:**
+       - ✓ Generated: `publisher.war` → Replace `publisher` folder ONLY
+       - ✓ Generated: `admin.war` → Replace `admin` folder ONLY
+       - ✓ Generated: `devportal.war` → Replace `devportal` folder ONLY
+
+   - **Process for Frontend Artifacts:**
+     1. **Identify the exact name** of your generated artifact (e.g., `publisher.war`)
+     2. **Verify the target** - The folder name in wso2am pack MUST match exactly (without .war extension)
+        * Example: For `publisher.war`, verify that `wso2am-${WSO2AM_VERSION}/repository/deployment/server/webapps/publisher` folder exists
+        * If the exact folder name does NOT exist, you have the WRONG artifact or are looking in the WRONG location
+     3. Navigate to `wso2am-${WSO2AM_VERSION}/repository/deployment/server/webapps/`
+     4. **Remove the existing FOLDER** with the EXACT matching name (without .war extension):
+        * Example: If generated file is `publisher.war`, remove the `publisher` folder
+        * Command: `rm -rf publisher`
+     5. **Copy the new .war file** to the webapps directory:
+        * Command: `cp /path/to/publisher.war .`
+     6. **Unzip the .war file** to create the new folder:
+        * Command: `unzip publisher.war -d publisher`
+        * This extracts the contents into a new `publisher` folder with the EXACT same name
+     7. **(Optional) Remove the .war file after extraction** if desired:
+        * Command: `rm publisher.war`
+
+   - **Example - Complete Frontend Replacement Process:**
+     * Generated: `publisher.war`
+     * Verify target exists: Check if `wso2am-${WSO2AM_VERSION}/repository/deployment/server/webapps/publisher` folder exists
+     * Remove folder: `rm -rf wso2am-${WSO2AM_VERSION}/repository/deployment/server/webapps/publisher`
+     * Copy war: `cp publisher.war wso2am-${WSO2AM_VERSION}/repository/deployment/server/webapps/`
+     * Unzip: `cd wso2am-${WSO2AM_VERSION}/repository/deployment/server/webapps/ && unzip publisher.war -d publisher`
+     * Result: New `publisher` folder created with the exact same name
+
+   - **Example - Complete Process for Multiple Frontend Files:**
+     * For `devportal.war`: Verify `devportal` folder exists → Remove `devportal` folder → Copy `devportal.war` → Unzip to `devportal` folder
+     * For `admin.war`: Verify `admin` folder exists → Remove `admin` folder → Copy `admin.war` → Unzip to `admin` folder
+
+   - **VERIFICATION STEP (MANDATORY):**
+     * After replacement, verify the folder name matches EXACTLY with the original folder name
+     * Check that the folder structure inside is correct
+     * DO NOT proceed if the names don't match exactly
+
+   **BACKEND .jar FILE REPLACEMENT PROCESS:**
+   - **For backend `.jar` files, replace the file directly** (no unzipping needed)
+   - **Process for Backend Artifacts:**
+     1. Note the exact name of your generated artifact (e.g., `org.wso2.carbon.apimgt.xxx.jar`)
+     2. Navigate to `wso2am-${WSO2AM_VERSION}/repository/components/plugins/` or `dropins/`
+     3. Find and remove the existing .jar file with EXACT matching name
+     4. Copy your generated .jar file to that location
+
+   **CRITICAL - EXACT NAME MATCHING:**
+   - Generated file name MUST match the target folder/file name EXACTLY
+   - **Important:** Files like `api#am#publisher.war` are different artifacts and should NOT be replaced when your generated file is `publisher.war`
+   - **VERIFICATION BEFORE REPLACEMENT:**
+     * For frontend (.war files): Check that a folder with the EXACT matching name (without .war) exists in `webapps/`
+     * For backend (.jar files): Check that a file with the EXACT matching name exists in `plugins/` or `dropins/`
+     * If EXACT match is NOT found, you have the WRONG artifact or are looking in the WRONG location
+     * DO NOT replace files with similar but not identical names
+   - **Examples of EXACT matching:**
+     * ✓ Generated: `publisher.war` → Replace: `publisher` folder (CORRECT)
+     * ✓ Generated: `org.wso2.carbon.apimgt.api.jar` → Replace: `org.wso2.carbon.apimgt.api.jar` file (CORRECT)
+     * ✗ Generated: `publisher.war` → Replace: `api#am#publisher.war` (WRONG - different artifact)
+     * ✗ Generated: `admin.war` → Replace: `admin-portal.war` (WRONG - different artifact)
+   - Do NOT rebuild the pack after replacement
+
+7. **Testing and Validation** (depends on repository type)
+
+   **For FRONTEND repositories (apim-apps, api-developer-portal):**
+   - **NO TESTING REQUIRED**
+   - Skip directly to step 8 (Zip the pack)
+
+   **For BACKEND repositories (carbon-apimgt, product-apim):**
+   - **TESTING IS MANDATORY**
+   - Run the updated wso2am-${WSO2AM_VERSION} pack
+   - Test by calling relevant APIs to verify the issue is resolved
+   - **If issue is SOLVED:**
+     * Proceed to step 8 (Zip the pack)
+   - **If issue is NOT SOLVED:**
+     * Go back to the cloned repository
+     * Revert the earlier changes
+     * Apply new changes based on testing observations
+     * Build the repository again (wait for BUILD SUCCESS)
+     * Replace artifacts in the wso2am pack again
+     * Run the pack and test again
+     * Repeat this cycle until the issue is completely solved
+     * Only then proceed to step 8
+
+8. **Zip wso2am-${WSO2AM_VERSION} pack**
+   - Zip entire updated `wso2am-${WSO2AM_VERSION}` pack (the pack which has the replaced .jar or .war files)
+   - Name: `wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip`
+
+9. **Commit and Push to the NEW Branch**
+   - **VERIFY**: Confirm you are inside the cloned repository with `pwd` before committing
+   - **Commit your changes**:
+     * `git add .`
+     * **IMPORTANT**: Commit message should not include issue number (#${ISSUE_NUMBER}) as well as the issue URL
+     * `git commit -m "Fix issue {add a suitable brief description}"`
+     * Example: `git commit -m "Fix issue Update TableView component to handle null values"`
+   - **VERIFY**: Confirm you are inside the cloned repository with `pwd` before pushing
+   - **Push to the NEW unique branch** you created in step 3:
+     * `git push origin fix_issue_${ISSUE_NUMBER}_{timestamp}`
+     * Example: `git push origin fix_issue_123_1710345600`
+   - **IMPORTANT**: Push to the branch with timestamp, NOT to main/master
+   - **ALL GIT OPERATIONS (add, commit, push) MUST BE DONE FROM WITHIN THE CLONED REPOSITORY DIRECTORY**
+
+10. **Create Pull Request from NEW Branch to Default Branch** (use GitHub token)
+   - **CRITICAL**: Create PR in the SAME repository (ranuka-laksika/{repository})
+   - **From**: The NEW branch with timestamp (e.g., `fix_issue_123_1710345600`)
+   - **To**: Default branch (main/master) of the SAME repository
+
+   **Before Creating PR - Get GitHub Actions Run URL:**
+   - **CRITICAL**: You MUST include the GitHub Actions run URL in the PR description
+   - The run URL is: `https://github.com/ranuka-laksika/api-manager/actions/runs/${GITHUB_RUN_ID}`
+   - `GITHUB_RUN_ID` is available as an environment variable
+   - This URL is where users can download the `wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip` artifact
+   - **Example for apim-apps**:
+     * Repository: `ranuka-laksika/apim-apps`
+     * From: `fix_issue_123_1710345600` (the NEW branch you created)
+     * To: `main` (default branch of ranuka-laksika/apim-apps)
+   - **Example for carbon-apimgt**:
+     * Repository: `ranuka-laksika/carbon-apimgt`
+     * From: `fix_issue_123_1710345600` (the NEW branch you created)
+     * To: `main` (default branch of ranuka-laksika/carbon-apimgt)
+
+**PR Description MUST Include:**
+- **CRITICAL**: Issue reference WITH URL: `https://github.com/ranuka-laksika/api-manager/issues/${ISSUE_NUMBER}`
+- Issue number reference: `#${ISSUE_NUMBER}`
+- Changes made
+- Build information (Java 11, Maven 3.6.3)
+- Which `.war`/`.jar` files were replaced
+- **GitHub Actions Artifact (MANDATORY):**
+  * **CRITICAL**: Include the GitHub Actions run link where the artifact can be downloaded
+  * Get the run link: Use `echo "https://github.com/ranuka-laksika/api-manager/actions/runs/${GITHUB_RUN_ID}"` to get the current workflow run URL
+  * Format: `https://github.com/ranuka-laksika/api-manager/actions/runs/{run_id}`
+  * Example: `https://github.com/ranuka-laksika/api-manager/actions/runs/18642196188`
+  * Artifact name: `wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip`
+  * Clear instructions on how to download from the Actions run page
+  * What's included in the artifact
+
+**PR Description Template:**
+```
+Fixes issue #${ISSUE_NUMBER} - [Brief description]
+
+**Issue URL**: https://github.com/ranuka-laksika/api-manager/issues/${ISSUE_NUMBER}
+
+## Changes Made
+- Modified [files/components]
+- [Description of changes]
+
+## Build Information
+- Built using Java 11 and Maven 3.6.3
+- Generated artifacts: [list .war or .jar files]
+
+## Artifact Replacement
+- Replaced [artifact name] in wso2am-${WSO2AM_VERSION} pack
+- Location: [path in the pack]
+
+## Modified wso2am-${WSO2AM_VERSION} Pack (GitHub Actions Artifact)
+The complete modified `wso2am-${WSO2AM_VERSION}` pack with all updated artifacts has been uploaded as a GitHub Actions artifact.
+
+**Download Link:**
+🔗 **[Download from GitHub Actions Run](https://github.com/ranuka-laksika/api-manager/actions/runs/${GITHUB_RUN_ID})**
+
+**Artifact Details:**
+- **Artifact Name**: `wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip`
+- **Location**: Available in the GitHub Actions workflow run linked above
+- **How to Download**:
+  1. Click the GitHub Actions run link above
+  2. Scroll down to the "Artifacts" section at the bottom of the page
+  3. Download the artifact: `wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip`
+  4. Extract and use the modified pack directly
+
+**What's included:**
+- All replaced `.war`/`.jar` files from the build
+- Complete `wso2am-${WSO2AM_VERSION}` directory structure
+- Ready to use without any additional build steps
+
+## Testing
+- [Testing steps performed]
+```
+
+========================
+IMPORTANT CONSIDERATIONS
+========================
+
+**CRITICAL - WORKING DIRECTORY VERIFICATION:**
+- **BEFORE EVERY OPERATION**: You MUST verify you are inside the cloned repository directory
+- **Use `pwd` command**: Always check your current working directory before:
+  * Configuring git credentials
+  * Creating branches
+  * Making code changes
+  * Running builds
+  * Committing changes
+  * Pushing changes
+- **Expected directory**: `/home/runner/work/api-manager/api-manager/{repository_name}`
+- **If you are NOT in the correct directory**: Navigate to it using `cd ${GITHUB_WORKSPACE}/{repository_name}`
+- **ALL operations must be performed from within the cloned repository directory**
+- **Git operations will FAIL if you are in the wrong directory**
+
+**CRITICAL WORKFLOW SUMMARY:**
+
+**For SINGLE Repository:**
+1. **Clone from ranuka-laksika/{repository}** (user provides repository name)
+2. **Navigate into the repository** and verify with `pwd`
+3. **Create NEW unique branch** with timestamp: `fix_issue_{issue_number}_{timestamp}`
+4. **Make modifications** in that NEW branch (verify directory first)
+5. **Build from within the repository** (verify directory first)
+6. **Update wso2am-${WSO2AM_VERSION} pack**:
+   - Frontend (.war): Remove folder → Copy .war → Unzip to create new folder
+   - Backend (.jar): Replace .jar file directly
+7. **Testing** (ONLY for backend repositories - skip for frontend)
+8. **Zip the updated wso2am pack**
+9. **Commit changes** to that NEW branch (verify directory first)
+10. **Push to that NEW branch** (NOT to main/master, verify directory first)
+11. **Create PR** from NEW branch → default branch of SAME repository
+
+**For MULTIPLE Repositories:**   
+1. **Prioritize repository order: FRONTEND first, then BACKEND**
+2. **For EACH FRONTEND repository:**
+   - Clone → Navigate → Create branch → Fix → Build → Replace artifacts in wso2am pack (remove folder, copy .war, unzip)
+   - Commit → Push → Create PR (NO testing, NO zipping)
+3. **For EACH BACKEND repository:**
+   - Clone → Navigate → Create branch → Fix → Build → Replace artifacts in SAME wso2am pack (replace .jar directly)
+   - **Test the pack** (mandatory) → If not solved: revert, fix, rebuild, test again
+   - Commit → Push → Create PR (NO zipping yet)
+4. **After ALL repositories are done:**
+   - **Zip the wso2am pack ONCE** (with all artifacts)
+   - Upload as GitHub Actions artifact
+   - All PRs reference this SAME artifact
+
+**OTHER IMPORTANT POINTS:**
+* **ONLY modify existing files** - DO NOT create temp files, README files, or documentation files
+* **Fix the bug in minimal files** - Only change files that are directly related to the bug
+* **Build is BLOCKING**: You CANNOT proceed without "BUILD SUCCESS"
+* **Wait for COMPLETE build** - do NOT search for .war/.jar files during build
+* **Artifact replacement**:
+  - Frontend (.war): Remove existing folder → Copy .war file → Unzip to create new folder (exact name matching)
+  - Backend (.jar): Replace .jar file directly (exact name matching)
+* **Zip** modified pack.
+* **Mention action run link** in EVERY PR with github action running link
+* Always take a system-wide view before making changes
+* Maintain backward compatibility
+* Follow existing code styles
 
 ========================
 TROUBLESHOOTING
 ========================
 
-**"could not read Username" error:**
-1. Verify remote URL with token: `git remote -v`
-2. Reconfigure: `git remote set-url origin https://${GITHUB_TOKEN}@github.com/ranuka-laksika/{repository}.git`
-3. Verify you're in correct directory: `pwd`
-4. Verify token exists: `echo ${GITHUB_TOKEN} | wc -c`
+**If you encounter "could not read Username for 'https://github.com'" error:**
+1. **Verify you configured the remote URL with token**:
+   - Run: `git remote -v`
+   - Should see: `https://***@github.com/ranuka-laksika/{repository}.git` (token is masked)
+   - If NOT configured: Run `git remote set-url origin https://${GITHUB_TOKEN}@github.com/ranuka-laksika/{repository}.git`
 
-**Key Points:**
-- Always verify working directory with `pwd` before operations
-- Wait for complete build before proceeding
-- Use exact name matching for artifact replacement
-- Include GitHub Actions run URL in ALL PRs
-- Each repository gets separate PR, but all reference same artifact
+2. **Verify you are in the correct repository directory**:
+   - Run: `pwd`
+   - Should see: `/home/runner/work/api-manager/api-manager/{repository_name}`
+   - If NOT: Navigate with `cd /home/runner/work/api-manager/api-manager/{repository_name}`
+
+3. **Verify GITHUB_TOKEN environment variable is set**:
+   - Run: `echo ${GITHUB_TOKEN} | wc -c`
+   - Should show a number > 1 (token exists)
+   - If NOT: Check workflow configuration for token setup
+
+**If push still fails after verification:**
+- Check if branch exists: `git branch -a`
+- Check remote connection: `git ls-remote origin`
+- Ensure you're pushing to the correct branch name with timestamp
+
+**IMPORTANT NOTES:**
+- **Commit message**: Include issue number (#123) but NOT the issue URL
+- **PR description**: MUST include:
+  * Issue number (#123) and the full issue URL
+  * **GitHub Actions run URL** where the artifact can be downloaded
+  * Use `${GITHUB_RUN_ID}` to construct the URL: `https://github.com/ranuka-laksika/api-manager/actions/runs/${GITHUB_RUN_ID}`
+- This same workflow applies to all repositories (carbon-apimgt, product-apim, etc.)
