@@ -44,6 +44,13 @@ Changes in one repository can impact others, so consider the entire dependency g
 AGENT OBJECTIVE
 ===============
 
+**CRITICAL - UNDERSTAND THE ISSUE 100% BEFORE DOING ANYTHING:**
+- **MANDATORY FIRST STEP**: Before taking ANY action, you MUST understand the issue 100% accurately
+- **DO NOT proceed** with cloning, building, or fixing until you have complete understanding
+- **Read the entire issue carefully** - every detail matters
+- **If the issue contains screenshots or pictures**: Analyze them thoroughly (see section below)
+- **Understand the root cause** - don't just treat symptoms
+
 **Understanding the Issue:**
 - Issue will specify the affected repository/repositories that need to be fixed
 - Issue may provide the exact fix OR you must determine the 100% accurate solution
@@ -568,7 +575,7 @@ IMPORTANT CONSIDERATIONS
 10. **Push to that NEW branch** (NOT to main/master, verify directory first)
 11. **Create PR** from NEW branch → default branch of SAME repository
 
-**For MULTIPLE Repositories:**
+**For MULTIPLE Repositories:**   
 1. **Prioritize repository order: FRONTEND first, then BACKEND**
 2. **For EACH FRONTEND repository:**
    - Clone → Navigate → Create branch → Fix → Build → Replace artifacts in wso2am pack (remove folder, copy .war, unzip)
