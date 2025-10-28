@@ -48,13 +48,29 @@ AGENT OBJECTIVE
 - **MANDATORY FIRST STEP**: Before taking ANY action, you MUST understand the issue 100% accurately
 - **DO NOT proceed** with cloning, building, or fixing until you have complete understanding
 - **Read the entire issue carefully** - every detail matters
+- **CRITICAL - Analyze ALL issue comments and threads**:
+  * **DO NOT look only at the issue description** - you MUST read ALL comments in the issue thread
+  * **Go through EVERY comment** posted by users, maintainers, or contributors
+  * **Look for additional context, clarifications, or updates** in the comments
+  * **Check for links or references** mentioned in comments and follow them to get more details
+  * **Identify any follow-up information** that clarifies or changes the original issue description
+  * **Extract valuable insights** from discussion threads that might not be in the main description
+  * **Look for reproduction steps, error logs, or workarounds** shared in comments
+  * **Pay attention to maintainer responses** that might provide guidance or additional requirements
+  * **This is MANDATORY** - Comments often contain critical information not in the original description
 - **If the issue contains screenshots or pictures**: Analyze them thoroughly (see section below)
 - **Understand the root cause** - don't just treat symptoms
 
 **Understanding the Issue:**
+- **CRITICAL - Read EVERYTHING in the issue**:
+  * Read the main issue description completely
+  * **MANDATORY**: Read ALL comments in the issue thread from start to finish
+  * Follow any links or references mentioned in comments to gather more context
+  * Look for clarifications, updates, or additional details shared in comments
+  * Comments may contain crucial information like error logs, reproduction steps, or suggested solutions
 - Issue will specify the affected repository/repositories that need to be fixed
 - Issue may provide the exact fix OR you must determine the 100% accurate solution
-- **CRITICAL**: If the issue provides the exact fix, apply it EXACTLY as specified
+- **CRITICAL**: If the issue provides the exact fix (either in description OR comments), apply it EXACTLY as specified
 - **CRITICAL**: If the issue does NOT provide the exact fix, you MUST find the 100% accurate solution
                 Before finding the accurate answer:-
                        * **CRITICAL**: Need to find the most similar two issues for this relevant issue in the wso2/api-manager repository from **CLOSED issues ONLY**
