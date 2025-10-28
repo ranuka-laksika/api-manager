@@ -113,7 +113,7 @@ jobs:
           unzip -q "${PACK_NAME}.zip"
 
           echo "Pack extracted successfully:"
-          ls -l "$PACK_NAME"
+          ls -la
 
           # Set environment variable for later steps
           echo "WSO2AM_VERSION=${LATEST_RELEASE}" >> $GITHUB_ENV
