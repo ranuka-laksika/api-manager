@@ -115,6 +115,12 @@ jobs:
           echo "Pack extracted successfully:"
           ls -la
 
+          LATEST_RELEASE=$(echo "$LATEST_RELEASE" | sed -E 's/-.*$//')
+          PACK_NAME=$(echo "$PACK_NAME" | sed -E 's/-.*$//')
+
+          echo "Latest Release (cleaned): $LATEST_RELEASE"
+          echo "Pack Name (cleaned): $PACK_NAME"
+
           # Set environment variable for later steps
           echo "WSO2AM_VERSION=${LATEST_RELEASE}" >> $GITHUB_ENV
           echo "WSO2AM_PACK_PATH=${GITHUB_WORKSPACE}/${PACK_NAME}" >> $GITHUB_ENV
