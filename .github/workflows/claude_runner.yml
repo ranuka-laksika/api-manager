@@ -116,7 +116,7 @@ jobs:
           ls -la
 
           LATEST_RELEASE=$(echo "$LATEST_RELEASE" | sed -E 's/-.*$//')
-          PACK_NAME=$(echo "$PACK_NAME" | sed -E 's/-.*$//')
+          PACK_NAME=$(echo "$PACK_NAME" | sed -E 's/-rc[0-9]+$//')
 
           echo "Latest Release (cleaned): $LATEST_RELEASE"
           echo "Pack Name (cleaned): $PACK_NAME"
