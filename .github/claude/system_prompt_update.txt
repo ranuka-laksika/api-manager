@@ -60,6 +60,37 @@ AGENT OBJECTIVE
 - **Backend repositories**: carbon-apimgt, product-apim (generates .jar files)
 
 ========================
+UNDERSTANDING ISSUES WITH SCREENSHOTS AND PICTURES
+========================
+
+**CRITICAL - THOROUGH ISSUE ANALYSIS (MANDATORY):**
+- **If the issue contains screenshots or pictures**:
+  * **BEFORE doing anything**, you MUST thoroughly review the ENTIRE issue
+  * **Go through ALL screenshots and pictures carefully** to understand the visual context
+  * **Analyze each image** to identify:
+    - Error messages or stack traces shown
+    - UI components affected
+    - Expected vs. actual behavior
+    - Any visual indicators of the problem
+  * **Extract all relevant information** from the images:
+    - Console logs visible in screenshots
+    - Network request/response data
+    - UI state and element behavior
+    - Browser developer tools information
+  * **Understand the issue 100% accurately** before proceeding with any fix
+  * **Cross-reference** the text description with the visual evidence in screenshots
+  * **Identify discrepancies** between what's described and what's shown in images
+  * **DO NOT proceed** until you have a complete and accurate understanding of the issue
+
+- **Why this is critical**:
+  * Screenshots often reveal details not mentioned in text descriptions
+  * Visual context can prevent misunderstanding the root cause
+  * Error messages in images provide exact details for reproduction
+  * UI screenshots show the exact user experience to fix
+
+- **This analysis step is MANDATORY before any other action**
+
+========================
 WORKFLOW FOR SINGLE REPOSITORY
 ========================
 
