@@ -44,25 +44,44 @@ AGENT OBJECTIVE
 ===============
 
 **CRITICAL - UNDERSTAND THE ISSUE 100% BEFORE DOING ANYTHING:**
-- **MANDATORY FIRST STEP**: Read the ENTIRE issue (description + ALL comments)
-- **Analyze ALL comments** for additional context, clarifications, error logs, reproduction steps
-- **Follow links** mentioned in comments for more details
-- **If screenshots/pictures present**: Analyze thoroughly to identify affected portal/component
+
+**MANDATORY FIRST STEP - Analyze Issue Description AND All Comments:**
+- **Read the ENTIRE issue description** thoroughly
+- **MANDATORY**: Go through ALL comments in the issue thread from start to finish
+- **Why comments are critical**: Comments often contain valuable suggestions, alternative solutions, workarounds, or additional insights that are NOT in the original description
+- **Extract suggestions from comments**: Look for recommendations, hints, or proposed solutions mentioned by users, maintainers, or contributors
+- **Follow ALL links mentioned**: 
+  * If ANY links are mentioned in the description OR comments (issue links, PR links, documentation links, etc.)
+  * **YOU MUST visit those links** and gather extra details, suggestions, or context
+  * These linked resources may contain crucial information for understanding or solving the issue
+- **What to look for in comments**:
+  * Additional context and clarifications
+  * Error logs and stack traces
+  * Reproduction steps or test cases
+  * Suggested solutions or workarounds
+  * Related issue references
+  * Maintainer guidance or requirements
+  * Alternative approaches discussed
+  * Links to related PRs, issues, or documentation
+- **Cross-reference everything**: Compare information from description, comments, and linked resources
 - **Understand root cause** - don't just treat symptoms
 
-**Portal Identification from Screenshots:**
-- Look for visual indicators: URL patterns (/publisher, /devportal, /admin), navigation menus, page titles
-- **Publisher Portal**: API creation/editing, lifecycle management, documentation editing
-- **Developer Portal**: API discovery, application creation, subscription management
-- **Admin Portal**: Tenant management, throttling policies
-- Document which portal(s) are affected
+**If Screenshots/Pictures Present:**
+- Analyze thoroughly to identify affected portal/component
+- **Portal Identification from Screenshots**:
+  * Look for visual indicators: URL patterns (/publisher, /devportal, /admin), navigation menus, page titles
+  * **Publisher Portal**: API creation/editing, lifecycle management, documentation editing
+  * **Developer Portal**: API discovery, application creation, subscription management
+  * **Admin Portal**: Tenant management, throttling policies
+  * Document which portal(s) are affected
 
 **Finding the Solution:**
-- If issue provides exact fix (in description OR comments): Apply it EXACTLY as specified
-- If NOT provided: Research similar **CLOSED issues ONLY** in wso2/api-manager repository
+- **If issue/comments provide exact fix**: Apply it EXACTLY as specified (check both description AND all comments)
+- **If exact fix NOT provided**: Research similar **CLOSED issues ONLY** in wso2/api-manager repository
   * Use GitHub search: `is:issue is:closed`
   * Review merged PRs for those CLOSED issues
   * Use insights to determine accurate fix
+- **Consider suggestions from comments**: Evaluate any proposed solutions or approaches mentioned in the discussion thread
 
 ========================
 CRITICAL WORKFLOW
@@ -91,7 +110,10 @@ CRITICAL WORKFLOW
 
 **STEP 4: Apply Fix**
 - **ONLY modify existing files** - NO temp files, README files, or documentation
-- Apply fix based on issue description/comments or research from CLOSED issues
+- Apply fix based on:
+  * Exact fix from issue description/comments, OR
+  * Suggestions from comments discussion, OR
+  * Research from similar CLOSED issues and their merged PRs
 - Modify minimal files directly related to the bug
 
 **STEP 5: Build Repository**
