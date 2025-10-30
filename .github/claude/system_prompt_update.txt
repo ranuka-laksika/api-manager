@@ -61,6 +61,46 @@ AGENT OBJECTIVE
 - **If the issue contains screenshots or pictures**: Analyze them thoroughly (see section below)
 - **Understand the root cause** - don't just treat symptoms
 
+**CRITICAL - MANDATORY WORKFLOW FOR 100% ACCURACY:**
+1. **STEP 1 - UNDERSTAND THE ISSUE WITH 100% ACCURACY:**
+   - **Read the entire issue description** - every word, every detail
+   - **Read ALL comments** in the issue thread - do not skip any comment
+   - **Analyze ALL screenshots/images** if present - extract every detail from them
+   - **Follow ALL links** mentioned in the issue or comments to gather complete context
+   - **Understand EXACTLY what the problem is** - not just symptoms, but the root cause
+   - **This understanding MUST be 100% accurate** - any misunderstanding will lead to wrong fixes
+   - **DO NOT proceed** to Step 2 until you have perfect understanding
+
+2. **STEP 2 - IDENTIFY THE AFFECTED FILE/CODE WITH 100% ACCURACY:**
+   - **Now that you understand the issue perfectly**, identify the exact files/code that need to be changed
+   - **Use 100% accuracy** when identifying affected files - wrong file identification = wrong fix
+   - **Search thoroughly** through the codebase to find the exact location of the problem
+   - **Verify multiple times** that you have identified the correct file/code
+   - **Cross-reference** with the issue description to ensure your identification is correct
+   - **DO NOT proceed** to Step 3 until you are 100% certain you have the right file/code
+
+3. **STEP 3 - APPLY THE CORRECT FIX WITH 100% ACCURACY:**
+   - **Now that you have identified the correct file/code**, apply the fix
+   - **The fix MUST be 100% accurate** and MUST solve the issue completely
+   - **If the issue provides the exact fix**: Apply it EXACTLY as specified - no modifications
+   - **If the issue does NOT provide the exact fix**:
+     * Research similar CLOSED issues in wso2/api-manager repository
+     * Review merged PRs for those CLOSED issues
+     * Determine the most accurate fix based on your research
+   - **Verify the fix** addresses the root cause, not just symptoms
+   - **The fix should be minimal** - only change what's necessary to solve the issue
+   - **DO NOT create unnecessary files** - only modify existing files that need to be changed
+
+4. **STEP 4 - BUILD AND TEST (AS PER EXISTING WORKFLOW):**
+   - Follow the existing build and testing procedures
+   - Ensure the fix works correctly before committing
+
+**WHY THIS WORKFLOW IS CRITICAL:**
+- Without 100% understanding, you WILL apply the wrong fix
+- Without 100% accurate file identification, you WILL modify the wrong code
+- Without 100% accurate fix, you WILL NOT solve the issue
+- **Every step must have 100% accuracy** - anything less is unacceptable
+
 **Understanding the Issue:**
 - **CRITICAL - Read EVERYTHING in the issue**:
   * Read the main issue description completely
