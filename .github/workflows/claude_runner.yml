@@ -181,6 +181,7 @@ jobs:
         with:
           anthropic_api_key: ${{ secrets.DOC_FIXING_AGENT_ANTHROPIC_API_KEY }}
           github_token: ${{ secrets.DOC_FIXING_AGENT_GITHUB_TOKEN }}
+          show_full_output: true
           prompt: ${{ env.SYSTEM_PROMPT }}
           trigger_phrase: "@wso2-engineering-bot"
           claude_args: |
