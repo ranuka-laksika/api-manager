@@ -209,11 +209,13 @@ CRITICAL WORKFLOW
 - Zip entire `wso2am-${WSO2AM_VERSION}` pack
 - Name: `wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip`
 - **CRITICAL - ZIP FILE LOCATION:**
-  * The zipped file MUST be placed in: `${GITHUB_WORKSPACE}/wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip`
-  * This is the root workspace directory, NOT inside any repository folder
+  * **MANDATORY**: When you zip the updated wso2am pack, the zipped file MUST be placed at: `${GITHUB_WORKSPACE}/wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip`
+  * This is the root GitHub workspace directory, NOT inside any repository folder
+  * The final location must be: `${GITHUB_WORKSPACE}/{name_of_the_zip_pack}`
   * Example: If GITHUB_WORKSPACE is `/home/runner/work/api-manager/api-manager`
   * Then zip file should be at: `/home/runner/work/api-manager/api-manager/wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip`
-  * This location is required for GitHub Actions to upload the artifact correctly
+  * This exact location is required for GitHub Actions to upload the artifact correctly
+  * **Command example**: `cd ${GITHUB_WORKSPACE} && zip -r wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip wso2am-${WSO2AM_VERSION}/`
 
 **STEP 9: Commit & Push**
 - Verify you're in repository directory with `pwd`
