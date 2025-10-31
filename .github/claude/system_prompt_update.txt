@@ -157,17 +157,43 @@ CRITICAL WORKFLOW
 
 **STEP 6: Replace Artifacts in wso2am Pack**
 
-**Frontend (.war files) - Remove folder, copy .war, unzip:**
-1. Verify exact name match (e.g., `publisher.war` → `publisher` folder)
-2. Navigate to `wso2am-${WSO2AM_VERSION}/repository/deployment/server/webapps/`
-3. Remove existing folder: `rm -rf publisher`
-4. Copy .war file: `cp /path/to/publisher.war .`
-5. Unzip: `unzip publisher.war -d publisher`
+**FRONTEND CHANGES ONLY (apim-apps repository) - Replace .war files:**
 
-**Backend (.jar files) - Direct replacement:**
-1. Navigate to `wso2am-${WSO2AM_VERSION}/repository/components/plugins/` or `dropins/`
-2. Remove existing .jar file with exact matching name
-3. Copy new .jar file to location
+**CRITICAL - Frontend Artifact Replacement Process:**
+1. **Build the changed component** in apim-apps repository (e.g., publisher, devportal, admin)
+   - Example: `cd apim-apps/portals/publisher && mvn clean install -DskipTests`
+   - Wait for "BUILD SUCCESS"
+2. **Locate the generated .war file**
+   - Path: `{component}/target/{component-name}.war`
+   - Example: `apim-apps/portals/publisher/target/publisher.war`
+3. **Navigate to wso2am pack webapps directory**
+   - `cd wso2am-${WSO2AM_VERSION}/repository/deployment/server/webapps/`
+4. **Remove existing folder** (e.g., if the .war is publisher.war, remove the publisher folder)
+   - Example: `rm -rf publisher`
+5. **Copy the generated .war file** to webapps directory
+   - Example: `cp /path/to/apim-apps/portals/publisher/target/publisher.war .`
+6. **Unzip the .war file** to generate the folder
+   - Example: `unzip publisher.war -d publisher`
+7. **Remove the copied .war file** from webapps directory
+   - Example: `rm publisher.war`
+
+**Component Name Mapping (verify exact name match):**
+- `publisher.war` → `publisher` folder
+- `devportal.war` → `devportal` folder
+- `admin.war` → `admin` folder
+
+**BACKEND CHANGES ONLY (carbon-apimgt, product-apim) - Replace .jar files:**
+1. **Build the changed component** in backend repository
+   - Navigate to specific component directory and build
+   - Example: `cd carbon-apimgt/components/apimgt/org.wso2.carbon.apimgt.api && mvn clean install -DskipTests`
+2. **Locate the generated .jar file**
+   - Path: `{component}/target/{component-name}.jar`
+3. **Navigate to wso2am pack plugins directory**
+   - `cd wso2am-${WSO2AM_VERSION}/repository/components/plugins/` or `dropins/`
+4. **Remove existing .jar file** with exact matching name
+   - Example: `rm org.wso2.carbon.apimgt.api_*.jar`
+5. **Copy new .jar file** to location
+   - Example: `cp /path/to/component/target/org.wso2.carbon.apimgt.api-*.jar .`
 
 **CRITICAL**: Only replace files with EXACT name matches. Do NOT replace similarly named files.
 
