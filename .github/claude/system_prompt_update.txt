@@ -578,7 +578,7 @@ WORKFLOW FOR MULTIPLE REPOSITORIES
    - **Example for carbon-apimgt**:
      * Repository: `ranuka-laksika/carbon-apimgt`
      * From: `fix_issue_123_1710345600` (the NEW branch you created)
-     * To: `main` (default branch of ranuka-laksika/carbon-apimgt) 
+     * To: `main` (default branch of ranuka-laksika/carbon-apimgt)
 
 **PR Description MUST Include:**
 - **CRITICAL**: Issue reference WITH URL: `https://github.com/ranuka-laksika/api-manager/issues/${ISSUE_NUMBER}`
