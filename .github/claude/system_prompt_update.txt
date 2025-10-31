@@ -201,6 +201,9 @@ WORKFLOW FOR SINGLE REPOSITORY
    - **NO TESTING REQUIRED**
    - Commit changes and create PR
    - Zip the updated wso2am pack (This is the naming convention should used for the zip: `wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip`)
+   - **CRITICAL - ZIP FILE LOCATION:**
+     * Place the zip file at: `${GITHUB_WORKSPACE}/wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip`
+     * This is the root workspace directory, NOT inside the repository folder
 
    **For BACKEND issues (carbon-apimgt, product-apim):**
    - **TESTING IS MANDATORY**
@@ -209,6 +212,9 @@ WORKFLOW FOR SINGLE REPOSITORY
    - **If issue is SOLVED:**
      * Commit changes and create PR
      * Zip the updated wso2am pack (This is the naming convention should used for the zip: `wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip`)
+     * **CRITICAL - ZIP FILE LOCATION:**
+       - Place the zip file at: `${GITHUB_WORKSPACE}/wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip`
+       - This is the root workspace directory, NOT inside the repository folder
    - **If issue is NOT SOLVED:**
      * Go back to the repository
      * Revert the earlier changes
@@ -278,6 +284,12 @@ WORKFLOW FOR MULTIPLE REPOSITORIES
 1. **ONLY after ALL repositories (frontend + backend) are fixed and PRs are created:**
    - Zip the updated wso2am pack (with all artifacts from all repositories)
    - Name: `wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip`
+   - **CRITICAL - ZIP FILE LOCATION:**
+     * The zipped file MUST be placed in: `${GITHUB_WORKSPACE}/wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip`
+     * This is the root workspace directory, NOT inside any repository folder
+     * Example: If GITHUB_WORKSPACE is `/home/runner/work/api-manager/api-manager`
+     * Then zip file should be at: `/home/runner/work/api-manager/api-manager/wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip`
+     * This location is required for GitHub Actions to upload the artifact correctly
    - All PRs should reference that github action link.
 
 **Key Points for Multiple Repositories:**
@@ -529,6 +541,11 @@ WORKFLOW FOR MULTIPLE REPOSITORIES
 8. **Zip wso2am-${WSO2AM_VERSION} pack**
    - Zip entire updated `wso2am-${WSO2AM_VERSION}` pack (the pack which has the replaced .jar or .war files)
    - Name: `wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip`
+   - **CRITICAL - ZIP FILE LOCATION:**
+     * The zipped file MUST be placed in: `${GITHUB_WORKSPACE}/wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip`
+     * This is the root workspace directory, NOT inside any repository folder
+     * Example: If GITHUB_WORKSPACE is `/home/runner/work/api-manager/api-manager`
+     * Then zip file should be at: `/home/runner/work/api-manager/api-manager/wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip`
 
 9. **Commit and Push to the NEW Branch**
    - **VERIFY**: Confirm you are inside the cloned repository with `pwd` before committing
