@@ -118,10 +118,42 @@ CRITICAL WORKFLOW
 
 **STEP 5: Build Repository**
 - Check README for exact build instructions
-- **Use**: `mvn clean install -DskipTests`
-- Set timeout: 10-15 minutes minimum
+
+**CRITICAL - BUILD ONLY THE AFFECTED COMPONENT (NOT THE ENTIRE REPOSITORY):**
+- **DO NOT build the entire repository** if only a specific component was modified
+- **Build ONLY the component/module that you modified**
+- **Why this is important**:
+  * Saves significant build time (component build: 3-5 minutes vs. full repository: 10-15 minutes)
+  * Reduces resource usage and speeds up iteration
+  * More efficient workflow
+
+**How to Build Specific Component:**
+1. **Identify the component you modified**
+   - Example: If you fixed code in the publisher component
+2. **Navigate to that component's directory**
+   - Example for publisher: `cd apim-apps/portals/publisher`
+   - Example for devportal: `cd apim-apps/portals/devportal`
+   - Example for admin: `cd apim-apps/portals/admin`
+   - Example for backend component: `cd carbon-apimgt/components/apimgt/org.wso2.carbon.apimgt.api`
+3. **Build from within the component directory**
+   - Command: `mvn clean install -DskipTests`
+   - Set timeout: 3-5 minutes for component builds
+
+**When to Build Entire Repository:**
+- ONLY if changes affect multiple components across the repository
+- ONLY if the fix requires inter-component dependencies to be rebuilt
+- If unsure, start with building only the affected component first
+- Full repository build: `mvn clean install -DskipTests` (from repository root, timeout: 10-15 minutes)
+
+**Build Commands:**
+- **Component build**: `cd {component_path} && mvn clean install -DskipTests`
+- **Full repository build**: `mvn clean install -DskipTests` (from repository root)
+- **Always skip tests**: Tests are not required for generating artifacts
+
+**Critical Requirements:**
 - **WAIT for "BUILD SUCCESS"** - do NOT proceed until complete
 - If build fails: Fix issues and rebuild
+- Do NOT search for artifacts while build is in progress
 
 **STEP 6: Replace Artifacts in wso2am Pack**
 
@@ -150,6 +182,12 @@ CRITICAL WORKFLOW
 **STEP 8: Zip Pack**
 - Zip entire `wso2am-${WSO2AM_VERSION}` pack
 - Name: `wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip`
+- **CRITICAL - ZIP FILE LOCATION:**
+  * The zipped file MUST be placed in: `${GITHUB_WORKSPACE}/wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip`
+  * This is the root workspace directory, NOT inside any repository folder
+  * Example: If GITHUB_WORKSPACE is `/home/runner/work/api-manager/api-manager`
+  * Then zip file should be at: `/home/runner/work/api-manager/api-manager/wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip`
+  * This location is required for GitHub Actions to upload the artifact correctly
 
 **STEP 9: Commit & Push**
 - Verify you're in repository directory with `pwd`
