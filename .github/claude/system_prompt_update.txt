@@ -117,27 +117,40 @@ CRITICAL WORKFLOW
 - Modify minimal files directly related to the bug
 
 **STEP 5: Build Repository**
-- Check README for exact build instructions
 
-**CRITICAL - BUILD ONLY THE AFFECTED COMPONENT (NOT THE ENTIRE REPOSITORY):**
-- **DO NOT build the entire repository** if only a specific component was modified
-- **Build ONLY the component/module that you modified**
+**CRITICAL - BUILD ONLY THE CHANGED COMPONENT (NOT THE ENTIRE REPOSITORY):**
+- **DO NOT build the entire repository** - only build the specific component you modified
 - **Why this is important**:
   * Saves significant build time (component build: 3-5 minutes vs. full repository: 10-15 minutes)
   * Reduces resource usage and speeds up iteration
   * More efficient workflow
 
-**How to Build Specific Component:**
-1. **Identify the component you modified**
-   - Example: If you fixed code in the publisher component
-2. **Navigate to that component's directory**
+**Build Process:**
+1. **Read the README file** to understand build instructions for the repository
+   - Check for specific build requirements or commands
+   - Understand the repository structure
+
+2. **Identify the component you modified**
+   - Example: If you fixed code in the publisher component → `apim-apps/portals/publisher`
+
+3. **Navigate to that component's directory**
    - Example for publisher: `cd apim-apps/portals/publisher`
    - Example for devportal: `cd apim-apps/portals/devportal`
    - Example for admin: `cd apim-apps/portals/admin`
    - Example for backend component: `cd carbon-apimgt/components/apimgt/org.wso2.carbon.apimgt.api`
-3. **Build from within the component directory**
+
+4. **Build ONLY that component**
    - Command: `mvn clean install -DskipTests`
    - Set timeout: 3-5 minutes for component builds
+
+**Build Configuration:**
+   - **VERIFY**: Confirm you are inside the cloned repository with `pwd` before building
+   - Use Java 11 and Maven 3.6.3
+   - Environment paths:
+     * PATH: ${PATH}
+     * JAVA_HOME: ${JAVA_HOME}
+     * MAVEN_HOME: ${MAVEN_HOME}
+     * NODE_PATH: ${NODE_PATH}
 
 **When to Build Entire Repository:**
 - ONLY if changes affect multiple components across the repository
