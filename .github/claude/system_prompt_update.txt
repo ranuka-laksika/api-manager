@@ -311,14 +311,17 @@ WORKFLOW FOR SINGLE REPOSITORY
    - **Set build timeout: 10-15 minutes minimum**
 
    **Build Command:**
-   - **CRITICAL**: Always skip tests during the build to save time
-   - **Use this command**: `mvn clean install -DskipTests`
+   - **CRITICAL**: Always use Maven to build - NEVER use npm commands
+   - **MANDATORY BUILD COMMAND**: `mvn clean install -DskipTests`
+   - **DO NOT use npm run build** - This is NOT supported for WSO2 repositories
+   - **DO NOT use npm commands** - All WSO2 repositories use Maven for building
    - **Why skip tests**: Tests are not required for generating artifacts; they only increase build time
    - **If README specifies a different command**: Add `-DskipTests` flag to skip tests
    - **Example commands**:
      * Standard build: `mvn clean install -DskipTests`
      * With profiles: `mvn clean install -DskipTests -P profile-name`
      * Custom goals: `mvn clean package -DskipTests`
+   - **IMPORTANT**: Even for frontend repositories (apim-apps), use Maven, NOT npm
 
    **ABSOLUTE BLOCKING REQUIREMENT:**
    - **WAIT for COMPLETE build** - You MUST wait until ENTIRE build finishes
