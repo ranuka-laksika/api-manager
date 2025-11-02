@@ -87,6 +87,29 @@ AGENT OBJECTIVE
 CRITICAL WORKFLOW
 ========================
 
+**MANDATORY - COMPLETE THE ENTIRE PROCESS NO MATTER HOW LONG IT TAKES:**
+- **CRITICAL**: You MUST complete the ENTIRE workflow from start to finish
+- **DO NOT stop** until the Pull Request is successfully created and uploaded
+- **DO NOT consider time constraints** - time is IRRELEVANT - the process MUST be completed
+- **NO TIME LIMIT**: Whether it takes 10 minutes, 1 hour, 2 hours, or more - YOU MUST FINISH
+- **PERSIST THROUGH ALL STEPS**: Complete every step below until PR is created:
+  1. Clone repository
+  2. Configure Git and create branch
+  3. Verify issue (if backend)
+  4. Apply fix
+  5. Build ENTIRE repository (using exact Maven/Java paths)
+  6. Replace generated artifacts in wso2am pack
+  7. Test (if backend - retry until issue is solved)
+  8. Zip the wso2am pack
+  9. Commit and push
+  10. Create Pull Request
+- **NO MATTER HOW MANY ATTEMPTS**: If any step fails, fix it and retry - DO NOT give up
+- **RETRY UNTIL SUCCESS**: Keep retrying failed steps until they succeed
+- **BUILD FAILURES**: If build fails 10 times, fix errors and rebuild 10 times - persist until success
+- **TEST FAILURES**: If tests fail, fix the issue, rebuild, replace artifacts, test again - repeat until solved
+- **THIS IS NON-NEGOTIABLE**: The workflow is incomplete until the PR is successfully created
+- **TIME DOES NOT MATTER**: Focus on completion, not speed
+
 **STEP 1: Clone Repository**
 - Clone from ranuka-laksika organization (NOT wso2)
 - Example: `git clone https://github.com/ranuka-laksika/apim-apps.git`
@@ -118,69 +141,70 @@ CRITICAL WORKFLOW
 
 **STEP 5: Build Repository**
 
-**MANDATORY - BUILD THE ENTIRE REPOSITORY:**
-- **CRITICAL**: You MUST build the ENTIRE repository, NOT just a component
-- **DO NOT build only the modified component** - ALWAYS build the WHOLE repository
-- **Why this is MANDATORY**:
-  * Ensures all dependencies are correctly resolved
-  * Prevents issues with inter-component dependencies
-  * Guarantees the generated artifact is compatible with the entire system
-  * This is the ONLY reliable way to generate correct artifacts
-- **This is NON-NEGOTIABLE** - building the whole repository is MANDATORY
+**CRITICAL - BUILD ONLY THE CHANGED COMPONENT (NOT THE ENTIRE REPOSITORY):**
+- **DO NOT build the entire repository** - only build the specific component you modified
+- **Why this is important**:
+  * Saves significant build time (component build: 3-5 minutes vs. full repository: 10-15 minutes)
+  * Reduces resource usage and speeds up iteration
+  * More efficient workflow
 
 **Build Process:**
 1. **Read the README file** to understand build instructions for the repository
    - Check for specific build requirements or commands
    - Understand the repository structure
 
-2. **Navigate to the repository root directory**
-   - **CRITICAL**: You MUST be in the repository root, NOT in a component subdirectory
-   - Example for apim-apps: `cd apim-apps` (repository root)
-   - Example for carbon-apimgt: `cd carbon-apimgt` (repository root)
-   - Example for product-apim: `cd product-apim` (repository root)
-   - **Verify you are in the root**: Run `pwd` to confirm
-   - Expected output: `/path/to/{repository_name}` (NOT `/path/to/{repository_name}/component/subdir`)
+2. **Identify the component you modified**
+   - Example: If you fixed code in the publisher component → `apim-apps/portals/publisher`
 
-3. **Build the ENTIRE repository from root**
+3. **Navigate to that component's directory**
+   - Example for publisher: `cd apim-apps/portals/publisher`
+   - Example for devportal: `cd apim-apps/portals/devportal`
+   - Example for admin: `cd apim-apps/portals/admin`
+   - Example for backend component: `cd carbon-apimgt/components/apimgt/org.wso2.carbon.apimgt.api`
 
-**MANDATORY - YOU MUST BUILD TO GET ARTIFACTS:**
-   - **CRITICAL**: After making ANY changes to the repository, you MUST build the repository
-   - **THIS IS MANDATORY**: Building is the ONLY way to generate .jar or .war files
-   - **Without building, you CANNOT get the generated artifacts** to replace in wso2am pack
-   - **You CANNOT proceed without building first** - this is a BLOCKING requirement
-   - **DO NOT use npm build, npm install, or any npm commands** - ONLY use Maven
-   - **ONLY use Maven with the exact paths specified below**
+4. **Build the repository or component**
 
 **Build Configuration:**
    - **VERIFY**: Confirm you are inside the cloned repository with `pwd` before building
    - Use Java 11 and Maven 3.6.3
-   - **MANDATORY - Use these EXACT installation paths:**
-     * **JAVA_HOME**: `/opt/homebrew/Cellar/openjdk@11/11.0.28/libexec/openjdk.jdk/Contents/Home`
-     * **Maven path**: `/opt/maven/bin/mvn`
-     * **Java path**: `/opt/homebrew/Cellar/openjdk@11/11.0.28/libexec/openjdk.jdk/Contents/Home/bin/java`
-   - **Before building, export JAVA_HOME**:
-     * Command: `export JAVA_HOME=/opt/homebrew/Cellar/openjdk@11/11.0.28/libexec/openjdk.jdk/Contents/Home`
+  **Use this emvironment path to find the installed java and maven
    - Environment paths:
      * PATH: ${PATH}
      * JAVA_HOME: ${JAVA_HOME}
      * MAVEN_HOME: ${MAVEN_HOME}
      * NODE_PATH: ${NODE_PATH}
 
+**MANDATORY - YOU MUST BUILD TO GET ARTIFACTS:**
+   - **CRITICAL**: After making ANY changes to the repository, you MUST build the whole repository
+   - **THIS IS MANDATORY**: Building is the ONLY way to generate .jar or .war files
+   - **Without building, you CANNOT get the generated artifacts** to replace in wso2am pack
+   - **You CANNOT proceed without building first** - this is a BLOCKING requirement
+   - **DO NOT use npm build, npm install, or any npm commands** - ONLY use Maven
+   - **ONLY use Maven with the exact paths specified below**
+
+**When to Build Entire Repository:**
+- ONLY if changes affect multiple components across the repository
+- ONLY if the fix requires inter-component dependencies to be rebuilt
+- If unsure, start with building only the affected component first
+- Full repository build: `/opt/maven/bin/mvn clean install -DskipTests` (from repository root, timeout: 10-15 minutes)
+
 **Build Commands - MANDATORY USE EXACT MAVEN PATH:**
-- **CRITICAL**: You MUST ALWAYS build the ENTIRE repository from the root directory
-- **DO NOT build individual components** - ALWAYS build from repository root
 - **CRITICAL**: DO NOT use 'mvn' command - MUST use full path: `/opt/maven/bin/mvn`
 - **DO NOT use npm build or npm commands** - ONLY use Maven
-- **MANDATORY build command**: `/opt/maven/bin/mvn clean install -DskipTests`
+- **Component build**: `cd {component_path} && /opt/maven/bin/mvn clean install -DskipTests`
+- **Full repository build**: `/opt/maven/bin/mvn clean install -DskipTests` (from repository root)
 - **Always skip tests**: Tests are not required for generating artifacts
-- **Build from repository root ONLY**: Navigate to root, then run `/opt/maven/bin/mvn clean install -DskipTests`
-- **Set timeout**: 10-15 minutes for full repository builds
+- **MANDATORY command**: `/opt/maven/bin/mvn clean install -DskipTests`
 
 **Critical Requirements:**
 - **WAIT for "BUILD SUCCESS"** - do NOT proceed until complete
-- If build fails: Fix issues and rebuild the ENTIRE repository
+- **If build fails**: Fix the issues and rebuild - DO NOT give up
+- **Keep retrying**: If build fails multiple times, fix each error and rebuild until success
+- **NO TIME LIMIT**: The build MUST succeed - time does not matter
+- **PERSIST**: Retry 5 times, 10 times, 20 times if needed - DO NOT stop until build succeeds
 - Do NOT search for artifacts while build is in progress
-- Set timeout: 10-15 minutes for full repository builds
+- Set timeout: 3-5 minutes for component builds, 10-15 minutes for full repository builds
+- **MANDATORY**: You MUST achieve "BUILD SUCCESS" before proceeding - this is non-negotiable
 
 **STEP 6: Replace Artifacts in wso2am Pack**
 
@@ -192,11 +216,9 @@ CRITICAL WORKFLOW
 **FRONTEND CHANGES ONLY (apim-apps repository) - Replace .war files:**
 
 **CRITICAL - Frontend Artifact Replacement Process:**
-1. **Build the ENTIRE repository** (e.g., apim-apps)
-   - **MANDATORY**: Navigate to repository root and build the WHOLE repository
-   - **CRITICAL**: Use exact Maven path: `/opt/maven/bin/mvn`
-   - Example: `cd apim-apps && /opt/maven/bin/mvn clean install -DskipTests`
-   - **DO NOT build individual components** - build from repository root
+1. **Build the changed component** in apim-apps repository (e.g., publisher, devportal, admin)
+   - **MANDATORY**: Use exact Maven path: `/opt/maven/bin/mvn`
+   - Example: `cd apim-apps/portals/publisher && /opt/maven/bin/mvn clean install -DskipTests`
    - **DO NOT use npm build** - ONLY use Maven
    - Wait for "BUILD SUCCESS"
 2. **Locate the generated .war file**
@@ -219,13 +241,9 @@ CRITICAL WORKFLOW
 - `admin.war` → `admin` folder
 
 **BACKEND CHANGES ONLY (carbon-apimgt, product-apim) - Replace .jar files:**
-1. **Build the ENTIRE repository** (e.g., carbon-apimgt, product-apim)
-   - **MANDATORY**: Navigate to repository root and build the WHOLE repository
-   - **CRITICAL**: Use exact Maven path: `/opt/maven/bin/mvn`
-   - Example: `cd carbon-apimgt && /opt/maven/bin/mvn clean install -DskipTests`
-   - **DO NOT build individual components** - build from repository root
-   - **DO NOT use npm build** - ONLY use Maven
-   - Wait for "BUILD SUCCESS"
+1. **Build the changed component** in backend repository
+   - Navigate to specific component directory and build
+   - Example: `cd carbon-apimgt/components/apimgt/org.wso2.carbon.apimgt.api && mvn clean install -DskipTests`
 2. **Locate the generated .jar file**
    - Path: `{component}/target/{component-name}.jar`
 3. **Navigate to wso2am pack plugins directory**
@@ -242,8 +260,11 @@ CRITICAL WORKFLOW
 - **Backend repositories**: MANDATORY testing
   * Run updated wso2am pack
   * Test by calling relevant APIs
-  * If NOT solved: Revert changes, apply new fix, rebuild, replace artifacts, test again
-  * Repeat until solved
+  * **If NOT solved**: Revert changes, apply new fix, rebuild, replace artifacts, test again
+  * **REPEAT UNTIL SOLVED**: No matter how many attempts it takes - 5, 10, 20 times
+  * **NO TIME LIMIT**: Keep trying until the issue is completely solved
+  * **DO NOT give up**: Persist through failures until tests pass
+  * **THIS IS MANDATORY**: Testing must succeed before creating PR
 
 **STEP 8: Zip Pack**
 - Zip entire `wso2am-${WSO2AM_VERSION}` pack
