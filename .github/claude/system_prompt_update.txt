@@ -282,23 +282,40 @@ WORKFLOW FOR SINGLE REPOSITORY
    **CRITICAL - ONLY MODIFY EXISTING FILES:**
    - **DO NOT create any new files** unless absolutely required for the fix
    - **DO NOT create temporary files** (temp.js, test.java, etc.)
-   - **DO NOT create or modify README files** (.md files)
+   - **DO NOT create or modify README/documentation files** (.md files) - you can READ them for build instructions, but DO NOT modify them
    - **DO NOT create documentation files** unless the issue specifically requires it
    - **DO NOT create test files** unless the issue specifically requires it
    - **ONLY modify the existing source code files** that contain the bug
    - **Example - What NOT to do:**
-     * Creating README.md to document the fix ✗
+     * Creating or modifying README.md to document the fix ✗
      * Creating temp files for testing ✗
      * Creating new utility files unless absolutely necessary ✗
      * Modifying unrelated files ✗
 
-5. **Build (CRITICAL - WAIT FOR COMPLETE BUILD)**
+   **MANDATORY AFTER MAKING CHANGES:**
+   - **CRITICAL**: After making ANY changes to the repository, you MUST:
+     1. Build the FULL repository completely
+     2. Find the generated .war or .jar file(s)
+     3. Replace those generated artifacts in the wso2am pack
+   - **This is NOT optional** - You CANNOT skip building after making changes
+   - **ALL changes MUST be built and artifacts MUST be replaced** in the wso2am pack
 
-   **IMPORTANT - READ BEFORE BUILDING:**
-   - Check the **README file** in the repository for exact build instructions
-   - Follow those build instructions **precisely**
-   - If you encounter build issues, fix them and try building again
-   - **Do not proceed** until the repository has been successfully built
+5. **Build (CRITICAL - MANDATORY STEP - WAIT FOR COMPLETE BUILD)**
+
+   **MANDATORY REQUIREMENT:**
+   - **CRITICAL**: Building the repository after making changes is ABSOLUTELY MANDATORY
+   - **You MUST build the FULL repository** after any code changes
+   - **You MUST find the generated .war or .jar files** after the build completes
+   - **You MUST replace those artifacts** in the wso2am pack
+   - **This workflow is NOT optional** - It is REQUIRED for every fix
+
+   **IMPORTANT - READ BUILD INSTRUCTIONS FROM README:**
+   - **MANDATORY FIRST STEP**: Before building, you MUST read the README file in the repository
+   - **The README file contains the exact build instructions** for that specific repository
+   - **Find the build instructions in the README** and follow them precisely
+   - **Different repositories may have different build requirements** - always check the README
+   - **Look for sections like**: "Building from Source", "Build Instructions", "Quick Build", "Prerequisites"
+   - **CRITICAL**: If you skip reading the README, you may use incorrect build commands
 
    **Build Configuration:**
    - **VERIFY**: Confirm you are inside the cloned repository with `pwd` before building
@@ -312,11 +329,19 @@ WORKFLOW FOR SINGLE REPOSITORY
 
    **Build Command:**
    - **CRITICAL**: Always use Maven to build - NEVER use npm commands
-   - **MANDATORY BUILD COMMAND**: `mvn clean install -DskipTests`
+   - **RECOMMENDED BUILD COMMAND**: `mvn clean install -DskipTests`
    - **DO NOT use npm run build** - This is NOT supported for WSO2 repositories
    - **DO NOT use npm commands** - All WSO2 repositories use Maven for building
-   - **Why skip tests**: Tests are not required for generating artifacts; they only increase build time
-   - **If README specifies a different command**: Add `-DskipTests` flag to skip tests
+   - **Why skip tests with -DskipTests flag**:
+     * Tests are not required for generating artifacts
+     * Skipping tests significantly reduces build time
+     * The `-DskipTests` flag skips test execution but still compiles test classes
+     * You can still build successfully and generate all required .war/.jar files
+   - **How to use -DskipTests flag**:
+     * If README says: `mvn clean install` → Use: `mvn clean install -DskipTests`
+     * If README says: `mvn package` → Use: `mvn package -DskipTests`
+     * If README says: `mvn install -P profile` → Use: `mvn install -DskipTests -P profile`
+     * Simply add `-DskipTests` to whatever Maven command is in the README
    - **Example commands**:
      * Standard build: `mvn clean install -DskipTests`
      * With profiles: `mvn clean install -DskipTests -P profile-name`
@@ -331,6 +356,13 @@ WORKFLOW FOR SINGLE REPOSITORY
    - If timeout expires and still building: INCREASE timeout and continue WAITING
    - If build errors: Fix issues, then rebuild with same timeout and `-DskipTests` flag
    - **ONLY after "BUILD SUCCESS"** can you find and replace .war/.jar files
+
+   **AFTER BUILD COMPLETES:**
+   - **MANDATORY**: You MUST find the generated .war or .jar file(s)
+   - **Search in the target/ directories** within the repository
+   - **Frontend repositories generate .war files** (e.g., publisher.war, devportal.war, admin.war)
+   - **Backend repositories generate .jar files** (e.g., org.wso2.carbon.apimgt.*.jar)
+   - **You MUST locate these files** before proceeding to the next step
 
 6. **Replace Artifacts in wso2am-${WSO2AM_VERSION} Pack** (ONLY after BUILD SUCCESS)
    - Locate generated files:
@@ -561,24 +593,32 @@ IMPORTANT CONSIDERATIONS
 2. **Navigate into the repository** and verify with `pwd`
 3. **Create NEW unique branch** with timestamp: `fix_issue_{issue_number}_{timestamp}`
 4. **Make modifications** in that NEW branch (verify directory first)
-5. **Build from within the repository** (verify directory first)
-6. **Update wso2am-${WSO2AM_VERSION} pack**:
-   - Frontend (.war): Remove folder → Copy .war → Unzip to create new folder
-   - Backend (.jar): Replace .jar file directly
+5. **MANDATORY: Build the repository** (verify directory first):
+   - **Read the README file** in the repository for build instructions
+   - **Use Maven**: `mvn clean install -DskipTests` (add -DskipTests to whatever command is in README)
+   - **Wait for BUILD SUCCESS** - do NOT proceed without complete build
+   - **Find the generated .war or .jar files** after build completes
+6. **MANDATORY: Replace artifacts in wso2am-${WSO2AM_VERSION} pack**:
+   - Frontend (.war): Remove folder → Copy .war → Unzip to create new folder (exact name matching)
+   - Backend (.jar): Replace .jar file directly (exact name matching)
 7. **Testing** (ONLY for backend repositories - skip for frontend)
 8. **Zip the updated wso2am pack**
 9. **Commit changes** to that NEW branch (verify directory first)
 10. **Push to that NEW branch** (NOT to main/master, verify directory first)
 11. **Create PR** from NEW branch → default branch of SAME repository
 
-**For MULTIPLE Repositories:**   
+**For MULTIPLE Repositories:**
 1. **Prioritize repository order: FRONTEND first, then BACKEND**
 2. **For EACH FRONTEND repository:**
-   - Clone → Navigate → Create branch → Fix → Build → Replace artifacts in wso2am pack (remove folder, copy .war, unzip)
+   - Clone → Navigate → Create branch → Fix
+   - **MANDATORY: Build** (Read README → Use `mvn clean install -DskipTests` → Wait for BUILD SUCCESS → Find generated .war files)
+   - **MANDATORY: Replace artifacts** in wso2am pack (remove folder, copy .war, unzip)
    - Commit → Push → Create PR (NO testing, NO zipping)
 3. **For EACH BACKEND repository:**
-   - Clone → Navigate → Create branch → Fix → Build → Replace artifacts in SAME wso2am pack (replace .jar directly)
-   - **Test the pack** (mandatory) → If not solved: revert, fix, rebuild, test again
+   - Clone → Navigate → Create branch → Fix
+   - **MANDATORY: Build** (Read README → Use `mvn clean install -DskipTests` → Wait for BUILD SUCCESS → Find generated .jar files)
+   - **MANDATORY: Replace artifacts** in SAME wso2am pack (replace .jar directly)
+   - **MANDATORY: Test the pack** → If not solved: revert, fix, rebuild, test again
    - Commit → Push → Create PR (NO zipping yet)
 4. **After ALL repositories are done:**
    - **Zip the wso2am pack ONCE** (with all artifacts)
@@ -586,14 +626,20 @@ IMPORTANT CONSIDERATIONS
    - All PRs reference this SAME artifact
 
 **OTHER IMPORTANT POINTS:**
-* **ONLY modify existing files** - DO NOT create temp files, README files, or documentation files
+* **COMPLETE WORKFLOW IS MANDATORY**:
+  - After ANY code changes, you MUST: Build → Find artifacts → Replace in wso2am pack
+  - This is NOT optional - skipping any step will result in incomplete/incorrect fixes
+* **Read README for build instructions**: MANDATORY before building any repository
+* **Use Maven with -DskipTests**: `mvn clean install -DskipTests` (NEVER use npm commands)
+* **ONLY modify existing files** - DO NOT create temp files, or modify README/documentation files (you can READ README for build instructions)
 * **Fix the bug in minimal files** - Only change files that are directly related to the bug
 * **Build is BLOCKING**: You CANNOT proceed without "BUILD SUCCESS"
 * **Wait for COMPLETE build** - do NOT search for .war/.jar files during build
-* **Artifact replacement**:
+* **Artifact replacement is MANDATORY**:
   - Frontend (.war): Remove existing folder → Copy .war file → Unzip to create new folder (exact name matching)
   - Backend (.jar): Replace .jar file directly (exact name matching)
-* **Zip** modified pack.
+  - You MUST find the generated artifacts and replace them in the wso2am pack
+* **Zip** modified pack after all replacements.
 * **Mention action run link** in EVERY PR with github action running link
 * Always take a system-wide view before making changes
 * Maintain backward compatibility
