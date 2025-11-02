@@ -178,10 +178,8 @@ UNDERSTANDING ISSUES WITH SCREENSHOTS AND PICTURES
 - **This analysis step is MANDATORY before any other action**
 
 ========================
-WORKFLOW FOR SINGLE REPOSITORY
+WORKFLOW
 ========================
-
-**If the issue affects ONLY ONE repository:**
 
 1. **Clone the repository** from ranuka-laksika organization
 2. **Apply the fix**:
@@ -226,83 +224,8 @@ WORKFLOW FOR SINGLE REPOSITORY
      * Only then commit, create PR, and zip the pack
 
 ========================
-WORKFLOW FOR MULTIPLE REPOSITORIES
+CRITICAL WORKFLOW - FOLLOW THIS EXACTLY:
 ========================
-
-**If the issue affects MULTIPLE repositories combine with frontend and backend repositories:**
-
-**CRITICAL - Repository Processing Order:**
-- **ALWAYS work on FRONTEND repositories FIRST**, then BACKEND repositories
-- Even if the user provides repositories in a different order, prioritize frontend repos first
-- Example: If user says "carbon-apimgt and apim-apps", work on apim-apps (frontend) FIRST, then carbon-apimgt (backend)
-
-**Phase 1 - Process FRONTEND Repositories First:**
-1. **Identify and work on ALL FRONTEND repositories first** (apim-apps, api-developer-portal)
-2. For EACH frontend repository:
-   - Clone the repository
-   - Apply the fix:
-     * If exact fix provided: Apply it EXACTLY as specified
-     * If no exact fix: Research similar **CLOSED issues ONLY** in wso2/api-manager repository (use `is:issue is:closed` filters), review merged PRs for those CLOSED issues, and determine accurate solution
-   - Build the repository (wait for BUILD SUCCESS)
-   - Replace the generated artifacts (.war files) in the wso2am pack:
-     * Remove existing folder → Copy .war file → Unzip to create new folder
-       Example:- Remove publisher folder → Copy publisher.war file → Unzip publisher.war file to create new publisher folder
-   - **Commit changes** to that repository
-   - **Push** to the unique branch
-   - **Create PR** for that repository
-   - **DO NOT zip the wso2am pack yet**
-3. The wso2am pack now contains all frontend artifacts
-
-**Phase 2 - Process BACKEND Repositories:**
-1. **After ALL frontend repositories are done**, work on BACKEND repositories (carbon-apimgt, product-apim)
-2. For EACH backend repository:
-   - Clone the repository
-   - Apply the fix:
-     * If exact fix provided: Apply it EXACTLY as specified
-     * If no exact fix: Research similar **CLOSED issues ONLY** in wso2/api-manager repository (use `is:issue is:closed` filters), review merged PRs for those CLOSED issues, and determine accurate solution
-   - Build the repository (wait for BUILD SUCCESS)
-   - Replace the generated artifacts (.jar files) in the **SAME wso2am pack** (pack coming from the frontend side updated artifacts):
-     * Replace .jar file directly (no unzipping needed)
-   - **TESTING IS MANDATORY** after replacing backend artifacts:
-     * Run the updated wso2am pack (with all frontend + backend artifacts)
-     * Test by calling relevant APIs
-     * **If issue is SOLVED:**
-       - Commit changes to that repository
-       - Push to the unique branch
-       - Create PR for that repository
-       - **DO NOT zip yet if there are more backend repos**
-     * **If issue is NOT SOLVED:**
-       - Go back to that repository
-       - Revert earlier changes and apply new changes
-       - Build that repository again
-       - Replace artifacts in the wso2am pack again
-       - Run the pack and test again
-       - Repeat until the issue is completely solved
-       - Then commit, push, and create PR.
-
-**Phase 3 - Zip the wso2am Pack:**
-1. **ONLY after ALL repositories (frontend + backend) are fixed and PRs are created:**
-   - Zip the updated wso2am pack (with all artifacts from all repositories)
-   - Name: `wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip`
-   - **CRITICAL - ZIP FILE LOCATION:**
-     * The zipped file MUST be placed in: `${GITHUB_WORKSPACE}/wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip`
-     * This is the root workspace directory, NOT inside any repository folder
-     * Example: If GITHUB_WORKSPACE is `/home/runner/work/api-manager/api-manager`
-     * Then zip file should be at: `/home/runner/work/api-manager/api-manager/wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip`
-     * This location is required for GitHub Actions to upload the artifact correctly
-   - All PRs should reference that github action link.
-
-**Key Points for Multiple Repositories:**
-- **Process order**: FRONTEND repositories FIRST → BACKEND repositories SECOND
-- Frontend repos: Fix → Build → Replace artifacts (remove folder, copy .war, unzip) → Commit → Push → Create PR (NO testing, NO zipping)
-- Backend repos: Fix → Build → Replace artifacts (replace .jar directly) → TEST → Commit → Push → Create PR (NO zipping yet)
-- **ZIP ONLY ONCE** at the very end after ALL repositories are processed
-- First repository will get the donwloaded wso2am pack and after that other repository will get the updates wso2am pack from the previous repository.
-- At last repostiory it should create the zip of that updates wso2am pack using this naming convention: wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip 
-- Each repository gets its own separate PR
-- All PRs reference the SAME github action running page link.
-
-**CRITICAL WORKFLOW - FOLLOW THIS EXACTLY:**
 
 1. **Clone Repository from ranuka-laksika Organization** (NOT wso2)
    - **IMPORTANT**: User will provide the repository name (e.g., apim-apps, carbon-apimgt, product-apim)
@@ -668,7 +591,6 @@ IMPORTANT CONSIDERATIONS
 
 **CRITICAL WORKFLOW SUMMARY:**
 
-**For SINGLE Repository:**
 1. **Clone from ranuka-laksika/{repository}** (user provides repository name)
 2. **Navigate into the repository** and verify with `pwd`
 3. **Create NEW unique branch** with timestamp: `fix_issue_{issue_number}_{timestamp}`
@@ -682,20 +604,6 @@ IMPORTANT CONSIDERATIONS
 9. **Commit changes** to that NEW branch (verify directory first)
 10. **Push to that NEW branch** (NOT to main/master, verify directory first)
 11. **Create PR** from NEW branch → default branch of SAME repository
-
-**For MULTIPLE Repositories:**   
-1. **Prioritize repository order: FRONTEND first, then BACKEND**
-2. **For EACH FRONTEND repository:**
-   - Clone → Navigate → Create branch → Fix → Build → Replace artifacts in wso2am pack (remove folder, copy .war, unzip)
-   - Commit → Push → Create PR (NO testing, NO zipping)
-3. **For EACH BACKEND repository:**
-   - Clone → Navigate → Create branch → Fix → Build → Replace artifacts in SAME wso2am pack (replace .jar directly)
-   - **Test the pack** (mandatory) → If not solved: revert, fix, rebuild, test again
-   - Commit → Push → Create PR (NO zipping yet)
-4. **After ALL repositories are done:**
-   - **Zip the wso2am pack ONCE** (with all artifacts)
-   - Upload as GitHub Actions artifact
-   - All PRs reference this SAME artifact
 
 **OTHER IMPORTANT POINTS:**
 * **ONLY modify existing files** - DO NOT create temp files, README files, or documentation files
