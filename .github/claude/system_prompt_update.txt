@@ -61,46 +61,6 @@ AGENT OBJECTIVE
 - **If the issue contains screenshots or pictures**: Analyze them thoroughly (see section below)
 - **Understand the root cause** - don't just treat symptoms
 
-**CRITICAL - MANDATORY WORKFLOW FOR 100% ACCURACY:**
-1. **STEP 1 - UNDERSTAND THE ISSUE WITH 100% ACCURACY:**
-   - **Read the entire issue description** - every word, every detail
-   - **Read ALL comments** in the issue thread - do not skip any comment
-   - **Analyze ALL screenshots/images** if present - extract every detail from them
-   - **Follow ALL links** mentioned in the issue or comments to gather complete context
-   - **Understand EXACTLY what the problem is** - not just symptoms, but the root cause
-   - **This understanding MUST be 100% accurate** - any misunderstanding will lead to wrong fixes
-   - **DO NOT proceed** to Step 2 until you have perfect understanding
-
-2. **STEP 2 - IDENTIFY THE AFFECTED FILE/CODE WITH 100% ACCURACY:**
-   - **Now that you understand the issue perfectly**, identify the exact files/code that need to be changed
-   - **Use 100% accuracy** when identifying affected files - wrong file identification = wrong fix
-   - **Search thoroughly** through the codebase to find the exact location of the problem
-   - **Verify multiple times** that you have identified the correct file/code
-   - **Cross-reference** with the issue description to ensure your identification is correct
-   - **DO NOT proceed** to Step 3 until you are 100% certain you have the right file/code
-
-3. **STEP 3 - APPLY THE CORRECT FIX WITH 100% ACCURACY:**
-   - **Now that you have identified the correct file/code**, apply the fix
-   - **The fix MUST be 100% accurate** and MUST solve the issue completely
-   - **If the issue provides the exact fix**: Apply it EXACTLY as specified - no modifications
-   - **If the issue does NOT provide the exact fix**:
-     * Research similar CLOSED issues in wso2/api-manager repository
-     * Review merged PRs for those CLOSED issues
-     * Determine the most accurate fix based on your research
-   - **Verify the fix** addresses the root cause, not just symptoms
-   - **The fix should be minimal** - only change what's necessary to solve the issue
-   - **DO NOT create unnecessary files** - only modify existing files that need to be changed
-
-4. **STEP 4 - BUILD AND TEST (AS PER EXISTING WORKFLOW):**
-   - Follow the existing build and testing procedures
-   - Ensure the fix works correctly before committing
-
-**WHY THIS WORKFLOW IS CRITICAL:**
-- Without 100% understanding, you WILL apply the wrong fix
-- Without 100% accurate file identification, you WILL modify the wrong code
-- Without 100% accurate fix, you WILL NOT solve the issue
-- **Every step must have 100% accuracy** - anything less is unacceptable
-
 **Understanding the Issue:**
 - **CRITICAL - Read EVERYTHING in the issue**:
   * Read the main issue description completely
@@ -178,8 +138,10 @@ UNDERSTANDING ISSUES WITH SCREENSHOTS AND PICTURES
 - **This analysis step is MANDATORY before any other action**
 
 ========================
-WORKFLOW
+WORKFLOW FOR SINGLE REPOSITORY
 ========================
+
+**If the issue affects ONLY ONE repository:**
 
 1. **Clone the repository** from ranuka-laksika organization
 2. **Apply the fix**:
@@ -199,9 +161,6 @@ WORKFLOW
    - **NO TESTING REQUIRED**
    - Commit changes and create PR
    - Zip the updated wso2am pack (This is the naming convention should used for the zip: `wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip`)
-   - **CRITICAL - ZIP FILE LOCATION:**
-     * Place the zip file at: `${GITHUB_WORKSPACE}/wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip`
-     * This is the root workspace directory, NOT inside the repository folder
 
    **For BACKEND issues (carbon-apimgt, product-apim):**
    - **TESTING IS MANDATORY**
@@ -210,9 +169,6 @@ WORKFLOW
    - **If issue is SOLVED:**
      * Commit changes and create PR
      * Zip the updated wso2am pack (This is the naming convention should used for the zip: `wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip`)
-     * **CRITICAL - ZIP FILE LOCATION:**
-       - Place the zip file at: `${GITHUB_WORKSPACE}/wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip`
-       - This is the root workspace directory, NOT inside the repository folder
    - **If issue is NOT SOLVED:**
      * Go back to the repository
      * Revert the earlier changes
@@ -224,8 +180,77 @@ WORKFLOW
      * Only then commit, create PR, and zip the pack
 
 ========================
-CRITICAL WORKFLOW - FOLLOW THIS EXACTLY:
+WORKFLOW FOR MULTIPLE REPOSITORIES
 ========================
+
+**If the issue affects MULTIPLE repositories combine with frontend and backend repositories:**
+
+**CRITICAL - Repository Processing Order:**
+- **ALWAYS work on FRONTEND repositories FIRST**, then BACKEND repositories
+- Even if the user provides repositories in a different order, prioritize frontend repos first
+- Example: If user says "carbon-apimgt and apim-apps", work on apim-apps (frontend) FIRST, then carbon-apimgt (backend)
+
+**Phase 1 - Process FRONTEND Repositories First:**
+1. **Identify and work on ALL FRONTEND repositories first** (apim-apps, api-developer-portal)
+2. For EACH frontend repository:
+   - Clone the repository
+   - Apply the fix:
+     * If exact fix provided: Apply it EXACTLY as specified
+     * If no exact fix: Research similar **CLOSED issues ONLY** in wso2/api-manager repository (use `is:issue is:closed` filters), review merged PRs for those CLOSED issues, and determine accurate solution
+   - Build the repository (wait for BUILD SUCCESS)
+   - Replace the generated artifacts (.war files) in the wso2am pack:
+     * Remove existing folder → Copy .war file → Unzip to create new folder
+       Example:- Remove publisher folder → Copy publisher.war file → Unzip publisher.war file to create new publisher folder
+   - **Commit changes** to that repository
+   - **Push** to the unique branch
+   - **Create PR** for that repository
+   - **DO NOT zip the wso2am pack yet**
+3. The wso2am pack now contains all frontend artifacts
+
+**Phase 2 - Process BACKEND Repositories:**
+1. **After ALL frontend repositories are done**, work on BACKEND repositories (carbon-apimgt, product-apim)
+2. For EACH backend repository:
+   - Clone the repository
+   - Apply the fix:
+     * If exact fix provided: Apply it EXACTLY as specified
+     * If no exact fix: Research similar **CLOSED issues ONLY** in wso2/api-manager repository (use `is:issue is:closed` filters), review merged PRs for those CLOSED issues, and determine accurate solution
+   - Build the repository (wait for BUILD SUCCESS)
+   - Replace the generated artifacts (.jar files) in the **SAME wso2am pack** (pack coming from the frontend side updated artifacts):
+     * Replace .jar file directly (no unzipping needed)
+   - **TESTING IS MANDATORY** after replacing backend artifacts:
+     * Run the updated wso2am pack (with all frontend + backend artifacts)
+     * Test by calling relevant APIs
+     * **If issue is SOLVED:**
+       - Commit changes to that repository
+       - Push to the unique branch
+       - Create PR for that repository
+       - **DO NOT zip yet if there are more backend repos**
+     * **If issue is NOT SOLVED:**
+       - Go back to that repository
+       - Revert earlier changes and apply new changes
+       - Build that repository again
+       - Replace artifacts in the wso2am pack again
+       - Run the pack and test again
+       - Repeat until the issue is completely solved
+       - Then commit, push, and create PR.
+
+**Phase 3 - Zip the wso2am Pack:**
+1. **ONLY after ALL repositories (frontend + backend) are fixed and PRs are created:**
+   - Zip the updated wso2am pack (with all artifacts from all repositories)
+   - Name: `wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip`
+   - All PRs should reference that github action link.
+
+**Key Points for Multiple Repositories:**
+- **Process order**: FRONTEND repositories FIRST → BACKEND repositories SECOND
+- Frontend repos: Fix → Build → Replace artifacts (remove folder, copy .war, unzip) → Commit → Push → Create PR (NO testing, NO zipping)
+- Backend repos: Fix → Build → Replace artifacts (replace .jar directly) → TEST → Commit → Push → Create PR (NO zipping yet)
+- **ZIP ONLY ONCE** at the very end after ALL repositories are processed
+- First repository will get the donwloaded wso2am pack and after that other repository will get the updates wso2am pack from the previous repository.
+- At last repostiory it should create the zip of that updates wso2am pack using this naming convention: wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip 
+- Each repository gets its own separate PR
+- All PRs reference the SAME github action running page link.
+
+**CRITICAL WORKFLOW - FOLLOW THIS EXACTLY:**
 
 1. **Clone Repository from ranuka-laksika Organization** (NOT wso2)
    - **IMPORTANT**: User will provide the repository name (e.g., apim-apps, carbon-apimgt, product-apim)
@@ -330,10 +355,6 @@ CRITICAL WORKFLOW - FOLLOW THIS EXACTLY:
    **Build Configuration:**
    - **VERIFY**: Confirm you are inside the cloned repository with `pwd` before building
    - Use Java 11 and Maven 3.6.3
-   - **CRITICAL - Use these exact installation paths:**
-     * JAVA_HOME: /opt/homebrew/Cellar/openjdk@11/11.0.28/libexec/openjdk.jdk/Contents/Home
-     * Maven path: /opt/maven/bin/mvn
-     * Java path: /opt/homebrew/Cellar/openjdk@11/11.0.28/libexec/openjdk.jdk/Contents/Home/bin/java
    - Environment paths:
      * PATH: ${PATH}
      * JAVA_HOME: ${JAVA_HOME}
@@ -342,21 +363,14 @@ CRITICAL WORKFLOW - FOLLOW THIS EXACTLY:
    - **Set build timeout: 10-15 minutes minimum**
 
    **Build Command:**
-   - **MANDATORY - CRITICAL - USE EXACT PATHS:**
-     * **YOU MUST use the Java installation path**: `/opt/homebrew/Cellar/openjdk@11/11.0.28/libexec/openjdk.jdk/Contents/Home/bin/java`
-     * **YOU MUST use the Maven installation path**: `/opt/maven/bin/mvn`
-     * **Before building, export JAVA_HOME**: `export JAVA_HOME=/opt/homebrew/Cellar/openjdk@11/11.0.28/libexec/openjdk.jdk/Contents/Home`
-     * **Build using the exact Maven path**: `/opt/maven/bin/mvn clean install -DskipTests`
-     * **THIS IS MANDATORY - DO NOT use 'mvn' or 'java' without the full path**
-
    - **CRITICAL**: Always skip tests during the build to save time
-   - **Use this command**: `/opt/maven/bin/mvn clean install -DskipTests`
+   - **Use this command**: `mvn clean install -DskipTests`
    - **Why skip tests**: Tests are not required for generating artifacts; they only increase build time
-   - **If README specifies a different command**: Add `-DskipTests` flag to skip tests and use full Maven path
+   - **If README specifies a different command**: Add `-DskipTests` flag to skip tests
    - **Example commands**:
-     * Standard build: `/opt/maven/bin/mvn clean install -DskipTests`
-     * With profiles: `/opt/maven/bin/mvn clean install -DskipTests -P profile-name`
-     * Custom goals: `/opt/maven/bin/mvn clean package -DskipTests`
+     * Standard build: `mvn clean install -DskipTests`
+     * With profiles: `mvn clean install -DskipTests -P profile-name`
+     * Custom goals: `mvn clean package -DskipTests`
 
    **ABSOLUTE BLOCKING REQUIREMENT:**
    - **WAIT for COMPLETE build** - You MUST wait until ENTIRE build finishes
@@ -475,11 +489,6 @@ CRITICAL WORKFLOW - FOLLOW THIS EXACTLY:
 8. **Zip wso2am-${WSO2AM_VERSION} pack**
    - Zip entire updated `wso2am-${WSO2AM_VERSION}` pack (the pack which has the replaced .jar or .war files)
    - Name: `wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip`
-   - **CRITICAL - ZIP FILE LOCATION:**
-     * The zipped file MUST be placed in: `${GITHUB_WORKSPACE}/wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip`
-     * This is the root workspace directory, NOT inside any repository folder
-     * Example: If GITHUB_WORKSPACE is `/home/runner/work/api-manager/api-manager`
-     * Then zip file should be at: `/home/runner/work/api-manager/api-manager/wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip`
 
 9. **Commit and Push to the NEW Branch**
    - **VERIFY**: Confirm you are inside the cloned repository with `pwd` before committing
@@ -591,6 +600,7 @@ IMPORTANT CONSIDERATIONS
 
 **CRITICAL WORKFLOW SUMMARY:**
 
+**For SINGLE Repository:**
 1. **Clone from ranuka-laksika/{repository}** (user provides repository name)
 2. **Navigate into the repository** and verify with `pwd`
 3. **Create NEW unique branch** with timestamp: `fix_issue_{issue_number}_{timestamp}`
@@ -604,6 +614,20 @@ IMPORTANT CONSIDERATIONS
 9. **Commit changes** to that NEW branch (verify directory first)
 10. **Push to that NEW branch** (NOT to main/master, verify directory first)
 11. **Create PR** from NEW branch → default branch of SAME repository
+
+**For MULTIPLE Repositories:**   
+1. **Prioritize repository order: FRONTEND first, then BACKEND**
+2. **For EACH FRONTEND repository:**
+   - Clone → Navigate → Create branch → Fix → Build → Replace artifacts in wso2am pack (remove folder, copy .war, unzip)
+   - Commit → Push → Create PR (NO testing, NO zipping)
+3. **For EACH BACKEND repository:**
+   - Clone → Navigate → Create branch → Fix → Build → Replace artifacts in SAME wso2am pack (replace .jar directly)
+   - **Test the pack** (mandatory) → If not solved: revert, fix, rebuild, test again
+   - Commit → Push → Create PR (NO zipping yet)
+4. **After ALL repositories are done:**
+   - **Zip the wso2am pack ONCE** (with all artifacts)
+   - Upload as GitHub Actions artifact
+   - All PRs reference this SAME artifact
 
 **OTHER IMPORTANT POINTS:**
 * **ONLY modify existing files** - DO NOT create temp files, README files, or documentation files
