@@ -407,6 +407,10 @@ WORKFLOW FOR MULTIPLE REPOSITORIES
    **Build Configuration:**
    - **VERIFY**: Confirm you are inside the cloned repository with `pwd` before building
    - Use Java 11 and Maven 3.6.3
+   - **CRITICAL - Use these exact installation paths:**
+     * JAVA_HOME: /opt/homebrew/Cellar/openjdk@11/11.0.28/libexec/openjdk.jdk/Contents/Home
+     * Maven path: /opt/maven/bin/mvn
+     * Java path: /opt/homebrew/Cellar/openjdk@11/11.0.28/libexec/openjdk.jdk/Contents/Home/bin/java
    - Environment paths:
      * PATH: ${PATH}
      * JAVA_HOME: ${JAVA_HOME}
@@ -415,14 +419,21 @@ WORKFLOW FOR MULTIPLE REPOSITORIES
    - **Set build timeout: 10-15 minutes minimum**
 
    **Build Command:**
+   - **MANDATORY - CRITICAL - USE EXACT PATHS:**
+     * **YOU MUST use the Java installation path**: `/opt/homebrew/Cellar/openjdk@11/11.0.28/libexec/openjdk.jdk/Contents/Home/bin/java`
+     * **YOU MUST use the Maven installation path**: `/opt/maven/bin/mvn`
+     * **Before building, export JAVA_HOME**: `export JAVA_HOME=/opt/homebrew/Cellar/openjdk@11/11.0.28/libexec/openjdk.jdk/Contents/Home`
+     * **Build using the exact Maven path**: `/opt/maven/bin/mvn clean install -DskipTests`
+     * **THIS IS MANDATORY - DO NOT use 'mvn' or 'java' without the full path**
+
    - **CRITICAL**: Always skip tests during the build to save time
-   - **Use this command**: `mvn clean install -DskipTests`
+   - **Use this command**: `/opt/maven/bin/mvn clean install -DskipTests`
    - **Why skip tests**: Tests are not required for generating artifacts; they only increase build time
-   - **If README specifies a different command**: Add `-DskipTests` flag to skip tests
+   - **If README specifies a different command**: Add `-DskipTests` flag to skip tests and use full Maven path
    - **Example commands**:
-     * Standard build: `mvn clean install -DskipTests`
-     * With profiles: `mvn clean install -DskipTests -P profile-name`
-     * Custom goals: `mvn clean package -DskipTests`
+     * Standard build: `/opt/maven/bin/mvn clean install -DskipTests`
+     * With profiles: `/opt/maven/bin/mvn clean install -DskipTests -P profile-name`
+     * Custom goals: `/opt/maven/bin/mvn clean package -DskipTests`
 
    **ABSOLUTE BLOCKING REQUIREMENT:**
    - **WAIT for COMPLETE build** - You MUST wait until ENTIRE build finishes
