@@ -100,7 +100,7 @@ cd components/apimgt/org.wso2.carbon.apimgt.api  # example path
 mvn clean install -DskipTests
 # Generated artifact: target/[component-name].jar
 ```
-
+** THIS IS MANDATORY ** when you want to build a component always need to use the mvn
 **Environment:**
 - Java: Use JAVA_HOME at `/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/11.0.28-6/x64`
 **Build Configuration:**
