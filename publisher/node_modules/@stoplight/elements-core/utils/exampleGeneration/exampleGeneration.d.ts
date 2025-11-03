@@ -1,0 +1,15 @@
+import * as Sampler from '@stoplight/json-schema-sampler';
+import { IMediaTypeContent } from '@stoplight/types';
+import { JSONSchema7 } from 'json-schema';
+declare type Example = {
+    label: string;
+    data: string;
+};
+export declare type GenerateExampleFromMediaTypeContentOptions = Sampler.Options;
+export declare const useGenerateExampleFromMediaTypeContent: (mediaTypeContent: IMediaTypeContent | undefined, chosenExampleIndex?: number, { skipReadOnly, skipWriteOnly, skipNonRequired, ticks }?: GenerateExampleFromMediaTypeContentOptions) => string;
+export declare const generateExampleFromMediaTypeContent: (mediaTypeContent: IMediaTypeContent | undefined, document: any, chosenExampleIndex?: number, options?: GenerateExampleFromMediaTypeContentOptions) => string;
+export declare const generateExamplesFromJsonSchema: (schema: JSONSchema7 & {
+    'x-examples'?: unknown;
+}) => Example[];
+export declare const exceedsSize: (example: string, size?: number) => boolean;
+export {};
