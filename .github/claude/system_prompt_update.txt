@@ -164,7 +164,10 @@ WORKFLOW FOR SINGLE REPOSITORY
      * Do NOT look at open issues; focus exclusively on CLOSED issues
      * Review merged PRs for those similar CLOSED issues
      * Use insights from those PRs to determine the accurate fix
-3. **Build the repository** completely (wait for BUILD SUCCESS)
+3. **Build ONLY the modified component** (wait for BUILD SUCCESS)
+   - Navigate to the specific component directory you changed
+   - Build only that component: `mvn clean install -DskipTests`
+   - Example: If you changed publisher → `cd apim-apps/portals/publisher && mvn clean install -DskipTests`
 4. **Replace artifacts** in the downloaded wso2am pack
 
 5. **Determine if testing is required:**
@@ -188,10 +191,10 @@ WORKFLOW FOR SINGLE REPOSITORY
        - Place the zip file at: `${GITHUB_WORKSPACE}/wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip`
        - This is the root workspace directory, NOT inside the repository folder
    - **If issue is NOT SOLVED:**
-     * Go back to the repository
+     * Go back to the modified component directory
      * Revert the earlier changes
      * Apply new changes based on testing observations
-     * Build the repository again
+     * Build ONLY that component again: `mvn clean install -DskipTests`
      * Replace artifacts in the wso2am pack again
      * Run the pack and test again
      * Repeat until the issue is solved
@@ -306,34 +309,54 @@ WORKFLOW FOR SINGLE REPOSITORY
      * Creating new utility files unless absolutely necessary ✗
      * Modifying unrelated files ✗
 
-5. **Build (CRITICAL - WAIT FOR COMPLETE BUILD)**
+5. **Build (CRITICAL - BUILD ONLY THE MODIFIED COMPONENT)**
+
+   **MANDATORY - BUILD ONLY THE COMPONENT YOU MODIFIED:**
+   - **DO NOT build the entire repository** - build ONLY the specific component you changed
+   - **This saves significant time**: Component build takes 3-5 minutes vs full repository build takes 10-15 minutes
+   - **Example**: If you modified publisher portal → build ONLY publisher component
+   - **Example**: If you modified devportal → build ONLY devportal component
+   - **Example**: If you modified a specific backend component → build ONLY that component
 
    **IMPORTANT - READ BEFORE BUILDING:**
    - Check the **README file** in the repository for exact build instructions
-   - Follow those build instructions **precisely**
-   - If you encounter build issues, fix them and try building again
-   - **Do not proceed** until the repository has been successfully built
+   - Identify the specific component/module you modified
+   - Navigate to that component's directory before building
+   - **Do not proceed** until the component has been successfully built
 
    **Build Configuration:**
-   - **VERIFY**: Confirm you are inside the cloned repository with `pwd` before building
-    export JAVA_HOME=/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/11.0.28-6/x64
+   - **VERIFY**: Confirm you are in the COMPONENT directory (not repository root) with `pwd` before building
+   - Export JAVA_HOME: `export JAVA_HOME=/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/11.0.28-6/x64`
    - Use Java 11 and Maven 3.6.3
    - Environment paths:
      * PATH: ${PATH}
      * JAVA_HOME: ${JAVA_HOME}
      * MAVEN_HOME: ${MAVEN_HOME}
      * NODE_PATH: ${NODE_PATH}
-   - **Set build timeout: 10-15 minutes minimum**
+   - **Set build timeout: 3-5 minutes for component builds**
+
+   **HOW TO BUILD SPECIFIC COMPONENT:**
+
+   **For Frontend Components (apim-apps repository):**
+   1. **Navigate to the specific component directory you modified**:
+      - For publisher: `cd apim-apps/portals/publisher`
+      - For devportal: `cd apim-apps/portals/devportal`
+      - For admin: `cd apim-apps/portals/admin`
+   2. **Build ONLY that component**: `mvn clean install -DskipTests`
+   3. **Generated artifact location**: `target/{component-name}.war`
+      - Example: `apim-apps/portals/publisher/target/publisher.war`
+
+   **For Backend Components (carbon-apimgt, product-apim):**
+   1. **Navigate to the specific component directory you modified**:
+      - Example: `cd carbon-apimgt/components/apimgt/org.wso2.carbon.apimgt.api`
+   2. **Build ONLY that component**: `mvn clean install -DskipTests`
+   3. **Generated artifact location**: `target/{component-name}.jar`
 
    **Build Command:**
    - **CRITICAL**: Always skip tests during the build to save time
-   - **Use this command**: `mvn clean install -DskipTests`
+   - **Use this command** (from component directory): `mvn clean install -DskipTests`
    - **Why skip tests**: Tests are not required for generating artifacts; they only increase build time
-   - **If README specifies a different command**: Add `-DskipTests` flag to skip tests
-   - **Example commands**:
-     * Standard build: `mvn clean install -DskipTests`
-     * With profiles: `mvn clean install -DskipTests -P profile-name`
-     * Custom goals: `mvn clean package -DskipTests`
+   - **DO NOT use npm build commands** - ONLY use Maven
 
    **ABSOLUTE BLOCKING REQUIREMENT:**
    - **WAIT for COMPLETE build** - You MUST wait until ENTIRE build finishes
@@ -572,12 +595,15 @@ IMPORTANT CONSIDERATIONS
 
 **REMEMBER: YOU CANNOT EXIT UNTIL ALL STEPS ARE COMPLETE - TIME IS NOT A FACTOR**
 
-**For SINGLE Repository:**
+**WORKFLOW:**
 1. **Clone from ranuka-laksika/{repository}** (user provides repository name)
 2. **Navigate into the repository** and verify with `pwd`
 3. **Create NEW unique branch** with timestamp: `fix_issue_{issue_number}_{timestamp}`
 4. **Make modifications** in that NEW branch (verify directory first)
-5. **Build from within the repository** (verify directory first) - **RETRY UNTIL SUCCESS**
+5. **Build ONLY the modified component** - **RETRY UNTIL SUCCESS**
+   - Navigate to the specific component directory you changed
+   - Build only that component: `cd {component_path} && mvn clean install -DskipTests`
+   - Example: `cd apim-apps/portals/publisher && mvn clean install -DskipTests`
 6. **Update wso2am-${WSO2AM_VERSION} pack**:
    - Frontend (.war): Remove folder → Copy .war → Unzip to create new folder
    - Backend (.jar): Replace .jar file directly
@@ -588,20 +614,6 @@ IMPORTANT CONSIDERATIONS
 11. **Create PR** from NEW branch → default branch of SAME repository - **ONLY AFTER THIS CAN YOU EXIT**
 
 **COMPLETION IS MANDATORY - WHATEVER TIME IT TAKES**
-
-**For MULTIPLE Repositories:**   
-1. **Prioritize repository order: FRONTEND first, then BACKEND**
-2. **For EACH FRONTEND repository:**
-   - Clone → Navigate → Create branch → Fix → Build → Replace artifacts in wso2am pack (remove folder, copy .war, unzip)
-   - Commit → Push → Create PR (NO testing, NO zipping)
-3. **For EACH BACKEND repository:**
-   - Clone → Navigate → Create branch → Fix → Build → Replace artifacts in SAME wso2am pack (replace .jar directly)
-   - **Test the pack** (mandatory) → If not solved: revert, fix, rebuild, test again
-   - Commit → Push → Create PR (NO zipping yet)
-4. **After ALL repositories are done:**
-   - **Zip the wso2am pack ONCE** (with all artifacts)
-   - Upload as GitHub Actions artifact
-   - All PRs reference this SAME artifact
 
 **OTHER IMPORTANT POINTS:**
 * **ONLY modify existing files** - DO NOT create temp files, README files, or documentation files
