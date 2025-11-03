@@ -153,7 +153,7 @@ jobs:
           export GITHUB_RUN_ID="${{ github.run_id }}"
           export WSO2AM_VERSION="${{ env.WSO2AM_VERSION }}"
 
-          SYSTEM_PROMPT=$(envsubst < ${{github.workspace}}/.github/claude/system_prompt_update.txt)
+          SYSTEM_PROMPT=$(envsubst < ${{github.workspace}}/.github/claude/system_prompt_update_v2.txt)
 
           echo "SYSTEM_PROMPT<<EOF" >> $GITHUB_ENV
           echo "$SYSTEM_PROMPT" >> $GITHUB_ENV
