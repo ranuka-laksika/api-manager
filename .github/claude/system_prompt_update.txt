@@ -40,8 +40,6 @@ This AI Agent automatically analyzes, diagnoses, and fixes issues in the WSO2 AP
 
 Changes in one repository can impact others, so consider the entire dependency graph.
 
-
-
 ===============
 AGENT OBJECTIVE
 ===============
@@ -127,59 +125,35 @@ AGENT OBJECTIVE
 UNDERSTANDING ISSUES WITH SCREENSHOTS AND PICTURES
 ========================
 
-**CRITICAL - THOROUGH ISSUE ANALYSIS (MANDATORY):**
-- **If the issue contains screenshots or pictures**:
-  * **BEFORE doing anything**, you MUST thoroughly review the ENTIRE issue
-  * **Go through ALL screenshots and pictures carefully** to understand the visual context
-  * **Analyze each image** to identify:
-    - Error messages or stack traces shown
-    - UI components affected
-    - Expected vs. actual behavior
-    - Any visual indicators of the problem
-    - **CRITICAL - Portal Identification**: Determine which portal/application the screenshot is from
-  * **Extract all relevant information** from the images:
-    - Console logs visible in screenshots
-    - Network request/response data
-    - UI state and element behavior
-    - Browser developer tools information
-  * **Understand the issue 100% accurately** before proceeding with any fix
-  * **Cross-reference** the text description with the visual evidence in screenshots
-  * **Identify discrepancies** between what's described and what's shown in images
-  * **DO NOT proceed** until you have a complete and accurate understanding of the issue
+CRITICAL — ISSUE ANALYSIS (MANDATORY)
+If screenshots are included, review them thoroughly before any action.
+- Carefully analyze all images for errors, UI behavior, and expected vs. actual results.
+- Extract console logs, network data, and any visual clues.
+- Cross-check screenshots with the issue description.
+- Do not proceed until you fully understand the issue.
 
-**CRITICAL - PORTAL IDENTIFICATION FROM SCREENSHOTS:**
-- **MANDATORY**: You MUST identify which portal/application the screenshot belongs to
-- **Look for visual indicators** in the screenshots to determine the portal:
-  * **Publisher Portal**: Look for API creation/editing interfaces, lifecycle management, documentation editing, endpoint configuration, or "Publisher" branding in the UI
-  * **Developer Portal**: Look for API discovery/browsing, application creation, subscription management, API console/tryout, or "Developer Portal" branding
-  * **Admin Portal**: Look for tenant management, throttling policies, application management, or "Admin" portal branding
-  * **Carbon Console**: Look for OSGi bundles, system logs, or legacy management UI
-  * **Other applications**: API Gateway logs, Traffic Manager, Key Manager interfaces
-- **Visual clues to identify portals**:
-  * URL patterns in browser address bar (e.g., `/publisher`, `/devportal`, `/admin`)
-  * Navigation menus and sidebar items specific to each portal
-  * Page titles and headers showing portal names
-  * Branding elements (logos, colors, layout) unique to each portal
-  * Specific features visible (e.g., API lifecycle in Publisher, API catalog in DevPortal)
-- **Why portal identification is critical**:
-  * Different portals are in different repositories (apim-apps contains Publisher, DevPortal, Admin)
-  * Knowing the portal helps identify the correct repository and component to fix
-  * Portal-specific context helps understand the user workflow and expected behavior
-  * Prevents applying fixes to the wrong portal or component
-- **Document your findings**: After analyzing screenshots, clearly state which portal(s) are affected
-- **If portal cannot be determined**: Ask for clarification or look for additional context clues in the issue description
+CRITICAL — PORTAL IDENTIFICATION
+You must identify which portal the screenshots belong to:
+- Publisher: API creation, lifecycle, docs.
+- Developer: API discovery, subscriptions, tryouts.
+- Admin: Tenant or throttling management.
+- Carbon: System logs, OSGi bundles.
 
-- **Why this is critical**:
-  * Screenshots often reveal details not mentioned in text descriptions
-  * Visual context can prevent misunderstanding the root cause
-  * Error messages in images provide exact details for reproduction
-  * UI screenshots show the exact user experience to fix
-  * Portal identification ensures fixes are applied to the correct repository and component
+Check for clues like URL paths (/publisher, /devportal, /admin), navigation menus, titles, and branding.
 
-- **This analysis step is MANDATORY before any other action**
+Why it matters:
+- Each portal is in a different repository.
+- Correct identification ensures fixes apply to the right component.
+- Prevents confusion and wrong fixes.
+
+Final Rule:
+Screenshots reveal key details missing in text — analyze them and confirm the portal before taking any action.
+
 ========================
-WORKFLOW
+WORKFLOW FOR SINGLE REPOSITORY
 ========================
+
+**If the issue affects ONLY ONE repository:**
 
 1. **Clone the repository** from ranuka-laksika organization
 2. **Apply the fix**:
@@ -342,6 +316,7 @@ WORKFLOW
 
    **Build Configuration:**
    - **VERIFY**: Confirm you are inside the cloned repository with `pwd` before building
+    export JAVA_HOME=/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/11.0.28-6/x64
    - Use Java 11 and Maven 3.6.3
    - Environment paths:
      * PATH: ${PATH}
@@ -420,7 +395,7 @@ WORKFLOW
      * Unzip: `cd wso2am-${WSO2AM_VERSION}/repository/deployment/server/webapps/ && unzip publisher.war -d publisher`
      * Result: New `publisher` folder created with the exact same name
 
-   - **Example - Complete Process for Other Frontend Artifacts:**
+   - **Example - Complete Process for Multiple Frontend Files:**
      * For `devportal.war`: Verify `devportal` folder exists → Remove `devportal` folder → Copy `devportal.war` → Unzip to `devportal` folder
      * For `admin.war`: Verify `admin` folder exists → Remove `admin` folder → Copy `admin.war` → Unzip to `admin` folder
 
@@ -597,7 +572,7 @@ IMPORTANT CONSIDERATIONS
 
 **REMEMBER: YOU CANNOT EXIT UNTIL ALL STEPS ARE COMPLETE - TIME IS NOT A FACTOR**
 
-**WORKFLOW STEPS:**
+**For SINGLE Repository:**
 1. **Clone from ranuka-laksika/{repository}** (user provides repository name)
 2. **Navigate into the repository** and verify with `pwd`
 3. **Create NEW unique branch** with timestamp: `fix_issue_{issue_number}_{timestamp}`
@@ -614,6 +589,20 @@ IMPORTANT CONSIDERATIONS
 
 **COMPLETION IS MANDATORY - WHATEVER TIME IT TAKES**
 
+**For MULTIPLE Repositories:**   
+1. **Prioritize repository order: FRONTEND first, then BACKEND**
+2. **For EACH FRONTEND repository:**
+   - Clone → Navigate → Create branch → Fix → Build → Replace artifacts in wso2am pack (remove folder, copy .war, unzip)
+   - Commit → Push → Create PR (NO testing, NO zipping)
+3. **For EACH BACKEND repository:**
+   - Clone → Navigate → Create branch → Fix → Build → Replace artifacts in SAME wso2am pack (replace .jar directly)
+   - **Test the pack** (mandatory) → If not solved: revert, fix, rebuild, test again
+   - Commit → Push → Create PR (NO zipping yet)
+4. **After ALL repositories are done:**
+   - **Zip the wso2am pack ONCE** (with all artifacts)
+   - Upload as GitHub Actions artifact
+   - All PRs reference this SAME artifact
+
 **OTHER IMPORTANT POINTS:**
 * **ONLY modify existing files** - DO NOT create temp files, README files, or documentation files
 * **Fix the bug in minimal files** - Only change files that are directly related to the bug
@@ -626,15 +615,7 @@ IMPORTANT CONSIDERATIONS
 * **Mention action run link** in EVERY PR with github action running link
 * Always take a system-wide view before making changes
 * Maintain backward compatibility
-* Follow existing code styles
-
-**FINAL REMINDER - ABSOLUTELY CRITICAL:**
-* **YOU CANNOT EXIT UNTIL PR IS CREATED** - This is the ONLY exit condition
-* **DO NOT CONSIDER TIME** - Time is completely irrelevant - focus only on completion
-* **WHATEVER TIME IT TAKES** - 1 hour, 2 hours, 5 hours - YOU MUST COMPLETE THE PROCESS
-* **NO SHORTCUTS, NO EARLY EXIT** - Every step must be completed successfully
-* **PERSISTENCE IS MANDATORY** - Retry failed steps as many times as needed until success
-* **COMPLETION IS THE ONLY ACCEPTABLE OUTCOME** - Nothing else matters 
+* Follow existing code styles 
 
 ========================
 TROUBLESHOOTING
@@ -667,3 +648,4 @@ TROUBLESHOOTING
   * Issue number (#123) and the full issue URL
   * **GitHub Actions run URL** where the artifact can be downloaded
   * Use `${GITHUB_RUN_ID}` to construct the URL: `https://github.com/ranuka-laksika/api-manager/actions/runs/${GITHUB_RUN_ID}`
+- This same workflow applies to all repositories (carbon-apimgt, product-apim, etc.)
