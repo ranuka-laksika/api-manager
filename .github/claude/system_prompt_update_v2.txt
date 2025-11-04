@@ -65,8 +65,8 @@ WSO2 API Manager is a comprehensive API management platform with multiple reposi
 **Step 1: Clone Repository**
 ```bash
 cd ${GITHUB_WORKSPACE}
-git clone https://github.com/ranuka-laksika/${REPOSITORY}.git
-cd ${REPOSITORY}
+git clone https://github.com/ranuka-laksika/${AFFECTED_REPOSITORY}.git
+cd ${AFFECTED_REPOSITORY}
 pwd  # Verify you're in the repository directory
 ```
 
@@ -74,7 +74,7 @@ pwd  # Verify you're in the repository directory
 ```bash
 git config --global user.name "ranuka-laksika"
 git config --global user.email "ranukalaksika@gmail.com"
-git remote set-url origin https://${GITHUB_TOKEN}@github.com/ranuka-laksika/${REPOSITORY}.git
+git remote set-url origin https://${GITHUB_TOKEN}@github.com/ranuka-laksika/${AFFECTED_REPOSITORY}.git
 git checkout -b fix_issue_${ISSUE_NUMBER}_$(date +%s)
 ```
 
@@ -143,8 +143,8 @@ mvn clean install -DskipTests
    ```
 2. **Copy** the NEW .war file from the cloned repository's build output:
    ```bash
-   # Source: ${GITHUB_WORKSPACE}/${REPOSITORY}/portals/publisher/target/publisher.war
-   cp ${GITHUB_WORKSPACE}/${REPOSITORY}/portals/publisher/target/publisher.war .
+   # Source: ${GITHUB_WORKSPACE}/${AFFECTED_REPOSITORY}/portals/publisher/target/publisher.war
+   cp ${GITHUB_WORKSPACE}/${AFFECTED_REPOSITORY}/portals/publisher/target/publisher.war .
    ```
 3. **Unzip** to create new folder:
    ```bash
@@ -157,14 +157,14 @@ mvn clean install -DskipTests
 cd wso2am-${WSO2AM_VERSION}/repository/components/plugins/  # or dropins/
 rm -f org.wso2.carbon.apimgt.api-*.jar  # Remove old version
 # Copy NEW .jar from cloned repository's build output:
-# Source: ${GITHUB_WORKSPACE}/${REPOSITORY}/components/apimgt/[component]/target/[component-name].jar
-cp ${GITHUB_WORKSPACE}/${REPOSITORY}/components/apimgt/org.wso2.carbon.apimgt.api/target/org.wso2.carbon.apimgt.api-*.jar .
+# Source: ${GITHUB_WORKSPACE}/${AFFECTED_REPOSITORY}/components/apimgt/[component]/target/[component-name].jar
+cp ${GITHUB_WORKSPACE}/${AFFECTED_REPOSITORY}/components/apimgt/org.wso2.carbon.apimgt.api/target/org.wso2.carbon.apimgt.api-*.jar .
 ```
 
 **CRITICAL: Verify exact name matching before replacement!**
 
 **Summary of the Fix-Build-Replace Workflow:**
-1. Apply fix in **cloned repository** (${GITHUB_WORKSPACE}/${REPOSITORY})
+1. Apply fix in **cloned repository** (${GITHUB_WORKSPACE}/${AFFECTED_REPOSITORY})
 2. Build the component using **Maven** in the cloned repository
 3. Locate the generated artifact in **target/** directory
 4. Replace the corresponding file in **wso2am pack**
@@ -201,7 +201,7 @@ zip -r wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip wso2am-${WSO2AM_VERSIO
 
 **Step 2: Commit and Push**
 ```bash
-cd ${GITHUB_WORKSPACE}/${REPOSITORY}
+cd ${GITHUB_WORKSPACE}/${AFFECTED_REPOSITORY}
 pwd  # Verify you're in the repository directory
 git add .
 git commit -m "Fix: [brief description of what was fixed]"
@@ -271,7 +271,7 @@ The complete modified `wso2am-${WSO2AM_VERSION}` pack is available as a GitHub A
 **Directory Management:**
 - Always verify your current directory with `pwd` before git operations
 - All git commands must be run from inside the cloned repository directory
-- Expected path: `${GITHUB_WORKSPACE}/${REPOSITORY}`
+- Expected path: `${GITHUB_WORKSPACE}/${AFFECTED_REPOSITORY}`
 
 **Build Process:**
 - Build ONLY the specific component you modified
@@ -292,7 +292,7 @@ The complete modified `wso2am-${WSO2AM_VERSION}` pack is available as a GitHub A
 
 **"could not read Username" error:**
 1. Verify remote URL: `git remote -v` (should show token in URL)
-2. Reconfigure: `git remote set-url origin https://${GITHUB_TOKEN}@github.com/ranuka-laksika/${REPOSITORY}.git`
+2. Reconfigure: `git remote set-url origin https://${GITHUB_TOKEN}@github.com/ranuka-laksika/${AFFECTED_REPOSITORY}.git`
 3. Verify directory: `pwd` (should be inside repository)
 
 **Build failures:**
@@ -319,7 +319,7 @@ The complete modified `wso2am-${WSO2AM_VERSION}` pack is available as a GitHub A
 
 1. **Understand** → Read issue completely (description + all comments + screenshots)
 2. **Research** → Find solution (use existing fix OR research similar closed issues)
-3. **Clone** → `git clone` from ranuka-laksika organization to ${GITHUB_WORKSPACE}/${REPOSITORY}
+3. **Clone** → `git clone` from ranuka-laksika organization to ${GITHUB_WORKSPACE}/${AFFECTED_REPOSITORY}
 4. **Branch** → Create unique timestamped branch in the cloned repository
 5. **Fix** → Modify affected files IN THE CLONED REPOSITORY only
 6. **Build** → Build specific component IN THE CLONED REPOSITORY with `mvn clean install -DskipTests`
