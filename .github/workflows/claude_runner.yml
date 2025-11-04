@@ -132,10 +132,12 @@ jobs:
 
       - name: Set environment variables
         run: |
-          echo "PATH=/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/11.0.28-6/x64/bin:/usr/share/maven/bin:/opt/hostedtoolcache/node/18.20.8/x64/bin:/usr/local/bin:/usr/bin:/bin" >> $GITHUB_ENV
-          echo "JAVA_HOME=/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/11.0.28-6/x64" >> $GITHUB_ENV
+          # Use the JAVA_HOME that was already set by actions/setup-java
+          # Use the Node path that was already set by actions/setup-node
           echo "MAVEN_HOME=/usr/share/maven" >> $GITHUB_ENV
-          echo "NODE_PATH=/opt/hostedtoolcache/node/18.20.8/x64/bin" >> $GITHUB_ENV
+          echo "Current JAVA_HOME: $JAVA_HOME"
+          echo "Current Node: $(which node)"
+          echo "Current Maven: $(which mvn)"
           
       - name: Prepare system prompt with environment variables
         id: prepare_prompt
@@ -145,13 +147,10 @@ jobs:
           fi
 
           export ISSUE_NUMBER="${{ github.event.issue.number }}"
-          export REPOSITORY="${{ vars.DOC_FIXING_AGENT_REPOSITORY }}"
-          export JAVA_HOME="${{ env.JAVA_HOME }}"
-          export MAVEN_HOME="${{ env.MAVEN_HOME }}"
-          export NODE_PATH="${{ env.NODE_PATH }}"
           export GITHUB_TOKEN="${{ secrets.DOC_FIXING_AGENT_GITHUB_TOKEN }}"
           export GITHUB_RUN_ID="${{ github.run_id }}"
           export WSO2AM_VERSION="${{ env.WSO2AM_VERSION }}"
+          export REPOSITORY="${{ vars.DOC_FIXING_AGENT_REPOSITORY }}"
 
           SYSTEM_PROMPT=$(envsubst < ${{github.workspace}}/.github/claude/system_prompt_update_v2.txt)
 
@@ -168,10 +167,9 @@ jobs:
         id: run_claude
         uses: anthropics/claude-code-action@v1
         env:
-          PATH: ${{ env.PATH }}
+          # JAVA_HOME and PATH are automatically set by actions/setup-java and actions/setup-node
           JAVA_HOME: ${{ env.JAVA_HOME }}
           MAVEN_HOME: ${{ env.MAVEN_HOME }}
-          NODE_PATH: ${{ env.NODE_PATH }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
           REPOSITORY: ${{ vars.DOC_FIXING_AGENT_REPOSITORY }}
           GITHUB_TOKEN: ${{ secrets.DOC_FIXING_AGENT_GITHUB_TOKEN }}

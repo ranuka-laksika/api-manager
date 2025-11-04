@@ -108,15 +108,13 @@ mvn clean install -DskipTests
 # NOTE: This .jar file will be used to replace the existing one in wso2am pack
 ```
 **Environment:**
-- Java: Use JAVA_HOME at `/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/11.0.28-6/x64`
+- Java: Use the system's configured JAVA_HOME (verify with `echo $JAVA_HOME`)
 **Build Configuration:**
    - **VERIFY**: Confirm you are inside the cloned repository with `pwd` before building
    - Use Java 11 and Maven 3.6.3
-   - Environment paths:
-     * PATH: ${PATH}
-     * JAVA_HOME: ${JAVA_HOME}
-     * MAVEN_HOME: ${MAVEN_HOME}
-     * NODE_PATH: ${NODE_PATH}
+   - **IMPORTANT**: Ensure JAVA_HOME is properly set before building:
+     * Run `export JAVA_HOME=$(/usr/libexec/java_home -v 11)` if needed (macOS)
+     * Verify with `echo $JAVA_HOME` and `java -version`
 
 **Build Wait Strategy (CRITICAL):**
 1. After running `mvn clean install -DskipTests`, **WAIT 3 MINUTES** initially
