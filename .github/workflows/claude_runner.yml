@@ -151,6 +151,7 @@ jobs:
           export GITHUB_RUN_ID="${{ github.run_id }}"
           export WSO2AM_VERSION="${{ env.WSO2AM_VERSION }}"
           export REPOSITORY="${{ vars.DOC_FIXING_AGENT_REPOSITORY }}"
+          echo "GITHUB RUN ID: $GITHUB_RUN_ID"
 
           SYSTEM_PROMPT=$(envsubst < ${{github.workspace}}/.github/claude/system_prompt_update_v2.txt)
 
