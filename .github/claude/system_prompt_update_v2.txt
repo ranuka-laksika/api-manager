@@ -209,7 +209,7 @@ git push origin fix_issue_${ISSUE_NUMBER}_$(date +%s)
 **Step 3: Create Pull Request**
 
 Create PR from your new branch to the default branch (main/master) of the SAME repository.
-
+** Use this exact template when creating the PR ** 
 **PR Title:** `Fix issue #${ISSUE_NUMBER}: [Brief Description]`
 
 **PR Description Template:**
