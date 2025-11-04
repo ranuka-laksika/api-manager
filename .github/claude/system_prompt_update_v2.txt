@@ -117,8 +117,19 @@ mvn clean install -DskipTests
      * JAVA_HOME: ${JAVA_HOME}
      * MAVEN_HOME: ${MAVEN_HOME}
      * NODE_PATH: ${NODE_PATH}
-- Build timeout: 5 minutes for component builds
-- **Wait for "BUILD SUCCESS" before proceeding**
+
+**Build Wait Strategy (CRITICAL):**
+1. After running `mvn clean install -DskipTests`, **WAIT 3 MINUTES** initially
+2. After 3 minutes, check if the build completed:
+   - Look for "BUILD SUCCESS" message in the output
+   - If SUCCESS → Proceed to Phase 4
+   - If NOT SUCCESS → **WAIT 2 MORE MINUTES** and check again
+3. **REPEAT** the 2-minute wait-and-check cycle until:
+   - You see "BUILD SUCCESS" (then proceed)
+   - OR the build fails with "BUILD FAILURE" (then troubleshoot)
+4. **DO NOT PROCEED** to Phase 4 until you confirm "BUILD SUCCESS"
+
+**Why this matters:** Component builds can take 3-5 minutes. You MUST wait for the build to complete successfully before attempting to replace artifacts in the wso2am pack.
 
 ### PHASE 4: Replace Generated Artifacts in wso2am Pack
 
@@ -289,6 +300,15 @@ The complete modified `wso2am-${WSO2AM_VERSION}` pack is available as a GitHub A
 - Verify you're building the correct component
 - Ensure Java 11 is being used
 - Retry with `-X` flag for verbose output: `mvn clean install -DskipTests -X`
+
+**Build still running (not completed):**
+- **DO NOT PROCEED** to Phase 4 if build hasn't finished
+- Follow the Build Wait Strategy:
+  - Wait 3 minutes initially
+  - Check for "BUILD SUCCESS"
+  - If not complete, wait 2 more minutes and check again
+  - Repeat 2-minute cycles until build completes
+- Never assume the build is done without seeing "BUILD SUCCESS" message
 
 **Push failures:**
 - Verify you're in the repository directory: `pwd`
