@@ -60,6 +60,8 @@ WSO2 API Manager is a comprehensive API management platform with multiple reposi
 
 ### PHASE 3: Apply the Fix
 
+**IMPORTANT: All fixes must be applied in the CLONED repository, then built, and the generated artifacts (.jar or .war files) must be replaced in the wso2am pack.**
+
 **Step 1: Clone Repository**
 ```bash
 cd ${GITHUB_WORKSPACE}
@@ -76,31 +78,35 @@ git remote set-url origin https://${GITHUB_TOKEN}@github.com/ranuka-laksika/${RE
 git checkout -b fix_issue_${ISSUE_NUMBER}_$(date +%s)
 ```
 
-**Step 3: Make Code Changes**
-- **ONLY modify files directly related to the bug**
+**Step 3: Make Code Changes in the Cloned Repository**
+- **ONLY modify files directly related to the bug IN THE CLONED REPOSITORY**
 - **DO NOT create**: temp files, test files, README files, or documentation unless the issue specifically requires them
 - Make minimal, targeted changes to fix the root cause
+- **Remember**: These changes are in the cloned repo and need to be built to generate artifacts
 
-**Step 4: Build the Modified Component**
+**Step 4: Build the Modified Component to Generate Artifacts**
 
-**IMPORTANT: Build ONLY the specific component you modified, not the entire repository.**
+**IMPORTANT: Build ONLY the specific component you modified in the cloned repository. This will generate the .jar or .war file that needs to be replaced in the wso2am pack.**
+
+**MANDATORY**: Always use Maven (`mvn`) to build components.
 
 For **Frontend Components** (apim-apps):
 ```bash
-# Navigate to the specific component you modified
+# Navigate to the specific component you modified IN THE CLONED REPO
 cd portals/publisher  # or devportal, or admin
 mvn clean install -DskipTests
 # Generated artifact: target/publisher.war (or devportal.war, admin.war)
+# NOTE: This .war file will be used to replace the existing one in wso2am pack
 ```
 
 For **Backend Components** (carbon-apimgt, product-apim):
 ```bash
-# Navigate to the specific component you modified
+# Navigate to the specific component you modified IN THE CLONED REPO
 cd components/apimgt/org.wso2.carbon.apimgt.api  # example path
 mvn clean install -DskipTests
 # Generated artifact: target/[component-name].jar
+# NOTE: This .jar file will be used to replace the existing one in wso2am pack
 ```
-** THIS IS MANDATORY ** when you want to build a component always need to use the mvn
 **Environment:**
 - Java: Use JAVA_HOME at `/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/11.0.28-6/x64`
 **Build Configuration:**
@@ -114,7 +120,9 @@ mvn clean install -DskipTests
 - Build timeout: 5 minutes for component builds
 - **Wait for "BUILD SUCCESS" before proceeding**
 
-### PHASE 4: Replace Artifacts in wso2am Pack
+### PHASE 4: Replace Generated Artifacts in wso2am Pack
+
+**CRITICAL WORKFLOW**: After building in the cloned repository (Step 4), take the generated .jar or .war file from the `target/` directory and replace it in the wso2am pack.
 
 **For Frontend (.war files) - 3-Step Process:**
 1. **Remove** the existing folder with matching name (without .war extension):
@@ -122,9 +130,10 @@ mvn clean install -DskipTests
    cd wso2am-${WSO2AM_VERSION}/repository/deployment/server/webapps/
    rm -rf publisher  # Example: if your artifact is publisher.war
    ```
-2. **Copy** the new .war file:
+2. **Copy** the NEW .war file from the cloned repository's build output:
    ```bash
-   cp /path/to/publisher.war .
+   # Source: ${GITHUB_WORKSPACE}/${REPOSITORY}/portals/publisher/target/publisher.war
+   cp ${GITHUB_WORKSPACE}/${REPOSITORY}/portals/publisher/target/publisher.war .
    ```
 3. **Unzip** to create new folder:
    ```bash
@@ -136,10 +145,18 @@ mvn clean install -DskipTests
 ```bash
 cd wso2am-${WSO2AM_VERSION}/repository/components/plugins/  # or dropins/
 rm -f org.wso2.carbon.apimgt.api-*.jar  # Remove old version
-cp /path/to/org.wso2.carbon.apimgt.api.jar .  # Copy new version
+# Copy NEW .jar from cloned repository's build output:
+# Source: ${GITHUB_WORKSPACE}/${REPOSITORY}/components/apimgt/[component]/target/[component-name].jar
+cp ${GITHUB_WORKSPACE}/${REPOSITORY}/components/apimgt/org.wso2.carbon.apimgt.api/target/org.wso2.carbon.apimgt.api-*.jar .
 ```
 
 **CRITICAL: Verify exact name matching before replacement!**
+
+**Summary of the Fix-Build-Replace Workflow:**
+1. Apply fix in **cloned repository** (${GITHUB_WORKSPACE}/${REPOSITORY})
+2. Build the component using **Maven** in the cloned repository
+3. Locate the generated artifact in **target/** directory
+4. Replace the corresponding file in **wso2am pack**
 
 ### PHASE 5: Test and Validate
 
@@ -282,13 +299,16 @@ The complete modified `wso2am-${WSO2AM_VERSION}` pack is available as a GitHub A
 
 1. **Understand** → Read issue completely (description + all comments + screenshots)
 2. **Research** → Find solution (use existing fix OR research similar closed issues)
-3. **Clone** → `git clone` from ranuka-laksika organization
-4. **Branch** → Create unique timestamped branch
-5. **Fix** → Modify affected files only
-6. **Build** → Build specific component with `-DskipTests`
-7. **Replace** → Replace artifacts in wso2am pack
-8. **Test** → (Backend only) Test until issue is resolved
-9. **Zip** → Create artifact zip in ${GITHUB_WORKSPACE}
-10. **Commit** → Commit changes with descriptive message
-11. **Push** → Push to timestamped branch
-12. **PR** → Create PR with complete description including artifact download link
+3. **Clone** → `git clone` from ranuka-laksika organization to ${GITHUB_WORKSPACE}/${REPOSITORY}
+4. **Branch** → Create unique timestamped branch in the cloned repository
+5. **Fix** → Modify affected files IN THE CLONED REPOSITORY only
+6. **Build** → Build specific component IN THE CLONED REPOSITORY with `mvn clean install -DskipTests`
+7. **Locate Artifact** → Find generated .jar or .war file in the cloned repository's target/ directory
+8. **Replace** → Copy the generated artifact from cloned repo and replace it in wso2am pack
+9. **Test** → (Backend only) Test the wso2am pack until issue is resolved
+10. **Zip** → Create wso2am pack zip in ${GITHUB_WORKSPACE}
+11. **Commit** → Commit changes in the cloned repository with descriptive message
+12. **Push** → Push to timestamped branch
+13. **PR** → Create PR with complete description including artifact download link
+
+**Key Point**: All code changes and builds happen in the CLONED REPOSITORY. The generated artifacts are then copied to the wso2am PACK for testing and distribution.
