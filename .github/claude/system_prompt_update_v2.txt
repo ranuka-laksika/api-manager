@@ -173,31 +173,134 @@ cp ${GITHUB_WORKSPACE}/${AFFECTED_REPOSITORY}/components/apimgt/org.wso2.carbon.
 - No testing required - proceed to Phase 6
 
 **Backend Issues (carbon-apimgt, product-apim):**
-1. **Test your fix**:
-   - Start the updated wso2am pack (with your replaced artifacts)
-   - Execute the same reproduction steps
-   - Verify the issue is resolved
-2. **If issue persists**:
-   - Stop the pack
-   - Go back to the repository
-   - Revert changes: `git checkout .`
-   - Analyze what went wrong based on test results
-   - Apply revised fix
-   - Rebuild component: `mvn clean install -DskipTests`
-   - Replace artifacts again
-   - Test again
-   - **Repeat until issue is fully resolved**
+
+**CRITICAL: You have a maximum of 3 attempts to resolve the issue. Time is NOT a constraint - test thoroughly regardless of how long it takes.**
+
+**Testing Iteration Process (Up to 3 Attempts):**
+
+For each attempt (Attempt 1, Attempt 2, Attempt 3):
+
+1. **Start the wso2am pack** with your replaced artifacts
+   ```bash
+   cd wso2am-${WSO2AM_VERSION}/bin/
+   sh api-manager.sh start
+   # Wait for server to fully start (check logs)
+   ```
+
+2. **Execute reproduction steps** from the issue:
+   - Call the APIs mentioned in the issue
+   - Follow the exact steps to reproduce the bug
+   - **Carefully observe**: API responses, error logs, console output, server logs
+   - **Document observations**: What worked? What failed? What error messages appeared?
+
+3. **Evaluate the result**:
+
+   **IF THE ISSUE IS RESOLVED:**
+   - ✅ **Stop the server**:
+     ```bash
+     sh api-manager.sh stop
+     ```
+   - ✅ **SUCCESS - Proceed to Phase 6** (create zip file and PR)
+
+   **IF THE ISSUE PERSISTS (and you have attempts remaining):**
+   - ❌ **Stop the server**:
+     ```bash
+     sh api-manager.sh stop
+     ```
+   - ❌ **Analyze what went wrong**:
+     - Review API call responses and error messages
+     - Check server logs for additional clues
+     - Identify why the current fix didn't work
+     - Determine what needs to change
+
+   - ❌ **Go back to repository and revert**:
+     ```bash
+     cd ${GITHUB_WORKSPACE}/${AFFECTED_REPOSITORY}
+     git checkout .  # Revert all changes
+     ```
+
+   - ❌ **Apply revised fix** based on observations:
+     - Modify the code with a different approach
+     - Address the specific issues found during testing
+     - Use insights from API call failures
+
+   - ❌ **Rebuild the component**:
+     ```bash
+     mvn clean install -DskipTests
+     # Wait for BUILD SUCCESS
+     ```
+
+   - ❌ **Replace artifacts again** in wso2am pack (follow Phase 4 steps)
+
+   - ❌ **Start next attempt**: Go back to step 1 and test again
+
+4. **After 3 Failed Attempts**:
+
+   If the issue is still NOT resolved after 3 complete attempts:
+
+   - **Stop the server**:
+     ```bash
+     cd wso2am-${WSO2AM_VERSION}/bin/
+     sh api-manager.sh stop
+     ```
+
+   - **DO NOT create the zip file**
+
+   - **Post a comment on the issue** explaining:
+     ```markdown
+     ## Unable to Resolve Issue After 3 Attempts
+
+     I attempted to fix this issue 3 times but was unable to fully resolve it. Here's what I tried:
+
+     **Attempt 1:**
+     - Changes made: [describe changes]
+     - Result: [what happened during testing]
+     - Observation: [API responses, errors, logs]
+
+     **Attempt 2:**
+     - Changes made: [describe changes]
+     - Result: [what happened during testing]
+     - Observation: [API responses, errors, logs]
+
+     **Attempt 3:**
+     - Changes made: [describe changes]
+     - Result: [what happened during testing]
+     - Observation: [API responses, errors, logs]
+
+     **Root Cause Analysis:**
+     [Explain why the issue couldn't be resolved]
+
+     **Recommendation:**
+     [Suggest what might be needed - deeper investigation, different approach, additional information, etc.]
+     ```
+
+   - **DO NOT proceed to Phase 6** - Stop the workflow here
+
+**Important Notes:**
+- **Time is NOT a constraint**: Take as long as needed for each test cycle
+- **Test thoroughly**: Observe all API calls, responses, and logs carefully
+- **Server management**: Always stop the server before making changes or at the end
+- **Only create zip file if successful**: The zip file should only be created if the issue is resolved within 3 attempts
 
 ### PHASE 6: Create PR and Upload Artifact
 
-**Step 1: Zip the Updated Pack**
+**IMPORTANT: Only proceed with this phase if the issue was successfully resolved in Phase 5 (within 3 attempts).**
+
+**Step 1: Stop the Server (if still running)**
+```bash
+cd wso2am-${WSO2AM_VERSION}/bin/
+sh api-manager.sh stop
+# Ensure server is fully stopped before zipping
+```
+
+**Step 2: Zip the Updated Pack**
 ```bash
 cd ${GITHUB_WORKSPACE}
 zip -r wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip wso2am-${WSO2AM_VERSION}/
 # Verify location: ${GITHUB_WORKSPACE}/wso2am-${WSO2AM_VERSION}-issue-${ISSUE_NUMBER}.zip
 ```
 
-**Step 2: Commit and Push**
+**Step 3: Commit and Push**
 ```bash
 cd ${GITHUB_WORKSPACE}/${AFFECTED_REPOSITORY}
 pwd  # Verify you're in the repository directory
@@ -206,7 +309,7 @@ git commit -m "Fix: [brief description of what was fixed]"
 git push origin fix_issue_${ISSUE_NUMBER}_$(date +%s)
 ```
 
-**Step 3: Create Pull Request**
+**Step 4: Create Pull Request**
 
 Create PR from your new branch to the default branch (main/master) of the SAME repository.
 ** Use this exact template when creating the PR ** 
