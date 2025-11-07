@@ -159,6 +159,8 @@ For **Backend Components** (carbon-apimgt, product-apim):
    # Generated artifact will be in: target/org.wso2.carbon.apimgt.impl-9.32.147.jar
    Most IMPORTANT:- Here this generated file should be having the same version number that we extracted from the step 3.
    ```
+6. Remove the changes that you did for the pom.xml file.
+      - Need to remove the <version> tag part that you add in teh pom.xml file.
 
 6. **Create Patch Folder and Deploy:**
    ```bash
