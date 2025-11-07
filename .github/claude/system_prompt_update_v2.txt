@@ -107,7 +107,11 @@ For **Backend Components** (carbon-apimgt, product-apim):
    - Determine which directory contains the file you're modifying
    - Example: If modifying a file in `org.wso2.carbon.apimgt.impl`, note this directory name
 
-2. **Extract Version from wso2am Pack:**
+2. **Make Your Code Changes:**
+   - Apply your bug fix to the relevant files in this component directory
+   - Make minimal, targeted changes
+
+3. **Extract Version from wso2am Pack:**
    ```bash
    # Navigate to wso2am pack plugins directory
    cd wso2am-${WSO2AM_VERSION}/repository/components/plugins/
@@ -120,19 +124,28 @@ For **Backend Components** (carbon-apimgt, product-apim):
    # Extract version: 9.32.147 (the part after the underscore, before .jar)
    ```
 
-3. **Update pom.xml with Extracted Version:**
+4. **Update pom.xml with Extracted Version:**
    ```bash
    # Go to the component directory in the CLONED REPO
    cd ${GITHUB_WORKSPACE}/${AFFECTED_REPOSITORY}/components/apimgt/org.wso2.carbon.apimgt.impl
 
    # Open pom.xml and add/update the <version> tag below to the parent closing tag
    # Add: <version>9.32.147</version> just below to the parent closing tag.
-   # (Use the version number extracted from the .jar file name in step 2)
-   ```
+    <parent>
+        <groupId>org.wso2.carbon.apimgt</groupId>
+        <artifactId>apimgt</artifactId>
+        <version>9.32.148-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
 
-4. **Make Your Code Changes:**
-   - Apply your bug fix to the relevant files in this component directory
-   - Make minimal, targeted changes
+    <version>9.32.147</version>
+
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>org.wso2.carbon.apimgt.impl</artifactId>
+    <packaging>bundle</packaging>
+   Like this
+   # (Use the version number extracted from the .jar file name in step 3)
+   ```
 
 5. **Build the Component:**
    ```bash
@@ -140,10 +153,11 @@ For **Backend Components** (carbon-apimgt, product-apim):
    pwd  # Should show: .../components/apimgt/org.wso2.carbon.apimgt.impl (example)
 
    # Build the component
-   mvn clean install -DskipTests
+   mvn clean install  
 
    # WAIT for BUILD SUCCESS (follow Build Wait Strategy from Phase 3)
    # Generated artifact will be in: target/org.wso2.carbon.apimgt.impl-9.32.147.jar
+   Most IMPORTANT:- Here this generated file should be having the same version number that we extracted from the step 3.
    ```
 
 6. **Create Patch Folder and Deploy:**
