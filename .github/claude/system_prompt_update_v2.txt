@@ -100,13 +100,73 @@ mvn clean install -DskipTests
 ```
 
 For **Backend Components** (carbon-apimgt, product-apim):
-```bash
-# Navigate to the specific component you modified IN THE CLONED REPO
-cd components/apimgt/org.wso2.carbon.apimgt.api  # example path
-mvn clean install -DskipTests
-# Generated artifact: target/[component-name].jar
-# NOTE: This .jar file will be used to replace the existing one in wso2am pack
-```
+
+**Step-by-Step Process:**
+
+1. **Identify the Component Directory:**
+   - Determine which directory contains the file you're modifying
+   - Example: If modifying a file in `org.wso2.carbon.apimgt.impl`, note this directory name
+
+2. **Extract Version from wso2am Pack:**
+   ```bash
+   # Navigate to wso2am pack plugins directory
+   cd wso2am-${WSO2AM_VERSION}/repository/components/plugins/
+
+   # Search for the .jar file matching your component directory name
+   # Example: If your component is org.wso2.carbon.apimgt.impl
+   ls -la | grep org.wso2.carbon.apimgt.impl
+
+   # Example output: org.wso2.carbon.apimgt.impl_9.32.147.jar
+   # Extract version: 9.32.147 (the part after the underscore, before .jar)
+   ```
+
+3. **Update pom.xml with Extracted Version:**
+   ```bash
+   # Go to the component directory in the CLONED REPO
+   cd ${GITHUB_WORKSPACE}/${AFFECTED_REPOSITORY}/components/apimgt/org.wso2.carbon.apimgt.impl
+
+   # Open pom.xml and add/update the <version> tag
+   # Add: <version>9.32.147</version>
+   # (Use the version number extracted from the .jar file name in step 2)
+   ```
+
+4. **Make Your Code Changes:**
+   - Apply your bug fix to the relevant files in this component directory
+   - Make minimal, targeted changes
+
+5. **Build the Component:**
+   ```bash
+   # Ensure you're in the component directory
+   pwd  # Should show: .../components/apimgt/org.wso2.carbon.apimgt.impl (example)
+
+   # Build the component
+   mvn clean install -DskipTests
+
+   # WAIT for BUILD SUCCESS (follow Build Wait Strategy from Phase 3)
+   # Generated artifact will be in: target/org.wso2.carbon.apimgt.impl-9.32.147.jar
+   ```
+
+6. **Create Patch Folder and Deploy:**
+   ```bash
+   # Navigate to wso2am pack patches directory
+   cd wso2am-${WSO2AM_VERSION}/repository/components/patches/
+
+   # Create a new patch folder (use next available number, NOT patch0000)
+   # Examples: patch0001, patch0002, patch0003, etc.
+   mkdir patch0001  # Adjust number based on existing patches
+
+   # Copy the generated .jar file from target directory to patch folder
+   cp ${GITHUB_WORKSPACE}/${AFFECTED_REPOSITORY}/components/apimgt/org.wso2.carbon.apimgt.impl/target/org.wso2.carbon.apimgt.impl-*.jar patch0001/
+
+   # Verify the file was copied
+   ls -la patch0001/
+   ```
+
+**IMPORTANT NOTES:**
+- This process applies to ALL backend repositories (carbon-apimgt, product-apim, etc.)
+- Always extract the correct version from the existing .jar file in wso2am pack
+- Patch folder naming: patch0001, patch0002, etc. (NEVER use patch0000)
+- The version in pom.xml MUST match the version from the wso2am pack's .jar file
 **Environment:**
 - Java: Use the system's configured JAVA_HOME (verify with `echo $JAVA_HOME`)
 **Build Configuration:**
