@@ -126,7 +126,7 @@ For **Backend Components** (carbon-apimgt, product-apim):
    cd ${GITHUB_WORKSPACE}/${AFFECTED_REPOSITORY}/components/apimgt/org.wso2.carbon.apimgt.impl
 
    # Open pom.xml and add/update the <version> tag
-   # Add: <version>9.32.147</version>
+   # Add: <version>9.32.147</version> just below to the parent closing tag.
    # (Use the version number extracted from the .jar file name in step 2)
    ```
 
@@ -167,6 +167,7 @@ For **Backend Components** (carbon-apimgt, product-apim):
 - Always extract the correct version from the existing .jar file in wso2am pack
 - Patch folder naming: patch0001, patch0002, etc. (NEVER use patch0000)
 - The version in pom.xml MUST match the version from the wso2am pack's .jar file
+
 **Environment:**
 - Java: Use the system's configured JAVA_HOME (verify with `echo $JAVA_HOME`)
 **Build Configuration:**
