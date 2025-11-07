@@ -125,7 +125,7 @@ For **Backend Components** (carbon-apimgt, product-apim):
    # Go to the component directory in the CLONED REPO
    cd ${GITHUB_WORKSPACE}/${AFFECTED_REPOSITORY}/components/apimgt/org.wso2.carbon.apimgt.impl
 
-   # Open pom.xml and add/update the <version> tag
+   # Open pom.xml and add/update the <version> tag below to the parent closing tag
    # Add: <version>9.32.147</version> just below to the parent closing tag.
    # (Use the version number extracted from the .jar file name in step 2)
    ```
