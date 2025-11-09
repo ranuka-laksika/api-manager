@@ -1,0 +1,14 @@
+import { IconDefinition } from '@fortawesome/free-solid-svg-icons';
+import { IntentVals } from '@stoplight/mosaic';
+import { Dictionary, HttpMethod, HttpSecurityScheme, NodeType } from '@stoplight/types';
+export declare const NodeTypeColors: Readonly<Dictionary<string, NodeType>>;
+export declare const NodeTypePrettyName: Readonly<Dictionary<string, NodeType>>;
+export declare const NodeTypeIconDefs: Readonly<Dictionary<IconDefinition, NodeType>>;
+export declare const HttpSecuritySchemeColors: Readonly<Partial<Record<HttpSecurityScheme['type'], string>>>;
+export declare const HttpMethodColors: Readonly<Record<HttpMethod, string>>;
+export declare const HttpCodeColor: Readonly<Record<number, string>>;
+export declare const HttpCodeDescriptions: Readonly<Record<number, string>>;
+export declare const badgeDefaultBackgroundColor = "#293742";
+export declare const badgeDefaultColor = "#FFFFFF";
+export declare const CodeToIntentMap: Readonly<Record<number, IntentVals>>;
+export declare const OptionalSecurityMessage = "Requiring authorization is optional.  A user can access data without authorization or with authorization, if provided.";
