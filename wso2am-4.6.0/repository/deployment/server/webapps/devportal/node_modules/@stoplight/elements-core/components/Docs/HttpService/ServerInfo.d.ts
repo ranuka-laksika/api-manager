@@ -1,0 +1,12 @@
+import type { IServer } from '@stoplight/types';
+import * as React from 'react';
+interface ServerInfoProps {
+    servers: IServer[];
+    mockUrl?: string;
+}
+export declare const ServerInfo: React.FC<ServerInfoProps>;
+export declare function useSplitUrl(url: string): {
+    kind: 'variable' | 'static';
+    value: string;
+}[];
+export {};
