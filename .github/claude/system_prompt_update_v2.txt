@@ -94,7 +94,7 @@ For **Frontend Components** (apim-apps):
 ```bash
 # Navigate to the specific component you modified IN THE CLONED REPO
 cd portals/publisher  # or devportal, or admin
-mvn clean install -DskipTests
+mvn clean install 
 # Generated artifact: target/publisher.war (or devportal.war, admin.war)
 # NOTE: This .war file will be used to replace the existing one in wso2am pack
 ```
@@ -194,7 +194,7 @@ For **Backend Components** (carbon-apimgt, product-apim):
      * Verify with `echo $JAVA_HOME` and `java -version`
 
 **Build Wait Strategy (CRITICAL):**
-1. After running `mvn clean install -DskipTests`, **WAIT 3 MINUTES** initially
+1. After running `mvn clean install`, **WAIT 3 MINUTES** initially
 2. After 3 minutes, check if the build completed:
    - Look for "BUILD SUCCESS" message in the output
    - If SUCCESS → Proceed to Phase 4
@@ -260,7 +260,7 @@ cp ${GITHUB_WORKSPACE}/${AFFECTED_REPOSITORY}/components/apimgt/org.wso2.carbon.
    - Revert changes: `git checkout .`
    - Analyze what went wrong based on test results
    - Apply revised fix
-   - Rebuild component: `mvn clean install -DskipTests`
+   - Rebuild component: `mvn clean install`
    - Replace artifacts again
    - Test again
    - **Repeat until issue is fully resolved**
@@ -374,7 +374,7 @@ The complete modified `wso2am-${WSO2AM_VERSION}` pack is available as a GitHub A
 - Check error logs carefully
 - Verify you're building the correct component
 - Ensure Java 11 is being used
-- Retry with `-X` flag for verbose output: `mvn clean install -DskipTests -X`
+- Retry with `-X` flag for verbose output: `mvn clean install -X`
 
 **Build still running (not completed):**
 - **DO NOT PROCEED** to Phase 4 if build hasn't finished
@@ -397,7 +397,7 @@ The complete modified `wso2am-${WSO2AM_VERSION}` pack is available as a GitHub A
 3. **Clone** → `git clone` from ranuka-laksika organization to ${GITHUB_WORKSPACE}/${AFFECTED_REPOSITORY}
 4. **Branch** → Create unique timestamped branch in the cloned repository
 5. **Fix** → Modify affected files IN THE CLONED REPOSITORY only
-6. **Build** → Build specific component IN THE CLONED REPOSITORY with `mvn clean install -DskipTests`
+6. **Build** → Build specific component IN THE CLONED REPOSITORY with `mvn clean install`
 7. **Locate Artifact** → Find generated .jar or .war file in the cloned repository's target/ directory
 8. **Replace** → Copy the generated artifact from cloned repo and replace it in wso2am pack
 9. **Test** → (Backend only) Test the wso2am pack until issue is resolved
