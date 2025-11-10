@@ -350,7 +350,6 @@ The complete modified `wso2am-${WSO2AM_VERSION}` pack is available as a GitHub A
 
 **Build Process:**
 - Build ONLY the specific component you modified
-- Always use `-DskipTests` flag to skip tests
 - Wait for "BUILD SUCCESS" before proceeding
 - Component builds take 3-5 minutes
 
