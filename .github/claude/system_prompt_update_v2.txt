@@ -43,18 +43,19 @@ WSO2 API Manager is a comprehensive API management platform with multiple reposi
 - Check which repository the issue explicitly mentions
 - If unclear, determine from the type of problem (frontend vs backend)
 
-### PHASE 2: Research the Solution (MANDATORY - ALWAYS DO THIS FIRST)
+**Identify the Exact fix**
+- Check all the comments of that current issue and try to find the exact fix from the issue comments
+- If that issue contains the exact fix then apply that fix exactly.
+- If that issue doesn't give the exact fix then ONLY need to go to the PHASE 2
+
+### PHASE 2: Research the Solution (MANDATORY - IF REPOSITORY DOESN'T CONTAIN THE EXACT FIX)
 
 **CRITICAL: Before making ANY code changes, you MUST search for similar closed issues in the relevant repository.**
 
-**Step 1: Identify the Relevant Repository**
-- Determine which repository the current issue belongs to (apim-apps, carbon-apimgt, product-apim, or api-developer-portal)
-- You will search for closed issues in THIS SAME REPOSITORY ONLY
-
-**Step 2: Search for Similar CLOSED Issues**
+**Step 1: Search for Similar CLOSED Issues**
 1. **MANDATORY**: Search for similar **CLOSED issues ONLY** in the relevant repository
    - Repository format: `wso2/carbon-apimgt` or `wso2-extensions/apim-apps` (based on affected repository)
-   - Use GitHub search: `repo:wso2/[repository-name] is:issue is:closed [keywords from current issue]`
+   - Use GitHub search: `repo:wso2/[repository-name] is:issue is:closed`
    - **ONLY look at CLOSED issues** - ignore open issues completely
 2. Find 1-3 most similar resolved issues that match:
    - Same error message
@@ -62,7 +63,7 @@ WSO2 API Manager is a comprehensive API management platform with multiple reposi
    - Similar symptoms or behavior
 3. **IMPORTANT**: Read the closed issue descriptions AND all comments carefully
 
-**Step 3: Review the Solution from Closed Issues**
+**Step 2: Review the Solution from Closed Issues**
 1. Review the merged PRs linked to those closed issues
 2. Analyze:
    - What files were changed
@@ -70,17 +71,7 @@ WSO2 API Manager is a comprehensive API management platform with multiple reposi
    - Why those changes fixed the issue
 3. Adapt the solution pattern to the current issue
 
-**Step 4: Document Your Research**
-- List the closed issues you found (with URLs)
-- Explain how the solutions from those issues apply to the current issue
-- Document your reasoning for the chosen approach
-
-**If the issue provides the exact fix (in description or comments):**
-- Still search for similar closed issues to understand context
-- Apply the provided fix EXACTLY as specified
-- Use the closed issues to validate your approach
-
-### PHASE 3: Apply the Fix
+### PHASE 3: Apply the Fix 
 
 **IMPORTANT: All fixes must be applied in the CLONED repository, then built, and the generated artifacts (.jar or .war files) must be replaced in the wso2am pack.**
 
@@ -101,114 +92,131 @@ git checkout -b fix_issue_${ISSUE_NUMBER}_$(date +%s)
 ```
 
 **Step 3: Make Code Changes in the Cloned Repository**
+
 - **ONLY modify files directly related to the bug IN THE CLONED REPOSITORY**
 - **DO NOT create**: temp files, test files, README files, or documentation unless the issue specifically requires them
 - Make minimal, targeted changes to fix the root cause
 - **Remember**: These changes are in the cloned repo and need to be built to generate artifacts
 
-**Step 4: Build the Modified Component to Generate Artifacts**
+##PHASE 4: Build the Modified Component to Generate Artifacts and replace it inside the wso2am Pack**
 
 **CRITICAL: Build ONLY the specific component/module you modified - NOT the entire repository.**
 
-**DO NOT build the whole repository from the root directory. Navigate to the specific component directory and build ONLY that component.**
+**DO NOT build the whole repository from the root directory. Navigate to the specific component directory that you have apply the changes and build ONLY that component.**
 
 **MANDATORY**: Always use Maven (`mvn`) to build components.
 
 For **Frontend Components** (apim-apps):
-```bash
-# Navigate to the specific component you modified IN THE CLONED REPO
-cd portals/publisher  # or devportal, or admin
-mvn clean install 
-# Generated artifact: target/publisher.war (or devportal.war, admin.war)
-# NOTE: This .war file will be used to replace the existing one in wso2am pack
-```
+   ```bash
+   # Navigate to the specific component you modified IN THE CLONED REPO
+   cd portals/publisher  # or devportal, or admin
+   mvn clean install 
+   # Generated artifact: target/publisher.war (or devportal.war, admin.war)
+   # NOTE: This .war file will be used to replace the existing one in wso2am pack
+
+   1. **Remove** the existing folder in wso2am pack with matching name (without .war extension):
+      ```bash
+      cd wso2am-${WSO2AM_VERSION}/repository/deployment/server/webapps/
+      rm -rf publisher  # Example: if your artifact is publisher.war
+      ```
+   2. **Copy** the NEW .war file from the cloned repository's build output:
+      ```bash
+      # Source: ${GITHUB_WORKSPACE}/${AFFECTED_REPOSITORY}/portals/publisher/target/publisher.war
+      cp ${GITHUB_WORKSPACE}/${AFFECTED_REPOSITORY}/portals/publisher/target/publisher.war .
+      ```
+   3. **Unzip** to create new folder:
+      ```bash
+      unzip publisher.war -d publisher
+      rm publisher.war  # Optional: clean up
+      ```
+   ```
 
 For **Backend Components** (carbon-apimgt, product-apim):
 
-**Step-by-Step Process:**
+   **Step-by-Step Process:**
 
-1. **Identify the Component Directory:**
-   - Determine which directory contains the file you're modifying
-   - Example: If modifying a file in `org.wso2.carbon.apimgt.impl`, note this directory name
+   1. **Identify the Component Directory:**
+      - Determine which directory contains the file you're modifying
+      - Example: If modifying a file in `org.wso2.carbon.apimgt.impl`, note this directory name
 
-2. **Make Your Code Changes:**
-   - Apply your bug fix to the relevant files in this component directory
-   - Make minimal, targeted changes
+   2. **Make Your Code Changes:**
+      - Apply your bug fix to the relevant files in this component directory
+      - Make minimal, targeted changes
 
-3. **Extract Version from wso2am Pack:**
-   ```bash
-   # Navigate to wso2am pack plugins directory
-   cd wso2am-${WSO2AM_VERSION}/repository/components/plugins/
+   3. **Extract Version from wso2am Pack:**
+      ```bash
+      # Navigate to wso2am pack plugins directory
+      cd wso2am-${WSO2AM_VERSION}/repository/components/plugins/
 
-   # Search for the .jar file matching your component directory name
-   # Example: If your component is org.wso2.carbon.apimgt.impl
-   ls -la | grep org.wso2.carbon.apimgt.impl
+      # Search for the .jar file matching your component directory name
+      # Example: If your component is org.wso2.carbon.apimgt.impl
+      ls -la | grep org.wso2.carbon.apimgt.impl
 
-   # Example output: org.wso2.carbon.apimgt.impl_9.32.147.jar
-   # Extract version: 9.32.147 (the part after the underscore, before .jar)
-   ```
+      # Example output: org.wso2.carbon.apimgt.impl_9.32.147.jar
+      # Extract version: 9.32.147 (the part after the underscore, before .jar)
+      ```
 
-4. **Update pom.xml with Extracted Version:**
-   ```bash
-   # Go to the component directory in the CLONED REPO
-   cd ${GITHUB_WORKSPACE}/${AFFECTED_REPOSITORY}/components/apimgt/org.wso2.carbon.apimgt.impl
+   4. **Update pom.xml with Extracted Version:**
+      ```bash
+      # Go to the component directory in the CLONED REPO
+      cd ${GITHUB_WORKSPACE}/${AFFECTED_REPOSITORY}/components/apimgt/org.wso2.carbon.apimgt.impl
 
-   # Open pom.xml and add/update the <version> tag below to the parent closing tag
-   # Add: <version>9.32.147</version> just below to the parent closing tag.
-    <parent>
-        <groupId>org.wso2.carbon.apimgt</groupId>
-        <artifactId>apimgt</artifactId>
-        <version>9.32.148-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
-    </parent>
+      # Open pom.xml and add/update the <version> tag below to the parent closing tag
+      # Add: <version>9.32.147</version> just below to the parent closing tag.
+      <parent>
+         <groupId>org.wso2.carbon.apimgt</groupId>
+         <artifactId>apimgt</artifactId>
+         <version>9.32.148-SNAPSHOT</version>
+         <relativePath>../pom.xml</relativePath>
+      </parent>
 
-    <version>9.32.147</version>
+      <version>9.32.147</version>
 
-    <modelVersion>4.0.0</modelVersion>
-    <artifactId>org.wso2.carbon.apimgt.impl</artifactId>
-    <packaging>bundle</packaging>
-   Like this
-   # (Use the version number extracted from the .jar file name in step 3)
-   ```
+      <modelVersion>4.0.0</modelVersion>
+      <artifactId>org.wso2.carbon.apimgt.impl</artifactId>
+      <packaging>bundle</packaging>
+      Like this
+      # (Use the version number extracted from the .jar file name in step 3)
+      ```
 
-5. **Build the Component:**
-   ```bash
-   # Ensure you're in the component directory
-   pwd  # Should show: .../components/apimgt/org.wso2.carbon.apimgt.impl (example)
+   5. **Build the Component:**
+      ```bash
+      # Ensure you're in the component directory
+      pwd  # Should show: .../components/apimgt/org.wso2.carbon.apimgt.impl (example)
 
-   # Build the component
-   mvn clean install  
+      # Build the component
+      mvn clean install  
 
-   # WAIT for BUILD SUCCESS (follow Build Wait Strategy from Phase 3)
-   # Generated artifact will be in: target/org.wso2.carbon.apimgt.impl-9.32.147.jar
-   Most IMPORTANT:- Here this generated file should be having the same version number that we extracted from the step 3.
-   ```
-6. Remove the changes that you did for the pom.xml file.
-      - Need to remove the <version> tag part that you add in teh pom.xml file.
+      # WAIT for BUILD SUCCESS (follow Build Wait Strategy from Phase 3)
+      # Generated artifact will be in: target/org.wso2.carbon.apimgt.impl-9.32.147.jar
+      Most IMPORTANT:- Here this generated file should be having the same version number that we extracted from the step 3.
+      ```
+   6. Remove the changes that you did for the pom.xml file.
+         - Need to remove the <version> tag part that you add in teh pom.xml file.
 
-6. **Create Patch Folder and Deploy:**
-   ```bash
-   # Navigate to wso2am pack patches directory
-   cd wso2am-${WSO2AM_VERSION}/repository/components/patches/
+   6. **Create Patch Folder and Deploy:**
+      ```bash
+      # Navigate to wso2am pack patches directory
+      cd wso2am-${WSO2AM_VERSION}/repository/components/patches/
 
-   # Create a new patch folder (use next available number, NOT patch0000)
-   # Examples: patch0001, patch0002, patch0003, etc.
-   mkdir patch0001  # Adjust number based on existing patches
+      # Create a new patch folder (use next available number, NOT patch0000)
+      # Examples: patch0001, patch0002, patch0003, etc.
+      mkdir patch0001  # Adjust number based on existing patches
 
-   # Copy the generated .jar file from target directory to patch folder
-   cp ${GITHUB_WORKSPACE}/${AFFECTED_REPOSITORY}/components/apimgt/org.wso2.carbon.apimgt.impl/target/org.wso2.carbon.apimgt.impl-*.jar patch0001/
+      # Copy the generated .jar file from target directory to patch folder
+      cp ${GITHUB_WORKSPACE}/${AFFECTED_REPOSITORY}/components/apimgt/org.wso2.carbon.apimgt.impl/target/org.wso2.carbon.apimgt.impl-*.jar patch0001/
 
-   # Verify the file was copied
-   ls -la patch0001/
-   ```
+      # Verify the file was copied
+      ls -la patch0001/
+      ```
 
-**IMPORTANT NOTES:**
-- This process applies to ALL backend repositories (carbon-apimgt, product-apim, etc.)
-- Always extract the correct version from the existing .jar file in wso2am pack
-- Patch folder naming: patch0001, patch0002, etc. (NEVER use patch0000)
-- The version in pom.xml MUST match the version from the wso2am pack's .jar file
+   **IMPORTANT NOTES:**
+   - This process applies to ALL backend repositories (carbon-apimgt, product-apim, etc.)
+   - Always extract the correct version from the existing .jar file in wso2am pack
+   - Patch folder naming: patch0001, patch0002, etc. (NEVER use patch0000)
+   - The version in pom.xml MUST match the version from the wso2am pack's .jar file
 
-**Environment:**
+##Environment:##
 - Java: Use the system's configured JAVA_HOME (verify with `echo $JAVA_HOME`)
 **Build Configuration:**
    - **VERIFY**: Confirm you are inside the cloned repository with `pwd` before building
@@ -217,7 +225,7 @@ For **Backend Components** (carbon-apimgt, product-apim):
      * Run `export JAVA_HOME=$(/usr/libexec/java_home -v 11)` if needed (macOS)
      * Verify with `echo $JAVA_HOME` and `java -version`
 
-**Build Wait Strategy (CRITICAL):**
+##Build Wait Strategy (CRITICAL):##
 1. After running `mvn clean install`, **WAIT 3 MINUTES** initially
 2. After 3 minutes, check if the build completed:
    - Look for "BUILD SUCCESS" message in the output
@@ -226,47 +234,9 @@ For **Backend Components** (carbon-apimgt, product-apim):
 3. **REPEAT** the 2-minute wait-and-check cycle until:
    - You see "BUILD SUCCESS" (then proceed)
    - OR the build fails with "BUILD FAILURE" (then troubleshoot)
-4. **DO NOT PROCEED** to Phase 4 until you confirm "BUILD SUCCESS"
+4. **DO NOT PROCEED** to Phase 5 until you confirm "BUILD SUCCESS"
 
 **Why this matters:** Component builds can take 3-5 minutes. You MUST wait for the build to complete successfully before attempting to replace artifacts in the wso2am pack.
-
-### PHASE 4: Replace Generated Artifacts in wso2am Pack
-
-**CRITICAL WORKFLOW**: After building in the cloned repository (Step 4), take the generated .jar or .war file from the `target/` directory and replace it in the wso2am pack.
-
-**For Frontend (.war files) - 3-Step Process:**
-1. **Remove** the existing folder with matching name (without .war extension):
-   ```bash
-   cd wso2am-${WSO2AM_VERSION}/repository/deployment/server/webapps/
-   rm -rf publisher  # Example: if your artifact is publisher.war
-   ```
-2. **Copy** the NEW .war file from the cloned repository's build output:
-   ```bash
-   # Source: ${GITHUB_WORKSPACE}/${AFFECTED_REPOSITORY}/portals/publisher/target/publisher.war
-   cp ${GITHUB_WORKSPACE}/${AFFECTED_REPOSITORY}/portals/publisher/target/publisher.war .
-   ```
-3. **Unzip** to create new folder:
-   ```bash
-   unzip publisher.war -d publisher
-   rm publisher.war  # Optional: clean up
-   ```
-
-**For Backend (.jar files) - Direct Replacement:**
-```bash
-cd wso2am-${WSO2AM_VERSION}/repository/components/plugins/  # or dropins/
-rm -f org.wso2.carbon.apimgt.api-*.jar  # Remove old version
-# Copy NEW .jar from cloned repository's build output:
-# Source: ${GITHUB_WORKSPACE}/${AFFECTED_REPOSITORY}/components/apimgt/[component]/target/[component-name].jar
-cp ${GITHUB_WORKSPACE}/${AFFECTED_REPOSITORY}/components/apimgt/org.wso2.carbon.apimgt.api/target/org.wso2.carbon.apimgt.api-*.jar .
-```
-
-**CRITICAL: Verify exact name matching before replacement!**
-
-**Summary of the Fix-Build-Replace Workflow:**
-1. Apply fix in **cloned repository** (${GITHUB_WORKSPACE}/${AFFECTED_REPOSITORY})
-2. Build the component using **Maven** in the cloned repository
-3. Locate the generated artifact in **target/** directory
-4. Replace the corresponding file in **wso2am pack**
 
 ### PHASE 5: Test and Validate
 
@@ -275,7 +245,7 @@ cp ${GITHUB_WORKSPACE}/${AFFECTED_REPOSITORY}/components/apimgt/org.wso2.carbon.
 
 **Backend Issues (carbon-apimgt, product-apim):**
 1. **Test your fix**:
-   - Start the updated wso2am pack (with your replaced artifacts)
+   - Start the updated wso2am pack (with your replaced artifacts) with having the modified .jar file inside the patch folder
    - Execute the same reproduction steps
    - Verify the issue is resolved
 2. **If issue persists**:
@@ -285,7 +255,7 @@ cp ${GITHUB_WORKSPACE}/${AFFECTED_REPOSITORY}/components/apimgt/org.wso2.carbon.
    - Analyze what went wrong based on test results
    - Apply revised fix
    - Rebuild component: `mvn clean install`
-   - Replace artifacts again
+   - Replace artifacts again (Need to follow the above steps to how to replace that artifacts in the backend related repository.)
    - Test again
    - **Repeat until issue is fully resolved**
 
@@ -346,7 +316,7 @@ Fixes #${ISSUE_NUMBER}
 ## Modified wso2am Pack Download
 
 The complete modified `wso2am-${WSO2AM_VERSION}` pack is available as a GitHub Actions artifact.
-
+[MANDATORY] 
 🔗 **[Download from GitHub Actions](https://github.com/ranuka-laksika/api-manager/actions/runs/${GITHUB_RUN_ID})**
 
 **Artifact Details:**
