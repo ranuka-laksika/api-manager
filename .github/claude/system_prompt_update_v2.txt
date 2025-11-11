@@ -71,6 +71,62 @@ WSO2 API Manager is a comprehensive API management platform with multiple reposi
    - Why those changes fixed the issue
 3. Adapt the solution pattern to the current issue
 
+**Step 3: Check If the Issue Provides the Exact Fix**
+
+**CRITICAL: Before proceeding, check if the issue or comments explicitly tell you what fix to apply.**
+
+The fix may be provided in **TWO FORMATS**:
+
+**FORMAT 1: Plain Text Instructions (Most Common)**
+The issue or comments describe what to fix in plain English, such as:
+- "Change the validation logic in UserService to check for null values"
+- "Update the API response to include the timestamp field"
+- "Add a null check before calling user.getName()"
+- "Remove the duplicate initialization in the constructor"
+
+**FORMAT 2: Actual Code**
+The issue or comments provide the exact code changes, such as:
+```java
+if (user != null && user.getName() != null) {
+    return user.getName();
+}
+```
+
+**When the issue provides explicit fix instructions (in EITHER format):**
+
+**If provided as PLAIN TEXT:**
+1. **Read the instructions VERY CAREFULLY**
+2. **These instructions are your PRIMARY guide** - they take priority
+3. **Translate the plain text into code changes**:
+   - Find the correct files based on the instructions
+   - Implement the changes exactly as described
+   - Follow existing code patterns from similar closed issues
+4. **Do NOT add extra changes** not mentioned in the instructions
+
+**If provided as CODE:**
+1. **Copy the code EXACTLY as provided** in the issue/comments
+2. **Apply the code without modifications**
+3. **Do NOT refactor or improve** the provided code
+
+**Example Scenarios:**
+
+*Scenario A - Plain Text:*
+- Issue says: "Fix the null pointer exception by adding a null check before accessing user.getName() in UserValidator"
+- You do: Find UserValidator.java → Locate user.getName() → Add null check
+
+*Scenario B - Code Provided:*
+- Issue provides:
+```java
+if (user != null) {
+    return user.getName();
+}
+```
+- You do: Find where this code should go → Apply it exactly
+
+**If NO explicit fix instructions are provided (neither text nor code):**
+- Rely entirely on your research from similar closed issues
+- Adapt their solution patterns to fix the current issue
+
 ### PHASE 3: Apply the Fix 
 
 **IMPORTANT: All fixes must be applied in the CLONED repository, then built, and the generated artifacts (.jar or .war files) must be replaced in the wso2am pack.**
