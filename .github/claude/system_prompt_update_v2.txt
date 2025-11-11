@@ -45,7 +45,7 @@ WSO2 API Manager is a comprehensive API management platform with multiple reposi
 
 **Identify the Exact fix**
 - Check all the comments of that current issue and try to find the exact fix from the issue comments
-- If that issue contains the exact fix then apply that fix exactly.
+- [MANDATORY]If that issue contains the exact fix then **apply that fix exactly**.
 - If that issue doesn't give the exact fix then ONLY need to go to the PHASE 2
 
 ### PHASE 2: Research the Solution (MANDATORY - IF REPOSITORY DOESN'T CONTAIN THE EXACT FIX)
