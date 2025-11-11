@@ -1,0 +1,26 @@
+<log level="custom">
+    <property name="IN_MESSAGE" value="xml_validator"/>
+</log>
+<property name="xmlValidation" value="true"/>
+<property name="dtdEnabled" value="{{dtdEnabled}}"/>
+<property name="externalEntitiesEnabled" value="{{externalEntitiesEnabled}}"/>
+<property name="maxXMLDepth" value="{{maxXMLDepth}}"/>
+<property name="maxElementCount" value="{{maxElementCount}}"/>
+<property name="maxAttributeCount" value="{{maxAttributeCount}}"/>
+<property name="maxAttributeLength" value="{{maxAttributeLength}}"/>
+<property name="maxChildrenPerElement" value="{{maxChildrenPerElement}}"/>
+<property name="entityExpansionLimit" value="{{entityExpansionLimit}}"/>
+<property name="schemaValidation" value="false"/>
+<switch source="get-property('To')">
+        <!--<case regex=".*/addResource.*">-->
+            <!--<property name="xsdURL" value="<insert XSD_URL>"/>-->
+        <!--</case>-->
+        <!--<case regex=".*/update.*">-->
+            <!--<property name="xsdURL" value="<insert XSD_URL>"/>-->
+        <!--</case>-->
+        <!--<case regex=".*/delete.*">-->
+            <!--<property name="xsdURL" value="<insert XSD_URL>d"/>-->
+        <!--</case>-->
+</switch>
+<property name="RequestMessageBufferSize" value="{{requestMessageBufferSize}}"/>
+<class name="{{xmlSchemaValidator}}"/>
