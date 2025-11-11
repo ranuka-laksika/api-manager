@@ -54,7 +54,7 @@ WSO2 API Manager is a comprehensive API management platform with multiple reposi
 
 **Step 1: Search for Similar CLOSED Issues**
 1. **MANDATORY**: Search for similar **CLOSED issues ONLY** in the relevant repository
-   - Repository format: `wso2/carbon-apimgt` or `wso2-extensions/apim-apps` (based on affected repository)
+   - Repository format: affected repository
    - Use GitHub search: `repo:wso2/[repository-name] is:issue is:closed`
    - **ONLY look at CLOSED issues** - ignore open issues completely
 2. Find 1-3 most similar resolved issues that match:
