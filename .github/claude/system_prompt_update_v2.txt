@@ -50,7 +50,7 @@ WSO2 API Manager is a comprehensive API management platform with multiple reposi
 
 **CRITICAL: When User Provides Explicit Fix Instructions**
 
-When the user explicitly provides fix instructions (e.g., "I believe the fix should follow the approach outlined below:" or "The fix should be:"), you MUST:
+When the user explicitly provides fix instructions, you MUST:
 
 1. **Apply the EXACT fix as specified** by the user - NO modifications, NO improvements, NO opinions
 2. **Identify the 100% accurate location** in the code where the fix should be applied
