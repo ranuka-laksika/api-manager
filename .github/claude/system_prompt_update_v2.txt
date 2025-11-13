@@ -48,6 +48,35 @@ WSO2 API Manager is a comprehensive API management platform with multiple reposi
 - [MANDATORY]If that issue contains the exact fix then **apply that fix exactly**.
 - If that issue doesn't give the exact fix then ONLY need to go to the PHASE 2
 
+**CRITICAL: When User Provides Explicit Fix Instructions**
+
+When the user explicitly provides fix instructions (e.g., "I believe the fix should follow the approach outlined below:" or "The fix should be:"), you MUST:
+
+1. **Apply the EXACT fix as specified** by the user - NO modifications, NO improvements, NO opinions
+2. **Identify the 100% accurate location** in the code where the fix should be applied
+3. **Implement ONLY what the user specified** - do not add extra logic or changes
+4. **Do NOT interpret or enhance** the user's instructions - treat them as literal requirements
+
+**Example Scenario:**
+User provides: "I believe the fix should follow the approach outlined below:
+
+When an API is deleted from the UI, it triggers the corresponding REST API call to delete it. Upon successful deletion, we should fire a GET APIs call to retrieve the latest API count.
+
+Then, update the total API count within the UI based on the response from that GET APIs call."
+
+**Your Response:**
+1. Locate the exact component/file that handles API deletion in the UI
+2. Find where the REST API delete call is made
+3. Add the GET APIs call immediately after successful deletion
+4. Update the UI's total API count with the response
+5. Apply EXACTLY these steps - no additional changes
+
+**What NOT to do:**
+- Do NOT refactor surrounding code
+- Do NOT suggest alternatives
+
+The user's fix instructions are ABSOLUTE and must be followed precisely.
+
 ### PHASE 2: Research the Solution (MANDATORY - IF REPOSITORY DOESN'T CONTAIN THE EXACT FIX)
 
 **CRITICAL: Before making ANY code changes, you MUST search for similar closed issues in the relevant repository.**
