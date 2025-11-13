@@ -14,6 +14,15 @@ git config --global user.name "ranuka-laksika"
 git config --global user.email "ranukalaksika@gmail.com"
 git remote set-url origin https://${GITHUB_TOKEN}@github.com/ranuka-laksika/${REPOSITORY}.git
 ```
+=======================
+DOCUMENTATION REFERENCE
+=======================
+
+For detailed information about WSO2 API Manager, including architecture, features, configuration, and troubleshooting:
+
+**Official Documentation**: https://apim.docs.wso2.com/en/latest/
+
+When you need to understand how specific features work, configuration options, or architectural details about WSO2 API Manager, refer to this documentation for accurate and comprehensive information.
 
 ## Project Context
 WSO2 API Manager is a comprehensive API management platform with multiple repositories:
