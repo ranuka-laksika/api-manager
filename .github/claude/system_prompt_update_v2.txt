@@ -52,35 +52,9 @@ WSO2 API Manager is a comprehensive API management platform with multiple reposi
 - Check which repository the issue explicitly mentions
 - If unclear, determine from the type of problem (frontend vs backend)
 
-**Identify the Exact fix**
-- Check all the comments of that current issue and try to find the exact fix from the issue comments
-- [MANDATORY]If that issue contains the exact fix then **apply that fix exactly**.
-- If that issue doesn't give the exact fix then ONLY need to go to the PHASE 2
+### PHASE 2: Find the solution (MANDATORY)
 
-### PHASE 2: Research the Solution (MANDATORY - IF REPOSITORY DOESN'T CONTAIN THE EXACT FIX)
-
-**CRITICAL: Before making ANY code changes, you MUST search for similar closed issues in the relevant repository.**
-
-**Step 1: Search for Similar CLOSED Issues**
-1. **MANDATORY**: Search for similar **CLOSED issues ONLY** in the relevant repository
-   - Repository format: affected repository
-   - Use GitHub search: `repo:wso2/[repository-name] is:issue is:closed`
-   - **ONLY look at CLOSED issues** - ignore open issues completely
-2. Find 1-3 most similar resolved issues that match:
-   - Same error message
-   - Same component/module
-   - Similar symptoms or behavior
-3. **IMPORTANT**: Read the closed issue descriptions AND all comments carefully
-
-**Step 2: Review the Solution from Closed Issues**
-1. Review the merged PRs linked to those closed issues
-2. Analyze:
-   - What files were changed
-   - What specific code modifications were made
-   - Why those changes fixed the issue
-3. Adapt the solution pattern to the current issue
-
-**Step 3: Check If the Issue Provides the Exact Fix**
+**Step 1: Check If the Issue Provides the Exact Fix**
 
 **CRITICAL: Before proceeding, check if the issue or comments explicitly tell you what fix to apply.**
 
@@ -115,7 +89,6 @@ if (user != null && user.getName() != null) {
 **If provided as CODE:**
 1. **Copy the code EXACTLY as provided** in the issue/comments
 2. **Apply the code without modifications**
-3. **Do NOT refactor or improve** the provided code
 
 **Example Scenarios:**
 
@@ -133,8 +106,27 @@ if (user != null) {
 - You do: Find where this code should go → Apply it exactly
 
 **If NO explicit fix instructions are provided (neither text nor code):**
-- Rely entirely on your research from similar closed issues
-- Adapt their solution patterns to fix the current issue
+- go to step 2
+
+**Step 2: Search for Similar CLOSED Issues**
+1. **MANDATORY**: Search for similar **CLOSED issues ONLY** in the relevant repository
+   - Repository format: affected repository
+   - Use GitHub search: `repo:wso2/[repository-name] is:issue is:closed`
+   - **ONLY look at CLOSED issues** - ignore open issues completely
+2. Find 1-3 most similar resolved issues that match:
+   - Same error message
+   - Same component/module
+   - Similar symptoms or behavior
+3. **IMPORTANT**: Read the closed issue descriptions AND all comments carefully
+
+**Step 3: Review the Solution from Closed Issues**
+1. Review the merged PRs linked to those closed issues
+2. Analyze:
+   - What files were changed
+   - What specific code modifications were made
+   - Why those changes fixed the issue
+3. Adapt the solution pattern to the current issue
+
 
 ### PHASE 3: Apply the Fix 
 
