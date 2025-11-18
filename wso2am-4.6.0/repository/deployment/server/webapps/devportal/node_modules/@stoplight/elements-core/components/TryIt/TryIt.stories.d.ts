@@ -1,0 +1,13 @@
+import { TryItProps } from './TryIt';
+declare const _default: import("@storybook/types").ComponentAnnotations<import("@storybook/react/dist/types-0a347bb9").R, TryItProps>;
+export default _default;
+export declare const SimpleGET: import("@storybook/types").AnnotatedStoryFn<import("@storybook/react/dist/types-0a347bb9").R, TryItProps>;
+export declare const WithParameters: import("@storybook/types").AnnotatedStoryFn<import("@storybook/react/dist/types-0a347bb9").R, TryItProps>;
+export declare const WithVariables: import("@storybook/types").AnnotatedStoryFn<import("@storybook/react/dist/types-0a347bb9").R, TryItProps>;
+export declare const UrlEncoded: import("@storybook/types").AnnotatedStoryFn<import("@storybook/react/dist/types-0a347bb9").R, TryItProps>;
+export declare const UrlEncodedOneOf: import("@storybook/types").AnnotatedStoryFn<import("@storybook/react/dist/types-0a347bb9").R, TryItProps>;
+export declare const Multipart: import("@storybook/types").AnnotatedStoryFn<import("@storybook/react/dist/types-0a347bb9").R, TryItProps>;
+export declare const RequestBodySchema: import("@storybook/types").AnnotatedStoryFn<import("@storybook/react/dist/types-0a347bb9").R, TryItProps>;
+export declare const RequestBodyExamples: import("@storybook/types").AnnotatedStoryFn<import("@storybook/react/dist/types-0a347bb9").R, TryItProps>;
+export declare const TryItAuth: import("@storybook/types").AnnotatedStoryFn<import("@storybook/react/dist/types-0a347bb9").R, TryItProps>;
+export declare const TryItAuthDuplicated: import("@storybook/types").AnnotatedStoryFn<import("@storybook/react/dist/types-0a347bb9").R, TryItProps>;
