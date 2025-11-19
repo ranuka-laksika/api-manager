@@ -18,12 +18,6 @@ git remote set-url origin https://${GITHUB_TOKEN}@github.com/ranuka-laksika/${RE
 DOCUMENTATION REFERENCE
 =======================
 
-For detailed information about WSO2 API Manager, including architecture, features, configuration, and troubleshooting:
-
-**Official Documentation**: https://apim.docs.wso2.com/en/latest/
-
-When you need to understand how specific features work, configuration options, or architectural details about WSO2 API Manager, refer to this documentation for accurate and comprehensive information.
-
 ## Project Context
 WSO2 API Manager is a comprehensive API management platform with multiple repositories:
 - **apim-apps** → Frontend applications (Publisher, Developer Portal, Admin Portal) - generates .war files
@@ -31,7 +25,7 @@ WSO2 API Manager is a comprehensive API management platform with multiple reposi
 - **product-apim** → Main distribution and packaging - generates .jar files
 - **api-developer-portal** → Standalone Developer Portal - generates .war files
 
-## Core Workflow
+## ========== Core Workflow ============
 
 ### PHASE 1: Understand the Issue (MANDATORY FIRST STEP)
 
@@ -56,57 +50,28 @@ WSO2 API Manager is a comprehensive API management platform with multiple reposi
 
 **Step 1: Check If the Issue Provides the Exact Fix**
 
-**CRITICAL: Before proceeding, check if the issue or comments explicitly tell you what fix to apply.**
+Before fixing any issue, first check whether the issue or comments already give you the exact fix.
+The fix can be provided in two formats:
 
-The fix may be provided in **TWO FORMATS**:
+1. Plain Text Instructions:
+   - The issue explains the fix in normal English.
+   - Read the instructions carefully.
+   - Treat them as the main source of truth.
+   - Translate the text into code changes in the correct files.
+   - ONLY fix what the instructions tell you to fix.
+   - Do NOT change anything else outside the required fix.
+   - Modify only the necessary file(s) mentioned or implied by the instructions.
 
-**FORMAT 1: Plain Text Instructions (Most Common)**
-The issue or comments describe what to fix in plain English, such as:
-- "Change the validation logic in UserService to check for null values"
-- "Update the API response to include the timestamp field"
-- "Add a null check before calling user.getName()"
-- "Remove the duplicate initialization in the constructor"
+2. Code Provided:
+   - The issue gives the exact code to use.
+   - Copy the code exactly as shown and apply it without changes.
+   - ONLY apply the provided code and do NOT modify other parts of the system.
 
-**FORMAT 2: Actual Code**
-The issue or comments provide the exact code changes, such as:
-```java
-if (user != null && user.getName() != null) {
-    return user.getName();
-}
-```
+Examples:
+- If the issue says “Add a null check in UserValidator for user.getName()”, find the file and add only that null check.
+- If the issue provides specific code, paste it exactly in the correct place and do not add extra logic.
 
-**When the issue provides explicit fix instructions (in EITHER format):**
-
-**If provided as PLAIN TEXT:**
-1. **Read the instructions VERY CAREFULLY**
-2. **These instructions are your PRIMARY guide** - they take priority
-3. **Translate the plain text into code changes**:
-   - Find the correct files based on the instructions
-   - Implement the changes exactly as described
-   - Follow existing code patterns from similar closed issues
-4. **Do NOT add extra changes** not mentioned in the instructions
-
-**If provided as CODE:**
-1. **Copy the code EXACTLY as provided** in the issue/comments
-2. **Apply the code without modifications**
-
-**Example Scenarios:**
-
-*Scenario A - Plain Text:*
-- Issue says: "Fix the null pointer exception by adding a null check before accessing user.getName() in UserValidator"
-- You do: Find UserValidator.java → Locate user.getName() → Add null check
-
-*Scenario B - Code Provided:*
-- Issue provides:
-```java
-if (user != null) {
-    return user.getName();
-}
-```
-- You do: Find where this code should go → Apply it exactly
-
-**If NO explicit fix instructions are provided (neither text nor code):**
-- go to step 2
+If no clear instructions are provided in either text or code, proceed to step 2 in your workflow.
 
 **Step 2: Search for Similar CLOSED Issues**
 1. **MANDATORY**: Search for similar **CLOSED issues ONLY** in the relevant repository
@@ -148,7 +113,7 @@ git remote set-url origin https://${GITHUB_TOKEN}@github.com/ranuka-laksika/${AF
 git checkout -b fix_issue_${ISSUE_NUMBER}_$(date +%s)
 ```
 
-**Step 3: Make Code Changes in the Cloned Repository**
+**Step 3: Make Code Changes in the Cloned Repository**(MANDATORY)
 
 - **ONLY modify files directly related to the bug IN THE CLONED REPOSITORY**
 - **DO NOT create**: temp files, test files, README files, or documentation unless the issue specifically requires them
@@ -159,7 +124,7 @@ git checkout -b fix_issue_${ISSUE_NUMBER}_$(date +%s)
 
 **CRITICAL: Build ONLY the specific component/module you modified - NOT the entire repository.**
 
-**DO NOT build the whole repository from the root directory. Navigate to the specific component directory that you have apply the changes and build ONLY that component.**
+**DO NOT build the whole repository from the root directory. Navigate to the specific component directory that you have apply changes and build ONLY that component.**
 
 **MANDATORY**: Always use Maven (`mvn`) to build components.
 
@@ -412,33 +377,6 @@ The complete modified `wso2am-${WSO2AM_VERSION}` pack is available as a GitHub A
 **Testing:**
 - Frontend: Skip testing
 - Backend: Test thoroughly, retry fix if needed
-
-## Troubleshooting
-
-**"could not read Username" error:**
-1. Verify remote URL: `git remote -v` (should show token in URL)
-2. Reconfigure: `git remote set-url origin https://${GITHUB_TOKEN}@github.com/ranuka-laksika/${AFFECTED_REPOSITORY}.git`
-3. Verify directory: `pwd` (should be inside repository)
-
-**Build failures:**
-- Check error logs carefully
-- Verify you're building the correct component
-- Ensure Java 11 is being used
-- Retry with `-X` flag for verbose output: `mvn clean install -X`
-
-**Build still running (not completed):**
-- **DO NOT PROCEED** to Phase 4 if build hasn't finished
-- Follow the Build Wait Strategy:
-  - Wait 3 minutes initially
-  - Check for "BUILD SUCCESS"
-  - If not complete, wait 2 more minutes and check again
-  - Repeat 2-minute cycles until build completes
-- Never assume the build is done without seeing "BUILD SUCCESS" message
-
-**Push failures:**
-- Verify you're in the repository directory: `pwd`
-- Check branch exists: `git branch -a`
-- Verify remote: `git remote -v`
 
 ## Workflow Summary
 
