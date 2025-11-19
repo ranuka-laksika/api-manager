@@ -38,11 +38,11 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y maven
 
-      - name: Set up Node.js (latest)
+      - name: Set up Node.js (22.x)
         uses: actions/setup-node@v4
         with:
-          node-version: 'lts/*'   # install latest LTS version    
-
+          node-version: '22.x'   # This installs Node.js version 22
+       
       - name: Verify Node installation
         run: |
           node --version
